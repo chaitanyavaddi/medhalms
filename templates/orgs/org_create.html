@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+{% load partials %}
+
+{% block title %}Create Organization · MyApp{% endblock %}
+{% block body_class %}no-top-gradient{% endblock %}
+{% block top_class %}{% endblock %}
+{% block site_header %}{% endblock %}
+{% block hero %}{% endblock %}
+{% block site_footer %}{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <style>
+    body { background: #fafafb; }
+    .auth-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
+    .auth-card { background: #fff; border: 1px solid #e0ddd8; border-radius: 12px; padding: 2.5rem 2rem; width: 100%; max-width: 440px; }
+    .auth-logo { margin-bottom: 1.5rem; }
+    .auth-logo svg { width: 40px; height: 40px; }
+    .auth-heading { font-family: 'Playfair Display', Georgia, serif; font-size: 1.5rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.3rem; }
+    .auth-sub { font-size: 0.875rem; color: #6b6b6b; margin-bottom: 1.5rem; }
+    .auth-form { display: flex; flex-direction: column; gap: 0.75rem; }
+    .auth-field input { width: 100%; border: 1px solid #e0ddd8; border-radius: 7px; padding: 0.55rem 0.75rem; font-size: 0.875rem; font-family: inherit; box-sizing: border-box; }
+    .auth-field input:focus { outline: none; border-color: var(--brand-primary, #3730a3); }
+    .subdomain-wrap { display: flex; align-items: center; border: 1px solid #e0ddd8; border-radius: 7px; overflow: hidden; }
+    .subdomain-wrap input { border: none; flex: 1; padding: 0.55rem 0.75rem; font-size: 0.875rem; font-family: inherit; min-width: 0; }
+    .subdomain-wrap input:focus { outline: none; }
+    .subdomain-suffix { padding: 0.55rem 0.75rem; background: #f5f4f0; color: #6b6b6b; font-size: 0.8rem; white-space: nowrap; border-left: 1px solid #e0ddd8; flex-shrink: 0; }
+    .btn-primary { background: var(--brand-primary, #3730a3); color: #fff; border: none; border-radius: 7px; padding: 0.6rem 1rem; font-size: 0.875rem; font-family: inherit; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: opacity 0.15s; }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .auth-footer { font-size: 0.8rem; color: #6b6b6b; text-align: center; margin-top: 1rem; }
+    .auth-footer a { color: #1a1a1a; }
+    .auth-messages { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-bottom: 0; padding: 0; }
+    .auth-message { font-size: 0.85rem; padding: 9px 13px; border-radius: 7px; border: 1px solid transparent; }
+    .auth-message--error { background: #feecec; border-color: #fca5a5; color: #dc2626; }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <a href="/">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="40" height="40" rx="10" fill="#ede9fe"/>
+          <text x="20" y="26" font-family="Georgia,serif" font-size="18" font-weight="400" fill="var(--brand-primary, #3730a3)" text-anchor="middle">A</text>
+        </svg>
+      </a>
+    </div>
+
+    <h1 class="auth-heading">Create your organization</h1>
+    <p class="auth-sub">Pick a name and subdomain for your workspace.</p>
+
+    {% partialdef create-org-form inline %}
+    <form method="post" class="auth-form"
+          hx-post="{% url 'orgs:create' %}"
+          hx-target="#create-org-form"
+          hx-swap="outerHTML"
+          id="create-org-form">
+      {% csrf_token %}
+      {% if messages %}
+        <ul class="auth-messages">
+          {% for m in messages %}
+            <li class="auth-message auth-message--{{ m.tags }}">{{ m }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      <div class="auth-field">
+        <input type="text" name="name" placeholder="Organization name"
+               value="{{ data.name|default:'' }}" autofocus autocomplete="off">
+      </div>
+      <div class="auth-field">
+        <div class="subdomain-wrap">
+          <input type="text" name="subdomain" placeholder="yourname"
+                 value="{{ data.subdomain|default:'' }}" autocomplete="off">
+          <span class="subdomain-suffix">.{{ request.domain }}</span>
+        </div>
+      </div>
+      <button type="submit" class="btn-primary">
+        <span class="btn-label">Create organization</span>
+        <span class="btn-spinner"></span>
+      </button>
+    </form>
+    {% endpartialdef %}
+
+    <p class="auth-footer"><a href="{% url 'orgs:list' %}">← Back to organizations</a></p>
+  </div>
+</div>
+{% endblock %}

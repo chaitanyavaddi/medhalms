@@ -1,0 +1,93 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:             #FAFAFB;
+  --surface:        #FFFFFF;
+  --surface-hover:  #F5F5F7;
+  --surface-active: #EFEFF2;
+  --border:         #ECECEF;
+  --border-strong:  #DCDCE0;
+  --text:           #0F0F10;
+  --text-2:         #56565E;
+  --text-3:         #8B8B93;
+  --text-4:         #B4B4BC;
+  /* Accent — driven by --brand-primary injected from settings.py */
+  --brand-primary:   #7a5c3e;   /* fallback; overridden by inline <style> */
+  --brand-secondary: #2a6e96;   /* fallback */
+  --accent:          var(--brand-primary);
+  --accent-hover:    color-mix(in srgb, var(--brand-primary) 82%, black);
+  --accent-bg:       color-mix(in srgb, var(--brand-primary) 12%, white);
+  --accent-text:     var(--brand-primary);
+  /* Status colours */
+  --st-blocked:     #DC2626; --st-blocked-bg: #FEECEC;
+  --st-done:        #059669; --st-done-bg:    #E5F5EE;
+  --st-progress:    #D97706; --st-progress-bg: #FEF3E0;
+  --st-review:      #2563EB; --st-review-bg:   #E8EFFE;
+  /* Typography */
+  --font-ui:      "Inter", -apple-system, system-ui, sans-serif;
+  --font-serif:   "Playfair Display", Georgia, serif;
+  --font-reading: "Lora", Georgia, serif;
+}
+
+html, body { height: 100%; }
+body {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HTMX button spinner ── */
+.btn-spinner { display: none; }
+
+.btn-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary.htmx-request {
+  pointer-events: none;
+}
+
+.btn-primary.htmx-request .btn-label {
+  opacity: 0;
+}
+
+.btn-primary.htmx-request .btn-spinner {
+  display: block;
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: btn-spin 0.55s linear infinite;
+}
+
+@keyframes btn-spin { to { transform: rotate(360deg); } }
+
+/* ── Auth message colours ── */
+.auth-messages {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.auth-message {
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+}
+
+.auth-message--error,
+.auth-message--danger  { background: var(--st-blocked-bg); border-color: #fca5a5; color: var(--st-blocked); }
+.auth-message--success { background: var(--st-done-bg);    border-color: #6ee7b7; color: var(--st-done); }
+.auth-message--warning { background: var(--st-progress-bg); border-color: #fcd34d; color: var(--st-progress); }
+.auth-message--info    { background: var(--st-review-bg);  border-color: #93c5fd; color: var(--st-review); }

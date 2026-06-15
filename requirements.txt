@@ -1,0 +1,10 @@
+asgiref==3.11.1
+Django==6.0.5
+sqlparse==0.5.5
+gunicorn==23.0.0
+whitenoise==6.9.0
+django-template-partials==25.3
+psycopg2-binary==2.9.10
+rcssmin==1.1.2
+rjsmin==1.2.2
+resend==2.10.0

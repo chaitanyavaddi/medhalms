@@ -1,0 +1,63 @@
+# Traefik dynamic config for myapp.com
+# Replace APP_NAME, myapp.com, and container name to match your deployment.
+http:
+  routers:
+    # Main domain — HTTP → HTTPS redirect
+    myapp-router-main:
+      rule: Host(`myapp.com`)
+      service: myapp-service
+      middlewares:
+        - redirect-to-https
+      entryPoints:
+        - web
+    # Main domain — HTTPS
+    myapp-router-main-secure:
+      rule: Host(`myapp.com`)
+      service: myapp-service
+      middlewares: []
+      entryPoints:
+        - websecure
+
+    # Subdomain wildcard — HTTP → HTTPS redirect
+    myapp-router-subdomain:
+      rule: HostRegexp(`[a-z0-9-]+\.myapp\.com`)
+      service: myapp-service
+      middlewares:
+        - redirect-to-https
+      entryPoints:
+        - web
+    # Subdomain wildcard — HTTPS
+    myapp-router-subdomain-secure:
+      rule: HostRegexp(`[a-z0-9-]+\.myapp\.com`)
+      service: myapp-service
+      middlewares: []
+      entryPoints:
+        - websecure
+
+    # www → root redirect — HTTP
+    myapp-router-www:
+      rule: Host(`www.myapp.com`)
+      service: myapp-service-www
+      middlewares:
+        - redirect-to-https
+      entryPoints:
+        - web
+    # www → root redirect — HTTPS
+    myapp-router-www-secure:
+      rule: Host(`www.myapp.com`)
+      service: myapp-service-www
+      middlewares: []
+      entryPoints:
+        - websecure
+
+  services:
+    myapp-service:
+      loadBalancer:
+        servers:
+          - url: http://myapp-container:8000
+        passHostHeader: true
+    myapp-service-www:
+      loadBalancer:
+        servers:
+          - url: http://myapp-container:8000
+        passHostHeader: true

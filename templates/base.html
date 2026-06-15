@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" id="html-root">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}MyApp{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?c={{ brand_primary|urlencode }}">
+  {% if brand_font_url %}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="{{ brand_font_url }}" rel="stylesheet">{% endif %}
+  <style>:root{--brand-primary:{{ brand_primary }};--brand-secondary:{{ brand_secondary }};--brand-font:{{ brand_font_family }};--font-ui:{{ brand_font_family }};--font-serif:{{ brand_font_family }};--font-reading:{{ brand_font_family }};}</style>
+  <script src="https://unpkg.com/htmx.org@1.9.10/dist/htmx.min.js" defer></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+  <div class="top-section {% block top_class %}{% endblock %}">
+
+    {% block site_header %}
+    <header class="site-header">
+      <nav class="site-nav">
+        <a href="/" class="site-name">MyApp</a>
+        <div class="nav-links">
+          <a href="{% url 'auth_login' %}" class="nav-link">Login</a>
+        </div>
+      </nav>
+    </header>
+    {% endblock %}
+
+    {% block hero %}{% endblock %}
+  </div>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block site_footer %}
+  <footer class="site-footer">
+    <p>&copy; MyApp.</p>
+  </footer>
+  {% endblock %}
+
+  {% block extra_js %}{% endblock %}
+
+</body>
+</html>

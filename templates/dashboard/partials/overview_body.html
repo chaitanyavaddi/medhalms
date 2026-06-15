@@ -1,0 +1,24 @@
+<div class="dash-page-header">
+  <nav class="dash-tabs">
+    <a href="{% url 'dashboard_overview' %}"
+       hx-get="{% url 'dashboard_overview' %}"
+       hx-target="#dash-content"
+       hx-push-url="true"
+       hx-indicator="#dash-loading"
+       class="dash-tab active">Overview</a>
+    <a href="{% url 'dashboard_settings' %}"
+       hx-get="{% url 'dashboard_settings' %}"
+       hx-target="#dash-content"
+       hx-push-url="true"
+       hx-indicator="#dash-loading"
+       class="dash-tab">Settings</a>
+  </nav>
+</div>
+
+<div class="dash-section">
+  <h2 class="dash-section-title">Welcome, {{ request.user.email }}</h2>
+  <p style="font-size:.9rem;color:#6b6b6b;margin-top:.5rem;">
+    Organization: <strong>{{ request.org.name }}</strong> &mdash;
+    <code>{{ request.org.subdomain }}.{{ request.domain }}</code>
+  </p>
+</div>

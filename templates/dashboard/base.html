@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Dashboard{% endblock %} · {{ request.org.name|default:"MyApp" }}</title>
+  {% if request.org.avatar %}<link rel="icon" type="image/png" href="{{ request.org.avatar }}">{% else %}<link rel="icon" type="image/svg+xml" href="/favicon.svg?c={{ brand_primary|urlencode }}">{% endif %}
+  {% if brand_font_url %}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="{{ brand_font_url }}" rel="stylesheet">{% endif %}
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <style>:root{--brand-primary:{{ brand_primary }};--brand-secondary:{{ brand_secondary }};--brand-font:{{ brand_font_family }};--font-ui:{{ brand_font_family }};--font-serif:{{ brand_font_family }};--font-reading:{{ brand_font_family }};}</style>
+  <script src="https://unpkg.com/htmx.org@1.9.10/dist/htmx.min.js"></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="dash-page">
+
+  <header class="dash-topbar">
+    <div class="dash-topbar-inner">
+      <div class="dash-topbar-left">
+        <a href="{% url 'dashboard_index' %}" class="dash-brand">
+          {% if request.org.avatar and request.org.logo_display != 'name' %}<img src="{{ request.org.avatar }}" class="dash-brand-logo" alt="{{ request.org.name }}">{% elif not request.org.avatar and request.org.logo_display != 'name' %}<span class="dash-brand-placeholder">{{ request.org.name|default:"A"|first|upper }}</span>{% endif %}
+          {% if request.org.logo_display != 'avatar' %}<span>{{ request.org.name|default:"MyApp" }}</span>{% endif %}
+        </a>
+      </div>
+      <div class="dash-topbar-right">
+        <form method="post" action="{% url 'auth_logout' %}" style="margin:0">
+          {% csrf_token %}
+          <button type="submit" class="dash-icon-btn dash-signout-btn" title="Sign out">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="16 17 21 12 16 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main class="dash-main">
+    <div class="dash-inner">
+      <div id="dash-content">
+        {% block content %}{% endblock %}
+      </div>
+      <div id="dash-loading" class="dash-loading htmx-indicator"></div>
+    </div>
+  </main>
+
+</body>
+</html>

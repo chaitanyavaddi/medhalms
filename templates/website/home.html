@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}MyApp{% endblock %}
+
+{% block extra_head %}
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: var(--brand-font); background: #fafafb; color: #1a1a1a; }
+  a { color: inherit; text-decoration: none; }
+
+  .site-header { border-bottom: 1px solid #e8e5e0; background: #fff; }
+  .site-nav { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+  .site-name { font-family: var(--brand-font); font-size: 1.1rem; font-weight: 600; color: #1a1a1a; }
+  .nav-links { display: flex; align-items: center; gap: 1rem; }
+  .nav-link { font-size: 0.875rem; color: #6b6b6b; transition: color 0.12s; }
+  .nav-link:hover { color: #1a1a1a; }
+
+  .top-section { background: #fff; }
+  .hero { max-width: 960px; margin: 0 auto; padding: 6rem 1.5rem 5rem; text-align: center; }
+  .hero-title { font-family: var(--brand-font); font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 600; color: #1a1a1a; margin: 0 0 1rem; line-height: 1.2; }
+  .hero-sub { font-size: 1.05rem; color: #6b6b6b; margin: 0 auto 2.5rem; max-width: 480px; line-height: 1.6; }
+  .hero-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+  .btn-cta { background: var(--brand-primary, #1a1a1a); color: #fff; border: none; border-radius: 8px; padding: 0.65rem 1.5rem; font-size: 0.9rem; font-family: inherit; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
+  .btn-cta:hover { opacity: 0.82; }
+  .btn-secondary { background: #fff; color: #1a1a1a; border: 1px solid #e0ddd8; border-radius: 8px; padding: 0.65rem 1.5rem; font-size: 0.9rem; font-family: inherit; font-weight: 500; cursor: pointer; transition: background 0.12s; }
+  .btn-secondary:hover { background: #f5f4f0; }
+
+  main { padding: 4rem 1.5rem; max-width: 960px; margin: 0 auto; }
+  .site-footer { border-top: 1px solid #e8e5e0; padding: 1.5rem; text-align: center; font-size: 0.8rem; color: #9b9b9b; }
+</style>
+{% endblock %}
+
+{% block hero %}
+<div class="hero">
+  <h1 class="hero-title">Your platform, your way</h1>
+  <p class="hero-sub">Create your organization and invite your team.</p>
+  <div class="hero-actions">
+    <a href="{% url 'auth_signup' %}" class="btn-cta">Get started free</a>
+    <a href="{% url 'auth_login' %}" class="btn-secondary">Sign in</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}{% endblock %}

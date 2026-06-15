@@ -1,0 +1,86 @@
+HETZNER SERVER SETUP NOTES
+==========================
+Server IP: 167.233.114.250
+OS: Ubuntu 22.04.5 LTS
+Panel: Dokploy (http://167.233.114.250:3000)
+
+
+1. SSH KEY SETUP (on local Mac)
+-------------------------------
+Generated a new SSH key pair for Hetzner:
+
+    ssh-keygen -t ed25519 -C "hetzner-milabase" -f ~/.ssh/hetzner_milabase
+
+This created two files:
+    ~/.ssh/hetzner_milabase       <- private key (never share)
+    ~/.ssh/hetzner_milabase.pub   <- public key (added to Hetzner)
+
+Added the public key in Hetzner Cloud Console during server creation.
+When an SSH key is attached at creation, Hetzner does NOT email a root password —
+key-based auth is used instead, and password login is effectively disabled by default.
+
+To SSH into the server:
+    ssh -i ~/.ssh/hetzner_milabase root@167.233.114.250
+
+To avoid specifying the key every time, add to ~/.ssh/config:
+    Host hetzner-djangocv
+        HostName 167.233.114.250
+        User root
+        IdentityFile ~/.ssh/hetzner_milabase
+
+Then just run: ssh hetzner-djangocv
+
+
+2. KNOWN_HOSTS NOTE
+-------------------
+If you rebuild or replace the server with the same IP, SSH will warn:
+"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED"
+
+This is expected. Clear the old entry with:
+    ssh-keygen -R 167.233.114.250
+
+Then reconnect and type 'yes' to accept the new fingerprint.
+
+
+3. DOKPLOY INSTALL
+------------------
+Installed Dokploy (self-hosted deployment panel) with:
+
+    curl -sSL https://dokploy.com/install.sh | sh
+
+This installs Docker and Dokploy, and starts it on port 3000.
+Access the dashboard at: http://167.233.114.250:3000
+
+
+4. SERVER SECURITY HARDENING
+-----------------------------
+Done immediately after getting access, before deploying anything.
+
+a) Disable password SSH, allow only key-based auth:
+    nano /etc/ssh/sshd_config
+
+    Set:
+        PasswordAuthentication no
+        PermitRootLogin prohibit-password
+
+    Apply:
+        systemctl restart ssh
+
+b) Set up UFW firewall — only open necessary ports:
+    ufw allow 22     # SSH
+    ufw allow 80     # HTTP
+    ufw allow 443    # HTTPS
+    ufw allow 3000   # Dokploy dashboard (remove once behind a domain)
+    ufw enable
+
+c) Enable automatic security updates:
+    apt install unattended-upgrades -y
+    dpkg-reconfigure --priority=low unattended-upgrades
+
+
+5. WHAT'S LEFT BEFORE GOING LIVE
+----------------------------------
+- Point a domain to 167.233.114.250
+- Add domain to Dokploy and get SSL cert (Dokploy handles this via Let's Encrypt)
+- Remove ufw rule for port 3000 once Dokploy is behind a domain with auth
+- Deploy the Django app via Dokploy

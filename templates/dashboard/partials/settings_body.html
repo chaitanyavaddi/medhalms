@@ -1,0 +1,387 @@
+<div class="dash-page-header">
+  <nav class="dash-tabs">
+    <a href="{% url 'dashboard_overview' %}"
+       hx-get="{% url 'dashboard_overview' %}"
+       hx-target="#dash-content"
+       hx-push-url="true"
+       hx-indicator="#dash-loading"
+       class="dash-tab">Overview</a>
+    <a href="{% url 'dashboard_settings' %}"
+       hx-get="{% url 'dashboard_settings' %}"
+       hx-target="#dash-content"
+       hx-push-url="true"
+       hx-indicator="#dash-loading"
+       class="dash-tab active">Settings</a>
+  </nav>
+  <button type="submit" form="settings-form" class="btn btn-accent">{% if saved %}Saved{% else %}Save{% endif %}</button>
+</div>
+
+<form id="settings-form" method="post" action="{% url 'dashboard_settings' %}"
+      hx-post="{% url 'dashboard_settings' %}"
+      hx-target="#dash-content"
+      hx-push-url="true">
+  {% csrf_token %}
+  <div class="settings-body">
+
+    <!-- 01 General -->
+    <details class="settings-section" {% if open_section == 'general' %}open{% endif %}>
+      <summary class="settings-section-summary">
+        <span class="settings-section-title"><span class="settings-num">01</span>General</span>
+        <svg class="settings-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none">
+          <path d="M5 7l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </summary>
+      <div class="settings-rows">
+        <div class="settings-row">
+          <div class="settings-row-label">
+            <span class="settings-label">Organization name</span>
+            <span class="settings-desc">Displayed in the header and browser tab.</span>
+          </div>
+          <div class="settings-row-control">
+            <input type="text" name="name" class="settings-input" value="{{ request.org.name|default:'' }}" placeholder="My Organization">
+          </div>
+        </div>
+        <div class="settings-row settings-row--top">
+          <div class="settings-row-label">
+            <span class="settings-label">Bio</span>
+            <span class="settings-desc">Short description of your organization.</span>
+          </div>
+          <div class="settings-row-control">
+            <textarea name="bio" class="settings-input settings-textarea" rows="3" placeholder="A few words about your organization…">{{ request.org.bio|default:'' }}</textarea>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- 02 Appearance -->
+    <details class="settings-section" {% if open_section == 'appearance' %}open{% endif %}>
+      <summary class="settings-section-summary">
+        <span class="settings-section-title"><span class="settings-num">02</span>Appearance</span>
+        <svg class="settings-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none">
+          <path d="M5 7l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </summary>
+      <div class="settings-rows">
+        <div class="settings-row settings-row--top">
+          <div class="settings-row-label">
+            <span class="settings-label">Logo</span>
+            <span class="settings-desc">Square image. Used in your dashboard header.</span>
+          </div>
+          <div class="settings-row-control logo-row-control">
+            <div class="logo-upload-area" id="logo-upload-area">
+              {% if request.org.avatar %}
+                <img src="{{ request.org.avatar }}" class="logo-preview" id="logo-preview" alt="Logo">
+                <button type="button" class="logo-remove-btn" id="logo-remove-btn" title="Remove logo">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              {% else %}
+                <label class="logo-upload-label" id="logo-upload-label">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <input type="file" id="logo-file-input" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none">
+                </label>
+              {% endif %}
+            </div>
+            <div class="logo-display-opts">
+              {% for val, label in display_choices %}
+              <label class="logo-tab {% if request.org.logo_display == val %}logo-tab--active{% endif %}">
+                <input type="radio" name="logo_display" value="{{ val }}" {% if request.org.logo_display == val %}checked{% endif %} style="display:none">
+                <span>{{ label }}</span>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-label">
+            <span class="settings-label">Primary color</span>
+            <span class="settings-desc">Used for links, accents, and buttons.</span>
+          </div>
+          <div class="settings-row-control settings-color-row">
+            <input type="color" class="settings-color-picker" id="color-primary-picker" value="{{ brand_primary }}">
+            <input type="text" name="brand_primary" class="settings-input settings-input--color" id="color-primary-text" value="{{ brand_primary }}" placeholder="#3730a3">
+            <button type="button" class="settings-reset-btn" title="Reset" onclick="resetColor('color-primary-picker','color-primary-text','#3730a3')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 3v5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-label">
+            <span class="settings-label">Secondary color</span>
+            <span class="settings-desc">Used for gradients and decorative tones.</span>
+          </div>
+          <div class="settings-row-control settings-color-row">
+            <input type="color" class="settings-color-picker" id="color-secondary-picker" value="{{ brand_secondary }}">
+            <input type="text" name="brand_secondary" class="settings-input settings-input--color" id="color-secondary-text" value="{{ brand_secondary }}" placeholder="#2a6e96">
+            <button type="button" class="settings-reset-btn" title="Reset" onclick="resetColor('color-secondary-picker','color-secondary-text','#2a6e96')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 3v5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- 03 Domain -->
+    <details class="settings-section" {% if open_section == 'domain' %}open{% endif %}>
+      <summary class="settings-section-summary">
+        <span class="settings-section-title"><span class="settings-num">03</span>Domain</span>
+        <svg class="settings-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none">
+          <path d="M5 7l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </summary>
+      <div class="settings-rows">
+        <div class="settings-row">
+          <div class="settings-row-label">
+            <span class="settings-label">Subdomain</span>
+            <span class="settings-desc">Your built-in address.</span>
+          </div>
+          <div class="settings-row-control">
+            <input type="text" class="settings-input settings-input--readonly" value="{{ request.org.subdomain }}.{{ request.domain }}" readonly>
+          </div>
+        </div>
+        <div class="settings-row settings-row--top settings-row--domain">
+          <div class="settings-row-label">
+            <span class="settings-label">Custom domain</span>
+            <span class="settings-desc">Point your own domain here. Enter it, get the DNS records, then verify.</span>
+          </div>
+          <div class="settings-row-control settings-row-control--domain">
+            <div class="domain-input-row">
+              <input type="text" name="custom_domain" class="settings-input" value="{{ request.org.custom_domain }}" placeholder="yourdomain.com" autocomplete="off" id="custom-domain-input">
+              <button type="button" class="btn-cname" id="get-cname-btn">Get DNS records</button>
+            </div>
+            <div class="domain-dns-box" id="domain-dns-box" {% if not request.org.custom_domain %}style="display:none"{% endif %}>
+              <table class="dns-table">
+                <thead><tr><th>Type</th><th>Name</th><th>Value</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>CNAME</td>
+                    <td id="dns-name-val">{{ request.org.custom_domain|default:"yourdomain.com" }}</td>
+                    <td class="dns-copy-cell">
+                      <span id="dns-value-val">{{ request.org.subdomain }}.{{ request.domain }}</span>
+                      <button type="button" class="dns-copy-btn" data-copy="{{ request.org.subdomain }}.{{ request.domain }}" title="Copy">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="domain-verify-row">
+                {% if request.org.custom_domain_verified %}
+                  <span class="domain-status domain-status--ok">
+                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 10l5 5 7-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Verified
+                  </span>
+                {% else %}
+                  <span class="domain-status domain-status--pending" id="domain-status-text">Pending verification</span>
+                  <button type="button" class="btn btn-ghost btn-sm" id="verify-domain-btn">Verify now</button>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- 04 Account -->
+    <details class="settings-section" {% if open_section == 'account' %}open{% endif %}>
+      <summary class="settings-section-summary">
+        <span class="settings-section-title"><span class="settings-num">04</span>Account</span>
+        <svg class="settings-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none">
+          <path d="M5 7l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </summary>
+      <div class="settings-rows">
+        <div class="settings-row">
+          <div class="settings-row-label">
+            <span class="settings-label">Email</span>
+            <span class="settings-desc">Your login email address.</span>
+          </div>
+          <div class="settings-row-control">
+            <span class="settings-static-value">{{ request.user.email }}</span>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- 05 Danger zone -->
+    <details class="settings-section settings-section--danger">
+      <summary class="settings-section-summary">
+        <span class="settings-section-title settings-section-title--danger"><span class="settings-num settings-num--danger">05</span>Danger zone</span>
+        <svg class="settings-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none">
+          <path d="M5 7l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </summary>
+      <div class="settings-rows">
+        <div class="settings-row">
+          <div class="settings-row-label">
+            <span class="settings-label">Delete organization</span>
+            <span class="settings-desc">Permanently remove this organization and all its data. This cannot be undone.</span>
+          </div>
+          <div class="settings-row-control">
+            <button type="button" class="btn settings-danger-btn" id="delete-org-btn">Delete organization</button>
+          </div>
+        </div>
+      </div>
+    </details>
+
+  </div>
+</form>
+
+<form id="delete-org-form" method="post" action="{% url 'dashboard_org_delete' %}" style="display:none">
+  {% csrf_token %}
+</form>
+
+{% include "dashboard/partials/delete_modal.html" %}
+
+<script>
+(function() {
+  function bindColorPair(pickerId, textId) {
+    var picker = document.getElementById(pickerId);
+    var text   = document.getElementById(textId);
+    if (!picker || !text) return;
+    picker.addEventListener('input', function() { text.value = picker.value; });
+    text.addEventListener('input', function() {
+      if (/^#[0-9a-fA-F]{6}$/.test(text.value)) picker.value = text.value;
+    });
+  }
+  bindColorPair('color-primary-picker', 'color-primary-text');
+  bindColorPair('color-secondary-picker', 'color-secondary-text');
+})();
+
+function resetColor(pickerId, textId, defaultValue) {
+  var picker = document.getElementById(pickerId);
+  var text   = document.getElementById(textId);
+  if (picker) picker.value = defaultValue;
+  if (text)   text.value   = defaultValue;
+}
+
+var deleteOrgBtn = document.getElementById('delete-org-btn');
+if (deleteOrgBtn) {
+  deleteOrgBtn.addEventListener('click', function() {
+    var modal = document.getElementById('delete-modal');
+    if (modal) modal.style.display = 'flex';
+  });
+}
+
+document.addEventListener('click', function(e) {
+  var modal = document.getElementById('delete-modal');
+  if (!modal || modal.style.display === 'none') return;
+  if (e.target.closest('#modal-cancel-btn')) {
+    modal.style.display = 'none';
+    return;
+  }
+  if (e.target.closest('#modal-confirm-btn')) {
+    document.getElementById('delete-org-form').submit();
+    return;
+  }
+  if (e.target === modal) {
+    modal.style.display = 'none';
+  }
+});
+
+// DNS records button
+var getCnameBtn = document.getElementById('get-cname-btn');
+if (getCnameBtn) {
+  getCnameBtn.addEventListener('click', function() {
+    var domain = document.getElementById('custom-domain-input').value.trim();
+    var box    = document.getElementById('domain-dns-box');
+    var nameEl = document.getElementById('dns-name-val');
+    if (nameEl && domain) nameEl.textContent = domain;
+    if (box) box.style.display = '';
+  });
+}
+
+// Copy CNAME
+document.querySelectorAll('.dns-copy-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var text = btn.dataset.copy;
+    var orig = btn.innerHTML;
+    var tick = '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 10l5 5 7-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    function showTick() { btn.innerHTML = tick; setTimeout(function() { btn.innerHTML = orig; }, 1500); }
+    if (navigator.clipboard) { navigator.clipboard.writeText(text).then(showTick); }
+    else { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showTick(); }
+  });
+});
+
+// Verify domain
+var verifyBtn = document.getElementById('verify-domain-btn');
+if (verifyBtn) {
+  verifyBtn.addEventListener('click', function() {
+    verifyBtn.disabled = true; verifyBtn.textContent = 'Checking…';
+    var csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    fetch('{% url "dashboard_verify_domain" %}', { method: 'POST', headers: { 'X-CSRFToken': csrf } })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var row = verifyBtn.closest('.domain-verify-row');
+        if (data.verified) {
+          row.innerHTML = '<span class="domain-status domain-status--ok"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 10l5 5 7-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Verified</span>';
+        } else {
+          verifyBtn.disabled = false; verifyBtn.textContent = 'Verify now';
+        }
+      })
+      .catch(function() { verifyBtn.disabled = false; verifyBtn.textContent = 'Verify now'; });
+  });
+}
+
+// Logo upload
+(function() {
+  var area = document.getElementById('logo-upload-area');
+  if (!area) return;
+  var csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  function renderPreview(url) {
+    area.innerHTML = '<img src="' + url + '" class="logo-preview" id="logo-preview" alt="Logo">' +
+      '<button type="button" class="logo-remove-btn" id="logo-remove-btn" title="Remove logo">' +
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+      '</button>';
+    bindRemove();
+  }
+  function renderEmpty() {
+    area.innerHTML = '<label class="logo-upload-label" id="logo-upload-label">' +
+        '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' +
+        '<input type="file" id="logo-file-input" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none">' +
+      '</label>';
+    bindUpload();
+  }
+  function bindUpload() {
+    var input = document.getElementById('logo-file-input');
+    if (!input) return;
+    input.addEventListener('change', function() {
+      var file = input.files[0]; if (!file) return;
+      var fd = new FormData(); fd.append('logo', file);
+      area.classList.add('logo-uploading');
+      fetch('{% url "dashboard_logo_upload" %}', { method: 'POST', headers: { 'X-CSRFToken': csrf }, body: fd })
+        .then(function(r) { return r.json(); })
+        .then(function(data) { area.classList.remove('logo-uploading'); if (data.url) renderPreview(data.url); })
+        .catch(function() { area.classList.remove('logo-uploading'); });
+    });
+  }
+  function bindRemove() {
+    var btn = document.getElementById('logo-remove-btn');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+      fetch('{% url "dashboard_logo_delete" %}', { method: 'POST', headers: { 'X-CSRFToken': csrf } })
+        .then(function() { renderEmpty(); });
+    });
+  }
+  bindUpload(); bindRemove();
+
+  document.querySelectorAll('.logo-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var radio = tab.querySelector('input[type=radio]');
+      document.querySelectorAll('.logo-tab').forEach(function(t) {
+        var r = t.querySelector('input[type=radio]');
+        t.classList.toggle('logo-tab--active', r && r.value === radio.value);
+        if (r && r.value === radio.value) r.checked = true;
+      });
+    });
+  });
+})();
+
+(function() {
+  var open = document.querySelector('details[open]');
+  if (open) {
+    setTimeout(function() { open.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80);
+    history.replaceState(null, '', '/dashboard/settings/');
+  }
+})();
+</script>
