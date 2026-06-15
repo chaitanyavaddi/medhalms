@@ -1,15 +1,31 @@
 {% extends "dashboard/base.html" %}
-
 {% block title %}Career Paths{% endblock %}
 {% block content_class %}dash-content--edge{% endblock %}
+
+{% block topbar_title %}<h2 class="dash-page-title">Career Paths</h2>{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var thread = document.querySelector('.cp-thread');
+  if (!thread) return;
+  thread.addEventListener('click', function (e) {
+    var btn = e.target.closest('.tn-item');
+    if (!btn) return;
+    thread.querySelectorAll('.tn-item').forEach(function (b) { b.classList.remove('is-active'); });
+    btn.classList.add('is-active');
+  });
+})();
+</script>
+{% endblock %}
 
 {% block content %}
 <div class="cp-layout">
 
   <aside class="cp-thread">
-    <div class="cp-thread-hd">
-      <h2 class="cp-thread-title">Career Paths</h2>
-      <p class="cp-thread-sub">Pick a role, follow the roadmap.</p>
+    <div class="cp-tab-bar">
+      <a href="{% url 'dashboard:career_paths' %}" class="cp-tab{% if tab == 'roles' %} is-active{% endif %}">Career Roles</a>
+      <a href="{% url 'dashboard:career_paths_skills' %}" class="cp-tab{% if tab == 'skills' %} is-active{% endif %}">Skills & Tech</a>
     </div>
     {% include "components/thread_nav.html" with tn_groups=thread_groups tn_active_id=active_role.id tn_base_url="/dashboard/career-paths/" tn_target="#cp-detail" %}
   </aside>

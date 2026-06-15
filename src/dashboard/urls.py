@@ -6,5 +6,7 @@ app_name = 'dashboard'
 urlpatterns = [
     path('', views.HomeView.as_view(), name='index'),
     path('career-paths/', views.CareerPathsView.as_view(), name='career_paths'),
-    path('career-paths/<str:role_id>/', views.CareerPathsView.as_view(), name='career_path_detail'),
+    # skills/ must come before <roadmap_id>/ to avoid being matched as an id
+    path('career-paths/skills/', views.CareerPathsView.as_view(), {'tab': 'skills'}, name='career_paths_skills'),
+    path('career-paths/<str:roadmap_id>/', views.CareerPathsView.as_view(), name='career_path_detail'),
 ]

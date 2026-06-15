@@ -2,20 +2,24 @@
 
   <div class="cp-role-hd">
     <div class="cp-role-hd-text">
-      <h1 class="cp-role-title">{{ role.name }}</h1>
+      <h1 class="cp-role-title">{{ role.name }} Roadmap</h1>
       <p class="cp-role-tagline">{{ role.tagline }}</p>
     </div>
-    <a href="{{ role.roadmap_url }}" target="_blank" rel="noopener" class="cp-open-btn">
-      Open on roadmap.sh
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-        <polyline points="15 3 21 3 21 9"/>
-        <line x1="10" y1="14" x2="21" y2="3"/>
-      </svg>
-    </a>
+    <div class="cp-zoom-controls">
+      <button type="button" class="cp-zoom-btn" id="cp-zoom-out" title="Zoom out">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+      </button>
+      <span class="cp-zoom-pct" id="cp-zoom-pct">Fit</span>
+      <button type="button" class="cp-zoom-btn" id="cp-zoom-in" title="Zoom in">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+      </button>
+      <button type="button" class="cp-zoom-btn cp-zoom-btn--reset" id="cp-zoom-reset" title="Reset zoom">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+      </button>
+    </div>
   </div>
 
+  {% if role.is_rich %}
   <div class="cp-role-meta">
     <div class="cp-meta-item">
       <span class="cp-meta-label">Time to job-ready</span>
@@ -32,40 +36,13 @@
     <div class="cp-meta-item cp-meta-item--skills">
       <span class="cp-meta-label">Key skills</span>
       <div class="cp-skills">
-        {% for skill in role.key_skills %}
-        <span class="cp-skill-pill">{{ skill }}</span>
-        {% endfor %}
+        {% for skill in role.key_skills %}<span class="cp-skill-pill">{{ skill }}</span>{% endfor %}
       </div>
     </div>
   </div>
+  {% endif %}
 
-  <!-- Roadmap image viewer -->
   <div class="cp-viewer">
-    <div class="cp-viewer-toolbar">
-      <span class="cp-viewer-label">Roadmap</span>
-      <div class="cp-zoom-controls">
-        <button type="button" class="cp-zoom-btn" id="cp-zoom-out" title="Zoom out">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            <line x1="8" y1="11" x2="14" y2="11"/>
-          </svg>
-        </button>
-        <span class="cp-zoom-pct" id="cp-zoom-pct">Fit</span>
-        <button type="button" class="cp-zoom-btn" id="cp-zoom-in" title="Zoom in">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
-          </svg>
-        </button>
-        <button type="button" class="cp-zoom-btn cp-zoom-btn--reset" id="cp-zoom-reset" title="Reset zoom">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-            <path d="M3 3v5h5"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-
     <div class="cp-img-wrap" id="cp-img-wrap">
       <div class="cp-img-loading" id="cp-img-loading">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="cp-spinner">
@@ -87,13 +64,21 @@
 
 <script>
 (function () {
-  var wrap  = document.getElementById('cp-img-wrap');
-  var img   = document.getElementById('cp-roadmap-img');
-  var pct   = document.getElementById('cp-zoom-pct');
-  var load  = document.getElementById('cp-img-loading');
+  var detail = document.getElementById('cp-detail');
+  var wrap   = document.getElementById('cp-img-wrap');
+  var img    = document.getElementById('cp-roadmap-img');
+  var pct    = document.getElementById('cp-zoom-pct');
+  var load   = document.getElementById('cp-img-loading');
+  if (!wrap || !img) return;
 
-  var scale = 1;
-  var fitW  = 0;
+  // Abort previous swap's document listeners before attaching new ones.
+  // detail stays in the DOM across HTMX swaps, so _ctrl persists.
+  if (detail._ctrl) detail._ctrl.abort();
+  var ctrl = new AbortController();
+  detail._ctrl = ctrl;
+  var sig = ctrl.signal;
+
+  var scale = 1, fitW = 0;
 
   function applyScale(s) {
     scale = Math.max(0.3, Math.min(5, s));
@@ -103,7 +88,7 @@
   }
 
   function initFit() {
-    fitW = wrap.clientWidth - 32; // 16px padding each side
+    fitW = wrap.clientWidth - 32;
     img.style.width = fitW + 'px';
     img.style.height = 'auto';
     scale = 1;
@@ -113,16 +98,19 @@
   }
 
   img.style.display = 'none';
-  img.addEventListener('load', initFit);
-  img.addEventListener('error', function () {
-    load.textContent = 'Could not load image.';
-  });
+  // img.complete is true when the browser already has the image cached —
+  // in that case the 'load' event never fires, so call initFit directly.
+  if (img.complete && img.naturalWidth > 0) {
+    initFit();
+  } else {
+    img.addEventListener('load', initFit, { signal: sig });
+    img.addEventListener('error', function () { load.textContent = 'Could not load image.'; }, { signal: sig });
+  }
 
-  document.getElementById('cp-zoom-in').addEventListener('click', function () { applyScale(scale + 0.25); });
-  document.getElementById('cp-zoom-out').addEventListener('click', function () { applyScale(scale - 0.25); });
-  document.getElementById('cp-zoom-reset').addEventListener('click', function () { applyScale(1); wrap.scrollTop = 0; wrap.scrollLeft = 0; });
+  document.getElementById('cp-zoom-in').addEventListener('click', function () { applyScale(scale + 0.25); }, { signal: sig });
+  document.getElementById('cp-zoom-out').addEventListener('click', function () { applyScale(scale - 0.25); }, { signal: sig });
+  document.getElementById('cp-zoom-reset').addEventListener('click', function () { applyScale(1); wrap.scrollTop = 0; wrap.scrollLeft = 0; }, { signal: sig });
 
-  // Drag-to-pan
   var dragging = false, startX, startY, scrollL, scrollT;
   wrap.addEventListener('mousedown', function (e) {
     dragging = true;
@@ -132,23 +120,22 @@
     scrollT = wrap.scrollTop;
     wrap.style.cursor = 'grabbing';
     e.preventDefault();
-  });
+  }, { signal: sig });
   document.addEventListener('mouseup', function () {
+    if (!dragging) return;
     dragging = false;
     wrap.style.cursor = 'grab';
-  });
+  }, { signal: sig });
   document.addEventListener('mousemove', function (e) {
     if (!dragging) return;
     wrap.scrollLeft = scrollL - (e.pageX - wrap.offsetLeft - startX);
     wrap.scrollTop  = scrollT - (e.pageY - wrap.offsetTop  - startY);
-  });
-
-  // Ctrl/Cmd + scroll to zoom
+  }, { signal: sig });
   wrap.addEventListener('wheel', function (e) {
     if (e.ctrlKey || e.metaKey) {
       e.preventDefault();
       applyScale(scale + (e.deltaY < 0 ? 0.1 : -0.1));
     }
-  }, { passive: false });
+  }, { passive: false, signal: sig });
 })();
 </script>
