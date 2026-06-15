@@ -1,0 +1,3836 @@
+[
+    {
+        "id": "sql",
+        "url": "/sql",
+        "title": "SQL",
+        "shortTitle": "SQL",
+        "description": "Step by step guide to learning SQL in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:46:21.599Z"
+    },
+    {
+        "id": "computer-science",
+        "url": "/computer-science",
+        "title": "Computer Science",
+        "shortTitle": "Computer Science",
+        "description": "Computer Science curriculum with free resources for a self-taught developer.",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-09T10:07:21.576Z"
+    },
+    {
+        "id": "react",
+        "url": "/react",
+        "title": "React",
+        "shortTitle": "React",
+        "description": "Everything that is there to learn about React and the ecosystem in @currentYear@.",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:50.272Z"
+    },
+    {
+        "id": "vue",
+        "url": "/vue",
+        "title": "Vue",
+        "shortTitle": "Vue",
+        "description": "Everything that is there to learn about Vue and the ecosystem in @currentYear@.",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:50.785Z"
+    },
+    {
+        "id": "frontend",
+        "url": "/frontend",
+        "title": "Frontend",
+        "shortTitle": "Frontend",
+        "description": "Step by step guide to becoming a modern frontend developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-06-08T07:39:29.714Z"
+    },
+    {
+        "id": "backend",
+        "url": "/backend",
+        "title": "Backend",
+        "shortTitle": "Backend",
+        "description": "Step by step guide to becoming a modern backend developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-07T16:58:57.293Z"
+    },
+    {
+        "id": "full-stack",
+        "url": "/full-stack",
+        "title": "Full Stack",
+        "shortTitle": "Full Stack",
+        "description": "Step by step guide to becoming a modern full stack developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:50.558Z"
+    },
+    {
+        "id": "devops",
+        "url": "/devops",
+        "title": "DevOps",
+        "shortTitle": "DevOps",
+        "description": "Step by step guide for DevOps, SRE or any other Operations Role in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-06-10T12:49:11.409Z"
+    },
+    {
+        "id": "devsecops",
+        "url": "/devsecops",
+        "title": "DevSecOps",
+        "shortTitle": "DevSecOps",
+        "description": "Step by step guide to becoming a DevSecOps Expert in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-06-10T12:50:33.026Z"
+    },
+    {
+        "id": "data-analyst",
+        "url": "/data-analyst",
+        "title": "Data Analyst",
+        "shortTitle": "Data Analyst",
+        "description": "Step by step guide to becoming an Data Analyst in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-06-09T11:12:48.541Z"
+    },
+    {
+        "id": "angular",
+        "url": "/angular",
+        "title": "Angular",
+        "shortTitle": "Angular",
+        "description": "Everything that is there to learn about Angular and the ecosystem in @currentYear@.",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-06-15T11:34:57.179Z"
+    },
+    {
+        "id": "ai-engineer",
+        "url": "/ai-engineer",
+        "title": "AI Engineer",
+        "shortTitle": "AI Engineer",
+        "description": "Step by step guide to becoming an AI Engineer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-06-10T12:52:44.760Z"
+    },
+    {
+        "id": "ai-data-scientist",
+        "url": "/ai-data-scientist",
+        "title": "AI and Data Scientist",
+        "shortTitle": "AI and Data Scientist",
+        "description": "Step by step roadmap guide to becoming an AI and Data Scientist in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-06-02T11:27:17.289Z"
+    },
+    {
+        "id": "data-engineer",
+        "url": "/data-engineer",
+        "title": "Data Engineer",
+        "shortTitle": "Data Engineer",
+        "description": "Step by step guide to becoming a Data Engineer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-27T18:01:20.023Z"
+    },
+    {
+        "id": "android",
+        "url": "/android",
+        "title": "Android",
+        "shortTitle": "Android",
+        "description": "Step by step guide to becoming an Android developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-06-12T09:13:05.979Z"
+    },
+    {
+        "id": "machine-learning",
+        "url": "/machine-learning",
+        "title": "Machine Learning",
+        "shortTitle": "Machine Learning",
+        "description": "Step by step guide to becoming a Machine Learning Engineer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-25T11:11:33.330Z"
+    },
+    {
+        "id": "postgresql-dba",
+        "url": "/postgresql-dba",
+        "title": "PostgreSQL",
+        "shortTitle": "PostgreSQL",
+        "description": "Step by step guide to becoming a modern PostgreSQL DB Administrator in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:51.969Z"
+    },
+    {
+        "id": "javascript",
+        "url": "/javascript",
+        "title": "JavaScript",
+        "shortTitle": "JavaScript",
+        "description": "Step by step guide to learn JavaScript in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-04-06T09:20:34.848Z"
+    },
+    {
+        "id": "ios",
+        "url": "/ios",
+        "title": "iOS",
+        "shortTitle": "iOS",
+        "description": "Step by step guide to becoming an iOS developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:51.616Z"
+    },
+    {
+        "id": "typescript",
+        "url": "/typescript",
+        "title": "TypeScript",
+        "shortTitle": "TypeScript",
+        "description": "Everything you need to learn about TypeScript in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:52.381Z"
+    },
+    {
+        "id": "nodejs",
+        "url": "/nodejs",
+        "title": "Node.js",
+        "shortTitle": "Node.js",
+        "description": "Step by step guide to becoming a modern Node.js developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:52.243Z"
+    },
+    {
+        "id": "blockchain",
+        "url": "/blockchain",
+        "title": "Blockchain",
+        "shortTitle": "Blockchain",
+        "description": "Step by step guide to becoming a blockchain developer in @currentYear@.",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:52.106Z"
+    },
+    {
+        "id": "qa",
+        "url": "/qa",
+        "title": "QA",
+        "shortTitle": "QA",
+        "description": "Steps to follow in order to become a modern QA Engineer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-30T09:08:13.741Z"
+    },
+    {
+        "id": "python",
+        "url": "/python",
+        "title": "Python",
+        "shortTitle": "Python",
+        "description": "Step by step guide to becoming a Python developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-06-09T10:39:25.321Z"
+    },
+    {
+        "id": "system-design",
+        "url": "/system-design",
+        "title": "System Design",
+        "shortTitle": "System Design",
+        "description": "Everything you need to know about designing large-scale systems in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-03T10:30:08.690Z"
+    },
+    {
+        "id": "software-architect",
+        "url": "/software-architect",
+        "title": "Software Architect",
+        "shortTitle": "Software Architect",
+        "description": "Step by step guide to becoming a Software Architect in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:52.878Z"
+    },
+    {
+        "id": "java",
+        "url": "/java",
+        "title": "Java",
+        "shortTitle": "Java",
+        "description": "Step by step guide to becoming a Java developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-27T13:57:35.172Z"
+    },
+    {
+        "id": "aspnet-core",
+        "url": "/aspnet-core",
+        "title": "ASP.NET Core",
+        "shortTitle": "ASP.NET Core",
+        "description": "Step by step guide to becoming an ASP.NET core developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:53.014Z"
+    },
+    {
+        "id": "api-design",
+        "url": "/api-design",
+        "title": "API Design",
+        "shortTitle": "API Design",
+        "description": "Step by step guide to learn how to design and build robust APIs.",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-05-18T13:59:39.252Z"
+    },
+    {
+        "id": "spring-boot",
+        "url": "/spring-boot",
+        "title": "Spring Boot",
+        "shortTitle": "Spring Boot",
+        "description": "Step by step guide to becoming a Spring Boot developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-17T15:55:08.992Z"
+    },
+    {
+        "id": "flutter",
+        "url": "/flutter",
+        "title": "Flutter",
+        "shortTitle": "Flutter",
+        "description": "Step by step guide to becoming a Flutter developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:57.099Z"
+    },
+    {
+        "id": "cpp",
+        "url": "/cpp",
+        "title": "C++",
+        "shortTitle": "C++",
+        "description": "Step by step guide to becoming a C++ developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-27T14:07:02.858Z"
+    },
+    {
+        "id": "rust",
+        "url": "/rust",
+        "title": "Rust",
+        "shortTitle": "Rust",
+        "description": "Step by step guide to becoming a Rust developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-16T09:18:50.547Z"
+    },
+    {
+        "id": "golang",
+        "url": "/golang",
+        "title": "Go",
+        "shortTitle": "Go",
+        "description": "Step by step guide to becoming a Go developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:57.237Z"
+    },
+    {
+        "id": "cyber-security",
+        "url": "/cyber-security",
+        "title": "Cyber Security",
+        "shortTitle": "Cyber Security",
+        "description": "Step by step guide to becoming a Cyber Security Expert in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-06-15T11:47:47.372Z"
+    },
+    {
+        "id": "ux-design",
+        "url": "/ux-design",
+        "title": "UX Design",
+        "shortTitle": "UX Design",
+        "description": "Step by step guide to becoming a UX Designer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-05-14T07:23:02.614Z"
+    },
+    {
+        "id": "software-design-architecture",
+        "url": "/software-design-architecture",
+        "title": "Software Design and Architecture",
+        "shortTitle": "Software Design and Architecture",
+        "description": "Step by step guide to learn software design and architecture",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2025-09-12T12:38:05.654Z"
+    },
+    {
+        "id": "graphql",
+        "url": "/graphql",
+        "title": "GraphQL",
+        "shortTitle": "GraphQL",
+        "description": "Step by step guide to learn GraphQL in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:43:56.741Z"
+    },
+    {
+        "id": "react-native",
+        "url": "/react-native",
+        "title": "React Native",
+        "shortTitle": "React Native",
+        "description": "Step by step guide to becoming a React Native developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:56.550Z"
+    },
+    {
+        "id": "design-system",
+        "url": "/design-system",
+        "title": "Design System",
+        "shortTitle": "Design System",
+        "description": "Learn how to create a design system with this step by step guide",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2025-11-19T08:40:14.512Z"
+    },
+    {
+        "id": "prompt-engineering",
+        "url": "/prompt-engineering",
+        "title": "Prompt Engineering",
+        "shortTitle": "Prompt Engineering",
+        "description": "Step by step guide to learning Prompt Engineering in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-04-29T07:36:03.435Z"
+    },
+    {
+        "id": "mongodb",
+        "url": "/mongodb",
+        "title": "MongoDB",
+        "shortTitle": "MongoDB",
+        "description": "Step by step guide to learning MongoDB in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:42:07.519Z"
+    },
+    {
+        "id": "linux",
+        "url": "/linux",
+        "title": "Linux",
+        "shortTitle": "Linux",
+        "description": "Step by step guide to learning Linux in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-05-12T11:02:34.052Z"
+    },
+    {
+        "id": "kubernetes",
+        "url": "/kubernetes",
+        "title": "Kubernetes",
+        "shortTitle": "Kubernetes",
+        "description": "Step by step guide to learning Kubernetes in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-17T16:01:20.453Z"
+    },
+    {
+        "id": "docker",
+        "url": "/docker",
+        "title": "Docker",
+        "shortTitle": "Docker",
+        "description": "Step by step guide to learning Docker in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:41:07.276Z"
+    },
+    {
+        "id": "aws",
+        "url": "/aws",
+        "title": "AWS",
+        "shortTitle": "AWS",
+        "description": "Step by step guide to learning AWS in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:40:46.664Z"
+    },
+    {
+        "id": "terraform",
+        "url": "/terraform",
+        "title": "Terraform",
+        "shortTitle": "Terraform",
+        "description": "Step by step guide to learn Terraform in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:40:23.441Z"
+    },
+    {
+        "id": "technical-writer",
+        "url": "/technical-writer",
+        "title": "Technical Writer",
+        "shortTitle": "Technical Writer",
+        "description": "Roadmap for anyone looking for a career in technical writing in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:49:57.817Z"
+    },
+    {
+        "id": "game-developer",
+        "url": "/game-developer",
+        "title": "Game Developer",
+        "shortTitle": "Game Developer",
+        "description": "Roadmap to becoming a Game Developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:53.833Z"
+    },
+    {
+        "id": "server-side-game-developer",
+        "url": "/server-side-game-developer",
+        "title": "Server Side Game Developer",
+        "shortTitle": "Server Side Game Developer",
+        "description": "Roadmap to becoming a Server Side Game Developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:53.971Z"
+    },
+    {
+        "id": "mlops",
+        "url": "/mlops",
+        "title": "MLOps",
+        "shortTitle": "MLOps",
+        "description": "Step by step guide to learn MLOps in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-24T13:19:27.128Z"
+    },
+    {
+        "id": "datastructures-and-algorithms",
+        "url": "/datastructures-and-algorithms",
+        "title": "Data Structures & Algorithms",
+        "shortTitle": "Data Structures & Algorithms",
+        "description": "Step by step guide to learn Data Structures and Algorithms in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:40:05.118Z"
+    },
+    {
+        "id": "redis",
+        "url": "/redis",
+        "title": "Redis",
+        "shortTitle": "Redis",
+        "description": "Step by step guide to learn Redis in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-20T12:21:44.235Z"
+    },
+    {
+        "id": "product-manager",
+        "url": "/product-manager",
+        "title": "Product Manager",
+        "shortTitle": "Product Manager",
+        "description": "Everything you need to know to become a Product Manager in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:49:13.640Z"
+    },
+    {
+        "id": "git-github",
+        "url": "/git-github",
+        "title": "Git and GitHub",
+        "shortTitle": "Git and GitHub",
+        "description": "Step by step guide to learn Git and GitHub in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:39:29.168Z"
+    },
+    {
+        "id": "php",
+        "url": "/php",
+        "title": "PHP",
+        "shortTitle": "PHP",
+        "description": "Step by step guide to learning PHP in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-06-15T11:41:38.992Z"
+    },
+    {
+        "id": "engineering-manager",
+        "url": "/engineering-manager",
+        "title": "Engineering Manager",
+        "shortTitle": "Engineering Manager",
+        "description": "Everything you need to know to become an Engineering Manager in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:48:55.643Z"
+    },
+    {
+        "id": "devrel",
+        "url": "/devrel",
+        "title": "Developer Relations",
+        "shortTitle": "Developer Relations",
+        "description": "Step by step guide to becoming a Developer Advocate in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:54.725Z"
+    },
+    {
+        "id": "cloudflare",
+        "url": "/cloudflare",
+        "title": "Cloudflare",
+        "shortTitle": "Cloudflare",
+        "description": "Learn to deploy your applications on Cloudflare in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-05-21T16:45:33.617Z"
+    },
+    {
+        "id": "bi-analyst",
+        "url": "/bi-analyst",
+        "title": "BI Analyst",
+        "shortTitle": "BI Analyst",
+        "description": "Learn to become a Business Intelligence Analyst in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:57.741Z"
+    },
+    {
+        "id": "ai-red-teaming",
+        "url": "/ai-red-teaming",
+        "title": "AI Red Teaming",
+        "shortTitle": "AI Red Teaming",
+        "description": "Learn to become a red teaming expert in AI in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-20T12:25:38.799Z"
+    },
+    {
+        "id": "ai-agents",
+        "url": "/ai-agents",
+        "title": "AI Agents",
+        "shortTitle": "AI Agents",
+        "description": "Learn to design, build and ship AI agents in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-09T11:24:39.307Z"
+    },
+    {
+        "id": "nextjs",
+        "url": "/nextjs",
+        "title": "Next.js",
+        "shortTitle": "Next.js",
+        "description": "Learn everything you need to master Next.js",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-25T22:37:15.247Z"
+    },
+    {
+        "id": "code-review",
+        "url": "/code-review",
+        "title": "Code Review",
+        "shortTitle": "Code Review",
+        "description": "Learn what to focus on when conducting a code review.",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2025-09-03T11:33:30.622Z"
+    },
+    {
+        "id": "kotlin",
+        "url": "/kotlin",
+        "title": "Kotlin",
+        "shortTitle": "Kotlin",
+        "description": "Step by step guide to learning Kotlin in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:35:47.767Z"
+    },
+    {
+        "id": "html",
+        "url": "/html",
+        "title": "HTML",
+        "shortTitle": "HTML",
+        "description": "Step by step guide to learning HTML in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:54:20.306Z"
+    },
+    {
+        "id": "css",
+        "url": "/css",
+        "title": "CSS",
+        "shortTitle": "CSS",
+        "description": "Step by step guide to learning CSS in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:29:32.677Z"
+    },
+    {
+        "id": "swift-ui",
+        "url": "/swift-ui",
+        "title": "Swift & Swift UI",
+        "shortTitle": "Swift & Swift UI",
+        "description": "Step by step guide to learning Swift and Swift UI in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:29:09.161Z"
+    },
+    {
+        "id": "shell-bash",
+        "url": "/shell-bash",
+        "title": "Shell / Bash",
+        "shortTitle": "Shell / Bash",
+        "description": "Learn to master Shell and Bash in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-05-12T10:59:14.861Z"
+    },
+    {
+        "id": "laravel",
+        "url": "/laravel",
+        "title": "Laravel",
+        "shortTitle": "Laravel",
+        "description": "Step by step guide to mastering Laravel in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:26:38.956Z"
+    },
+    {
+        "id": "elasticsearch",
+        "url": "/elasticsearch",
+        "title": "Elasticsearch",
+        "shortTitle": "Elasticsearch",
+        "description": "Step by step guide to mastering Elasticsearch in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:58.650Z"
+    },
+    {
+        "id": "wordpress",
+        "url": "/wordpress",
+        "title": "WordPress",
+        "shortTitle": "WordPress",
+        "description": "Step by step guide to becoming a WordPress Developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-01-06T16:31:58.787Z"
+    },
+    {
+        "id": "django",
+        "url": "/django",
+        "title": "Django",
+        "shortTitle": "Django",
+        "description": "Step-by-step guide to becoming a Django Developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:25:03.150Z"
+    },
+    {
+        "id": "ruby",
+        "url": "/ruby",
+        "title": "Ruby",
+        "shortTitle": "Ruby",
+        "description": "Step by step guide to becoming a Ruby developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:24:17.062Z"
+    },
+    {
+        "id": "ruby-on-rails",
+        "url": "/ruby-on-rails",
+        "title": "Ruby on Rails",
+        "shortTitle": "Ruby on Rails",
+        "description": "Step-by-step guide to become a Ruby on Rails Developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-02-26T08:23:04.930Z"
+    },
+    {
+        "id": "claude-code",
+        "url": "/claude-code",
+        "title": "Claude Code",
+        "shortTitle": "Claude Code",
+        "description": "Step-by-Step guide to becoming a Claude Code expert in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-05-26T12:25:45.652Z"
+    },
+    {
+        "id": "vibe-coding",
+        "url": "/vibe-coding",
+        "title": "Vibe Coding",
+        "shortTitle": "Vibe Coding",
+        "description": "Step-by-step guide to master Vibe Coding in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-06-01T17:42:17.096Z"
+    },
+    {
+        "id": "scala",
+        "url": "/scala",
+        "title": "Scala",
+        "shortTitle": "Scala",
+        "description": "Step-by-step guide to become a Scala developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-19T14:05:02.831Z"
+    },
+    {
+        "id": "openclaw",
+        "url": "/openclaw",
+        "title": "OpenClaw",
+        "shortTitle": "OpenClaw",
+        "description": "Learn to deploy and get the most out of OpenClaw",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-06-02T14:34:07.089Z"
+    },
+    {
+        "id": "leetcode",
+        "url": "/leetcode",
+        "title": "LeetCode",
+        "shortTitle": "LeetCode",
+        "description": "Step-by-step guide to pass your coding interview",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "skill-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-05-18T06:18:11.437Z"
+    },
+    {
+        "id": "network-engineer",
+        "url": "/network-engineer",
+        "title": "Network Engineer",
+        "shortTitle": "Network Engineer",
+        "description": "Step-by-Step guide to learn Network Engineering in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-05-18T16:10:58.726Z"
+    },
+    {
+        "id": "forward-deployed-engineer",
+        "url": "/forward-deployed-engineer",
+        "title": "Forward Deployed Engineer",
+        "shortTitle": "Forward Deployed Engineer",
+        "description": "Step-by-step guide to becoming a Forward Deployed Engineer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "role-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-06-03T14:44:33.482Z"
+    },
+    {
+        "id": "frontend-beginner",
+        "url": "/frontend?r=frontend-beginner",
+        "title": "Frontend Developer Beginner",
+        "shortTitle": "Frontend Developer Beginner",
+        "description": "Step by step guide to becoming a modern frontend developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "beginner-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-04T16:31:44.654Z"
+    },
+    {
+        "id": "backend-beginner",
+        "url": "/backend?r=backend-beginner",
+        "title": "Backend Developer Beginner",
+        "shortTitle": "Backend Developer Beginner",
+        "description": "Step by step guide to becoming a modern backend developer in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "beginner-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-04T16:32:38.311Z"
+    },
+    {
+        "id": "devops-beginner",
+        "url": "/devops?r=devops-beginner",
+        "title": "DevOps Roadmap Beginner",
+        "shortTitle": "DevOps Roadmap Beginner",
+        "description": "Step by step guide for DevOps, SRE or any other Operations Role in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "beginner-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-04T16:32:50.218Z"
+    },
+    {
+        "id": "git-github-beginner",
+        "url": "/git-github?r=git-github-beginner",
+        "title": "Learn Git and GitHub Beginner",
+        "shortTitle": "Learn Git and GitHub Beginner",
+        "description": "Step by step guide to learn Git and GitHub in @currentYear@",
+        "group": "Roadmaps",
+        "metadata": {
+            "tags": [
+                "beginner-roadmap"
+            ]
+        },
+        "renderer": "editor",
+        "updatedAt": "2026-03-04T16:32:58.606Z"
+    },
+    {
+        "id": "aws-best-practices",
+        "url": "/aws-best-practices",
+        "title": "AWS",
+        "shortTitle": "AWS",
+        "description": "Detailed list of best practices for Amazon Web Services (AWS)",
+        "group": "Roadmaps",
+        "updatedAt": "2025-12-02T08:55:07.437Z"
+    },
+    {
+        "id": "api-security-best-practices",
+        "url": "/api-security-best-practices",
+        "title": "API Security",
+        "shortTitle": "API Security",
+        "description": "Detailed list of best practices to make your APIs secure",
+        "group": "Roadmaps",
+        "updatedAt": "2025-11-19T10:04:22.877Z"
+    },
+    {
+        "id": "backend-performance-best-practices",
+        "url": "/backend-performance-best-practices",
+        "title": "Backend Performance",
+        "shortTitle": "Backend Performance",
+        "description": "Detailed list of best practices to improve your backend performance",
+        "group": "Roadmaps",
+        "updatedAt": "2025-11-14T22:08:05.149Z"
+    },
+    {
+        "id": "frontend-performance-best-practices",
+        "url": "/frontend-performance-best-practices",
+        "title": "Frontend Performance",
+        "shortTitle": "Frontend Performance",
+        "description": "Detailed list of best practices to improve your frontend performance",
+        "group": "Roadmaps",
+        "updatedAt": "2025-11-15T07:18:38.172Z"
+    },
+    {
+        "id": "code-review-best-practices",
+        "url": "/code-review-best-practices",
+        "title": "Code Review",
+        "shortTitle": "Code Review",
+        "description": "Detailed list of best practices for effective code reviews and quality",
+        "group": "Roadmaps",
+        "updatedAt": "2025-11-17T13:15:14.497Z"
+    },
+    {
+        "id": "angular",
+        "url": "/questions/angular",
+        "title": "Top 60+ Angular Interview Questions (and answers)",
+        "shortTitle": "Top 60+ Angular Interview Questions (and answers)",
+        "group": "Questions",
+        "updatedAt": "2026-04-27T14:50:17.467Z"
+    },
+    {
+        "id": "spring-boot",
+        "url": "/questions/spring-boot",
+        "title": "Top 60+ Spring Boot Interview Questions and Answers",
+        "shortTitle": "Top 60+ Spring Boot Interview Questions and Answers",
+        "group": "Questions",
+        "updatedAt": "2026-03-17T10:54:51.033Z"
+    },
+    {
+        "id": "kubernetes",
+        "url": "/questions/kubernetes",
+        "title": "Top 50 Kubernetes Interview Questions and Answers",
+        "shortTitle": "Top 50 Kubernetes Interview Questions and Answers",
+        "group": "Questions",
+        "updatedAt": "2026-03-17T10:49:34.834Z"
+    },
+    {
+        "id": "cpp",
+        "url": "/questions/cpp",
+        "title": "30 C++ Interview Questions and Answers (+Quiz!)",
+        "shortTitle": "30 C++ Interview Questions and Answers (+Quiz!)",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T15:57:15.279Z"
+    },
+    {
+        "id": "system-design",
+        "url": "/questions/system-design",
+        "title": "Top 30 System Design Interview Questions (+ Quiz!)",
+        "shortTitle": "Top 30 System Design Interview Questions (+ Quiz!)",
+        "group": "Questions",
+        "updatedAt": "2026-04-09T10:35:39.754Z"
+    },
+    {
+        "id": "rest-api",
+        "url": "/questions/rest-api",
+        "title": "Top 37 REST API Interview Questions (and Answers)",
+        "shortTitle": "Top 37 REST API Interview Questions (and Answers)",
+        "group": "Questions",
+        "updatedAt": "2026-03-18T15:16:26.739Z"
+    },
+    {
+        "id": "python",
+        "url": "/questions/python",
+        "title": "Top 20 Python Interview Questions and Answers",
+        "shortTitle": "Top 20 Python Interview Questions and Answers",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T16:00:34.636Z"
+    },
+    {
+        "id": "javascript-coding",
+        "url": "/questions/javascript-coding",
+        "title": "Top 80 JavaScript Coding Interview Questions and Answers",
+        "shortTitle": "Top 80 JavaScript Coding Interview Questions and Answers",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T16:01:02.453Z"
+    },
+    {
+        "id": "nodejs",
+        "url": "/questions/nodejs",
+        "title": "Top 100 Node.js Interview Questions and Answers",
+        "shortTitle": "Top 100 Node.js Interview Questions and Answers",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T16:02:40.596Z"
+    },
+    {
+        "id": "java",
+        "url": "/questions/java",
+        "title": "Top 100 Java Interview Questions: Ace Your Interview",
+        "shortTitle": "Top 100 Java Interview Questions: Ace Your Interview",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T16:03:09.688Z"
+    },
+    {
+        "id": "sql",
+        "url": "/questions/sql",
+        "title": "Top 30 SQL Interview Questions and Answers (With Quiz)",
+        "shortTitle": "Top 30 SQL Interview Questions and Answers (With Quiz)",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T16:09:05.643Z"
+    },
+    {
+        "id": "sql-queries",
+        "url": "/questions/sql-queries",
+        "title": "30 SQL Queries Interview Questions and Answers",
+        "shortTitle": "30 SQL Queries Interview Questions and Answers",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T16:09:32.977Z"
+    },
+    {
+        "id": "javascript",
+        "url": "/questions/javascript",
+        "title": "Top 30 JavaScript Interview Questions and Answers",
+        "shortTitle": "Top 30 JavaScript Interview Questions and Answers",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T16:15:27.692Z"
+    },
+    {
+        "id": "data-science",
+        "url": "/questions/data-science",
+        "title": "Top 60+ Data Science Interview Questions and Answers",
+        "shortTitle": "Top 60+ Data Science Interview Questions and Answers",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T16:16:13.052Z"
+    },
+    {
+        "id": "golang",
+        "url": "/questions/golang",
+        "title": "50 Popular Golang Interview Questions (+ Quiz!)",
+        "shortTitle": "50 Popular Golang Interview Questions (+ Quiz!)",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T16:16:35.955Z"
+    },
+    {
+        "id": "data-analyst",
+        "url": "/questions/data-analyst",
+        "title": "50 Popular Data Analyst Interview Questions (+ Quiz!)",
+        "shortTitle": "50 Popular Data Analyst Interview Questions (+ Quiz!)",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T16:16:56.550Z"
+    },
+    {
+        "id": "full-stack",
+        "url": "/questions/full-stack",
+        "title": "Top 50 Full Stack Developer Interview Questions",
+        "shortTitle": "Top 50 Full Stack Developer Interview Questions",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T16:23:29.811Z"
+    },
+    {
+        "id": "devops",
+        "url": "/questions/devops",
+        "title": "Top 50 Popular DevOps Interview Questions (and Answers)",
+        "shortTitle": "Top 50 Popular DevOps Interview Questions (and Answers)",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T16:41:34.809Z"
+    },
+    {
+        "id": "react",
+        "url": "/questions/react",
+        "title": "Top 45 React Interview Questions and Answers",
+        "shortTitle": "Top 45 React Interview Questions and Answers",
+        "group": "Questions",
+        "updatedAt": "2026-01-27T16:12:05.870Z"
+    },
+    {
+        "id": "backend",
+        "url": "/questions/backend",
+        "title": "50 Popular Backend Developer Interview Questions and Answers",
+        "shortTitle": "50 Popular Backend Developer Interview Questions and Answers",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T16:46:31.475Z"
+    },
+    {
+        "id": "frontend",
+        "url": "/questions/frontend",
+        "title": "Top 30 Popular Front End Developer Interview Questions",
+        "shortTitle": "Top 30 Popular Front End Developer Interview Questions",
+        "group": "Questions",
+        "updatedAt": "2025-12-19T16:47:00.570Z"
+    },
+    {
+        "id": "return-multiple-values",
+        "url": "/python/return-multiple-values",
+        "title": "Python Return Multiple Values: 4 Methods & Examples",
+        "description": "Learn 4 ways to return multiple values in Python: tuples, named tuples, dataclasses, and dicts. With code examples and a quick-reference comparison table.",
+        "authorId": "kimberly-fessel",
+        "shortTitle": "Python Return Multiple Values: 4 Methods & Examples",
+        "group": "Guides",
+        "updatedAt": "2026-06-09T10:30:49.547Z"
+    },
+    {
+        "id": "multiline-strings",
+        "url": "/python/multiline-strings",
+        "title": "Python Multiline Strings: The Complete Guide",
+        "description": "Learn 5 ways to write Python multiline strings: triple quotes, f-strings, join & more. Real-world examples included.",
+        "authorId": "kimberly-fessel",
+        "shortTitle": "Python Multiline Strings: The Complete Guide",
+        "group": "Guides",
+        "updatedAt": "2026-06-03T06:58:50.645Z"
+    },
+    {
+        "id": "security-best-practices",
+        "url": "/openclaw/security-best-practices",
+        "title": "OpenClaw Security: 12 Best Practices From Our Experts",
+        "description": "Secure your OpenClaw AI agent with 12 expert-backed practices. Stop credential leaks, prompt injections & supply chain attacks before they hit your system.",
+        "authorId": "william",
+        "shortTitle": "OpenClaw Security: 12 Best Practices From Our Experts",
+        "group": "Guides",
+        "updatedAt": "2026-06-02T14:18:38.171Z"
+    },
+    {
+        "id": "installation-guide",
+        "url": "/openclaw/installation-guide",
+        "title": "How to Install OpenClaw: A Complete Setup Guide",
+        "description": "Install OpenClaw in minutes: connect your AI agent to Telegram, add skills & run it 24/7 on your laptop, Mac mini, or VPS. Step-by-step guide.",
+        "authorId": "ekene",
+        "shortTitle": "How to Install OpenClaw: A Complete Setup Guide",
+        "group": "Guides",
+        "updatedAt": "2026-06-02T14:23:28.061Z"
+    },
+    {
+        "id": "vs-cursor",
+        "url": "/claude-code/vs-cursor",
+        "title": "Claude Code vs Cursor: Which AI Coding Tool To Choose",
+        "description": "Claude Code vs Cursor: compare features, autonomy, pricing & use cases to pick the best AI coding tool for your workflow in 2026.",
+        "authorId": "ekene",
+        "shortTitle": "Claude Code vs Cursor: Which AI Coding Tool To Choose",
+        "group": "Guides",
+        "updatedAt": "2026-05-20T08:56:36.675Z"
+    },
+    {
+        "id": "not-operator",
+        "url": "/python/not-operator",
+        "title": "Python not Operator: The Complete Guide to Logical Negation",
+        "description": "Master the Python Not Operator. Learn how this logical negation keyword handles True/False, truthiness, and complex conditions.",
+        "authorId": "kimberly-fessel",
+        "shortTitle": "Python not Operator: The Complete Guide to Logical Negation",
+        "group": "Guides",
+        "updatedAt": "2026-05-19T13:09:20.019Z"
+    },
+    {
+        "id": "print-new-line",
+        "url": "/python/print-new-line",
+        "title": "Python Print New Line: Methods, Examples, and Best Practices",
+        "description": "Learn 5 ways to print a new line in Python, including the \\n escape sequence, print() function's end/sep arguments, and multiline strings + best practices.",
+        "authorId": "kimberly-fessel",
+        "shortTitle": "Python Print New Line: Methods, Examples, and Best Practices",
+        "group": "Guides",
+        "updatedAt": "2026-05-19T12:58:09.480Z"
+    },
+    {
+        "id": "exponent",
+        "url": "/python/exponent",
+        "title": "Python Exponent: 5 Methods for Exponentiation + Applications",
+        "description": "Master 5 Python exponent methods, see performance, edge cases, & real-world applications in Finance, ML, & Cryptography",
+        "authorId": "kimberly-fessel",
+        "shortTitle": "Python Exponent: 5 Methods for Exponentiation + Applications",
+        "group": "Guides",
+        "updatedAt": "2026-05-15T10:28:34.978Z"
+    },
+    {
+        "id": "modulo",
+        "url": "/python/modulo",
+        "title": "Python Modulo Operator (%): Complete Guide with Examples",
+        "description": "Unlock the power of Python modulo (%). A complete guide covering syntax, examples, floats, negative numbers, divmod(), and practical applications.",
+        "authorId": "kimberly-fessel",
+        "shortTitle": "Python Modulo Operator (%): Complete Guide with Examples",
+        "group": "Guides",
+        "updatedAt": "2026-04-27T14:48:08.616Z"
+    },
+    {
+        "id": "division",
+        "url": "/python/division",
+        "title": "Python Division: Operators, Floor Division, and Examples",
+        "description": "Learn Python division operators: true division (/), floor division (//), modulo, and divmod() with examples, edge cases, and common errors.",
+        "authorId": "kimberly-fessel",
+        "shortTitle": "Python Division: Operators, Floor Division, and Examples",
+        "group": "Guides",
+        "updatedAt": "2026-04-27T14:48:20.852Z"
+    },
+    {
+        "id": "tutorial",
+        "url": "/vibe-coding/tutorial",
+        "title": "Vibe coding tutorial: Build your first app with Claude Code",
+        "description": "New to vibe coding and want to build your first app? This vibe coding tutorial is for you: a step-by-step guide to build a real CLI app with Claude Code.",
+        "authorId": "ekene",
+        "shortTitle": "Vibe coding tutorial: Build your first app with Claude Code",
+        "group": "Guides",
+        "updatedAt": "2026-04-20T15:11:13.203Z"
+    },
+    {
+        "id": "best-practices",
+        "url": "/vibe-coding/best-practices",
+        "title": "Vibe Coding Best Practices: How To Get Consistent Results",
+        "description": "Vibe coding can get messy, inconsistent results. Learn these 10 vibe coding best practices to ship reliable code faster.",
+        "authorId": "ekene",
+        "shortTitle": "Vibe Coding Best Practices: How To Get Consistent Results",
+        "group": "Guides",
+        "updatedAt": "2026-04-27T14:49:02.208Z"
+    },
+    {
+        "id": "best-tools",
+        "url": "/vibe-coding/best-tools",
+        "title": "The 10 Best Vibe Coding Tools in 2026: Our Choices",
+        "description": "Compare the 10 best vibe coding tools in 2026 — from Cursor and Claude Code to Lovable and Bolt. Find the right tool for your skill level, budget, and project type.",
+        "authorId": "william",
+        "shortTitle": "The 10 Best Vibe Coding Tools in 2026: Our Choices",
+        "group": "Guides",
+        "updatedAt": "2026-04-27T14:49:20.259Z"
+    },
+    {
+        "id": "how-long-to-learn",
+        "url": "/javascript/how-long-to-learn",
+        "title": "How Long Does It Take to Learn JS? A Career Seeker's Guide",
+        "description": "How long does it take to learn JavaScript from scratch? This guide shows what to expect—and how to speed up your journey.",
+        "authorId": "fernando",
+        "shortTitle": "How Long Does It Take to Learn JS? A Career Seeker's Guide",
+        "group": "Guides",
+        "updatedAt": "2026-04-01T18:12:04.413Z"
+    },
+    {
+        "id": "lifecycle",
+        "url": "/ai-data-scientist/lifecycle",
+        "title": "Data Science Lifecycle 101: A Beginners' Ultimate Guide",
+        "description": "Discover the Data Science Lifecycle step-by-step: Learn key phases, tools, and techniques in this beginner-friendly guide.",
+        "authorId": "fernando",
+        "shortTitle": "Data Science Lifecycle 101: A Beginners' Ultimate Guide",
+        "group": "Guides",
+        "updatedAt": "2026-04-01T17:58:04.452Z"
+    },
+    {
+        "id": "switch",
+        "url": "/python/switch",
+        "title": "Python Switch Statement 101: Match-case and alternatives",
+        "description": "Learn how to use Python switch statement patterns like match-case and dictionary patterns for an improved structure and cleaner code.",
+        "authorId": "ekene",
+        "shortTitle": "Python Switch Statement 101: Match-case and alternatives",
+        "group": "Guides",
+        "updatedAt": "2026-04-27T14:50:38.302Z"
+    },
+    {
+        "id": "glob",
+        "url": "/python/glob",
+        "title": "Python glob Module: File Pattern Matching Explained",
+        "description": "Learn what the Python glob module is and how it can simplify pattern-based searches in larger projects.",
+        "authorId": "ekene",
+        "shortTitle": "Python glob Module: File Pattern Matching Explained",
+        "group": "Guides",
+        "updatedAt": "2026-03-03T11:43:46.830Z"
+    },
+    {
+        "id": "binary-search",
+        "url": "/python/binary-search",
+        "title": "Binary search in Python 101: Implementation and use cases",
+        "description": "Improve search performance with binary search in Python. Learn what binary search in Python is and how to implement it.",
+        "authorId": "william",
+        "shortTitle": "Binary search in Python 101: Implementation and use cases",
+        "group": "Guides",
+        "updatedAt": "2026-04-27T14:52:00.915Z"
+    },
+    {
+        "id": "hashmap",
+        "url": "/python/hashmap",
+        "title": "Hashmaps in Python: Master Implementation and Use Cases",
+        "description": "Hashmaps are everywhere in Python, and there’s a good chance you’ve used them before. Learn how to use hashmaps in Python with common errors and examples.",
+        "authorId": "william",
+        "shortTitle": "Hashmaps in Python: Master Implementation and Use Cases",
+        "group": "Guides",
+        "updatedAt": "2026-03-18T14:56:13.648Z"
+    },
+    {
+        "id": "nonlocal",
+        "url": "/python/nonlocal",
+        "title": "Python Nonlocal Keyword Explained by Our Experts",
+        "description": "Nested functions break variable updates due to scope rules. Learn what the Python nonlocal keyword is, when to use it correctly, and common applications.",
+        "authorId": "william",
+        "shortTitle": "Python Nonlocal Keyword Explained by Our Experts",
+        "group": "Guides",
+        "updatedAt": "2026-05-19T13:14:03.066Z"
+    },
+    {
+        "id": "encapsulation",
+        "url": "/python/encapsulation",
+        "title": "Encapsulation in Python: All You Need to Know",
+        "description": "Classes feel unsafe and hard to manage? Learn how encapsulation in Python works, how to implement it, and practical use cases.",
+        "authorId": "william",
+        "shortTitle": "Encapsulation in Python: All You Need to Know",
+        "group": "Guides",
+        "updatedAt": "2026-03-18T15:05:30.383Z"
+    },
+    {
+        "id": "how-long-does-it-take-to-learn",
+        "url": "/python/how-long-does-it-take-to-learn",
+        "title": "How Long Does It Really Take To Learn Python? My Experience",
+        "description": "Wondering how long it takes to learn Python? Get clear timelines, learning stages, and tips in this comprehensive guide.",
+        "authorId": "ekene",
+        "shortTitle": "How Long Does It Really Take To Learn Python? My Experience",
+        "group": "Guides",
+        "updatedAt": "2026-04-27T14:52:22.642Z"
+    },
+    {
+        "id": "vs-cpp",
+        "url": "/java/vs-cpp",
+        "title": "Java vs. C++: A Guide to Choosing the Right Language",
+        "description": "Not sure how Java vs C++ compares? Explore the trade offs, use cases, and when each language is a better fit for your team and your project needs.",
+        "authorId": "william",
+        "shortTitle": "Java vs. C++: A Guide to Choosing the Right Language",
+        "group": "Guides",
+        "updatedAt": "2026-04-27T14:52:46.955Z"
+    },
+    {
+        "id": "vs-kotlin",
+        "url": "/python/vs-kotlin",
+        "title": "Python vs. Kotlin: Which is Best for You?",
+        "description": "Not sure whether to go for Python vs. Kotlin? Compare performance, use cases, and career paths to make the right choice.",
+        "authorId": "ekene",
+        "shortTitle": "Python vs. Kotlin: Which is Best for You?",
+        "group": "Guides",
+        "updatedAt": "2026-03-18T16:56:10.876Z"
+    },
+    {
+        "id": "vs-kotlin",
+        "url": "/java/vs-kotlin",
+        "title": "Java vs Kotlin Comparison: Which Language Should You Choose?",
+        "description": "Not sure whether Java or Kotlin fits your needs? This Java vs. Kotlin comparison explains the key differences to help you decide.",
+        "authorId": "ekene",
+        "shortTitle": "Java vs Kotlin Comparison: Which Language Should You Choose?",
+        "group": "Guides",
+        "updatedAt": "2026-03-18T16:59:58.796Z"
+    },
+    {
+        "id": "vs-c",
+        "url": "/cpp/vs-c",
+        "title": "C++ vs. C: When (and when not) to use each language",
+        "description": "If you can't decide between C++ vs. C, this guide will show where C or C++ fits best for your next development project.",
+        "authorId": "ekene",
+        "shortTitle": "C++ vs. C: When (and when not) to use each language",
+        "group": "Guides",
+        "updatedAt": "2026-03-24T10:55:14.920Z"
+    },
+    {
+        "id": "vs-csharp",
+        "url": "/cpp/vs-csharp",
+        "title": "C# vs C++: Which is Best for You in 2026?",
+        "description": "Choosing between C++ vs. C#? Learn the key trade-offs, when to use C#, when C++ fits better, and how to match each language to your project goals.",
+        "authorId": "ekene",
+        "shortTitle": "C# vs C++: Which is Best for You in 2026?",
+        "group": "Guides",
+        "updatedAt": "2026-04-27T14:53:05.713Z"
+    },
+    {
+        "id": "monitoring-tools",
+        "url": "/devops/monitoring-tools",
+        "title": "15 Must-Have DevOps Monitoring Tools in 2026",
+        "description": "Dealing with downtime and blind spots? These 15 DevOps monitoring tools help you detect issues early, track performance, and keep your systems working reliably.",
+        "authorId": "ekene",
+        "shortTitle": "15 Must-Have DevOps Monitoring Tools in 2026",
+        "group": "Guides",
+        "updatedAt": "2026-03-18T16:11:00.428Z"
+    },
+    {
+        "id": "multithreading",
+        "url": "/python/multithreading",
+        "title": "Python Multithreading: The Most Practical Intro",
+        "description": "Confused by Python's multithreading and GIL? Learn practical ways to use threads for I/O tasks, avoid race conditions, and improve responsiveness.",
+        "authorId": "ekene",
+        "shortTitle": "Python Multithreading: The Most Practical Intro",
+        "group": "Guides",
+        "updatedAt": "2026-04-27T14:53:19.541Z"
+    },
+    {
+        "id": "deployment-tools",
+        "url": "/devops/deployment-tools",
+        "title": "10 DevOps Deployment Tools for 2026",
+        "description": "Tired of broken builds and delayed releases? Explore the best DevOps deployment tools to automate releases, speed up, and keep your builds reliable.",
+        "authorId": "ekene",
+        "shortTitle": "10 DevOps Deployment Tools for 2026",
+        "group": "Guides",
+        "updatedAt": "2026-03-18T15:57:20.444Z"
+    },
+    {
+        "id": "testing-tools",
+        "url": "/devops/testing-tools",
+        "title": "Top 14 DevOps Testing Tools: My Best Recommendations",
+        "description": "Manual tests slowing you down? Explore the best DevOps testing tools to automate QA, catch bugs early, speed up deployments, and increase test reliability.",
+        "authorId": "william",
+        "shortTitle": "Top 14 DevOps Testing Tools: My Best Recommendations",
+        "group": "Guides",
+        "updatedAt": "2026-03-18T15:32:55.462Z"
+    },
+    {
+        "id": "what-does-a-data-analyst-do",
+        "url": "/data-analyst/what-does-a-data-analyst-do",
+        "title": "What Does a Data Analyst Do?",
+        "description": "Wondering what does a data analyst do day to day? This beginner-friendly guide covers job duties, tools, and career potential.",
+        "authorId": "william",
+        "shortTitle": "What Does a Data Analyst Do?",
+        "group": "Guides",
+        "updatedAt": "2026-03-18T15:10:21.444Z"
+    },
+    {
+        "id": "is-python-hard-to-learn",
+        "url": "/python/is-python-hard-to-learn",
+        "title": "Is Python Hard to Learn? Our Experts Say...",
+        "description": "Is Python hard to learn? See what our experienced developers say, plus practical advice for new learners.",
+        "authorId": "william",
+        "shortTitle": "Is Python Hard to Learn? Our Experts Say...",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:00:09.575Z"
+    },
+    {
+        "id": "vs-javascript",
+        "url": "/python/vs-javascript",
+        "title": "Python vs JavaScript: The Ultimate Guide for 2026",
+        "description": "Choosing between Python vs JavaScript? Compare strengths, learning curves, and jobs in this up-to-date 2026 guide.",
+        "authorId": "fernando",
+        "shortTitle": "Python vs JavaScript: The Ultimate Guide for 2026",
+        "group": "Guides",
+        "updatedAt": "2026-01-22T10:28:22.819Z"
+    },
+    {
+        "id": "vs-rust",
+        "url": "/golang/vs-rust",
+        "title": "Go vs. Rust Compared: Which is right for you?",
+        "description": "Choosing between Golang vs Rust? Explore their differences and find out which language fits your project or career goals best.",
+        "authorId": "fernando",
+        "shortTitle": "Go vs. Rust Compared: Which is right for you?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:02:08.345Z"
+    },
+    {
+        "id": "vs-business-analyst",
+        "url": "/data-analyst/vs-business-analyst",
+        "title": "Data Analyst vs. Business Analyst Roles: How to Choose",
+        "description": "Compare data analyst vs business analyst roles by skills, tools, career paths, and salaries to choose the right fit for your strengths and interests.",
+        "authorId": "ekene",
+        "shortTitle": "Data Analyst vs. Business Analyst Roles: How to Choose",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:03:42.693Z"
+    },
+    {
+        "id": "how-long-does-it-take-to-learn-js-a-career-seeker-s-guide",
+        "url": "/javascript/how-long-does-it-take-to-learn-js-a-career-seeker-s-guide",
+        "title": "How Long Does It Take to Learn JS? A Career Seeker's Guide",
+        "description": "How long does it take to learn JavaScript from scratch? This guide shows what to expect—and how to speed up your journey.",
+        "authorId": "fernando",
+        "shortTitle": "How Long Does It Take to Learn JS? A Career Seeker's Guide",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:04:09.635Z"
+    },
+    {
+        "id": "hard-to-learn",
+        "url": "/javascript/hard-to-learn",
+        "title": "Is JavaScript Hard to Learn? Advice from a Pro",
+        "description": "Is JavaScript hard to learn for beginners? This expert guide breaks down the learning curve and how to get started smoothly.",
+        "authorId": "fernando",
+        "shortTitle": "Is JavaScript Hard to Learn? Advice from a Pro",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:04:45.817Z"
+    },
+    {
+        "id": "vs-python",
+        "url": "/golang/vs-python",
+        "title": "Go vs Python: Pro advice on picking the right language",
+        "description": "Torn between Golang vs Python? Get expert advice on performance, ease of use, and which one fits your project best.",
+        "authorId": "fernando",
+        "shortTitle": "Go vs Python: Pro advice on picking the right language",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:05:15.478Z"
+    },
+    {
+        "id": "vs-data-engineer",
+        "url": "/data-analyst/vs-data-engineer",
+        "title": "Data Analyst vs. Data Engineer: Skills, Salary, and more",
+        "description": "Compare data analyst and data engineer roles in terms of skills, tools, salaries, and career paths. Find the best fit for your goals with this complete guide.",
+        "authorId": "ekene",
+        "shortTitle": "Data Analyst vs. Data Engineer: Skills, Salary, and more",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:05:38.624Z"
+    },
+    {
+        "id": "hard-to-learn",
+        "url": "/sql/hard-to-learn",
+        "title": "Is SQL Hard to Learn? (An Expert's Take)",
+        "description": "Wondering whether SQL is hard to learn? A seasoned pro shares insights, beginner tips, and how to make it easier than you think.",
+        "authorId": "william",
+        "shortTitle": "Is SQL Hard to Learn? (An Expert's Take)",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:06:04.555Z"
+    },
+    {
+        "id": "how-long-to-learn",
+        "url": "/sql/how-long-to-learn",
+        "title": "How Long Does It Take to Learn SQL? (An Expert's Take)",
+        "description": "How long does it take to learn SQL? A seasoned expert shares what to expect, from basics to job-ready skills.",
+        "authorId": "ekene",
+        "shortTitle": "How Long Does It Take to Learn SQL? (An Expert's Take)",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:06:27.393Z"
+    },
+    {
+        "id": "vs-python",
+        "url": "/sql/vs-python",
+        "title": "SQL vs. Python: Which should you learn for data analysis?",
+        "description": "Choosing between SQL vs Python? This guide helps you pick the right tool for data analysis, based on real-world use.",
+        "authorId": "william",
+        "shortTitle": "SQL vs. Python: Which should you learn for data analysis?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:06:50.511Z"
+    },
+    {
+        "id": "vs-mysql",
+        "url": "/sql/vs-mysql",
+        "title": "SQL vs. MySQL: What's the Difference?",
+        "description": "SQL vs. MySQL trips up every beginner. This guide clears it up once and for all, with real examples and project code to show you how they fit.",
+        "authorId": "ekene",
+        "shortTitle": "SQL vs. MySQL: What's the Difference?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:07:09.632Z"
+    },
+    {
+        "id": "career-path",
+        "url": "/data-analyst/career-path",
+        "title": "Data Analyst Career Path: My Pro Advice",
+        "description": "Wondering where a data analyst role can take you? Learn what your data analyst career path could look like.",
+        "authorId": "fernando",
+        "shortTitle": "Data Analyst Career Path: My Pro Advice",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:09:55.877Z"
+    },
+    {
+        "id": "vs-typescript",
+        "url": "/javascript/vs-typescript",
+        "title": "TypeScript vs JavaScript: Which to Choose For Your Project",
+        "description": "TypeScript vs JavaScript: Learn the pros, cons, and best use cases to choose the right language for your next project.",
+        "authorId": "william",
+        "shortTitle": "TypeScript vs JavaScript: Which to Choose For Your Project",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:10:30.525Z"
+    },
+    {
+        "id": "how-to-become",
+        "url": "/data-analyst/how-to-become",
+        "title": "How to Become a Data Analyst with No Experience: My Advice",
+        "description": "Learn how to become a data analyst with no experience through smart steps, skill-building tips, and my real-world guidance.",
+        "authorId": "fernando",
+        "shortTitle": "How to Become a Data Analyst with No Experience: My Advice",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:15:47.390Z"
+    },
+    {
+        "id": "vs-cyber-security",
+        "url": "/ai-data-scientist/vs-cyber-security",
+        "title": "Data Science vs. Cyber Security: Which Is Best for You?",
+        "description": "Cyber security fights threats. Data science uncovers insights. If you're deciding between them, here's a practical guide based on skills, job roles, and career growth.",
+        "authorId": "ekene",
+        "shortTitle": "Data Science vs. Cyber Security: Which Is Best for You?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:17:16.946Z"
+    },
+    {
+        "id": "vs-software-engineering",
+        "url": "/ai-data-scientist/vs-software-engineering",
+        "title": "Data Science vs Software Engineering: Which to Choose?",
+        "description": "Both software engineering and data science offer exciting opportunities, but they require different skill sets. This breakdown helps you find your ideal fit.",
+        "authorId": "william",
+        "shortTitle": "Data Science vs Software Engineering: Which to Choose?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:17:43.129Z"
+    },
+    {
+        "id": "vs-ai",
+        "url": "/ai-data-scientist/vs-ai",
+        "title": "Data Science vs. AI: How I Would Choose My Path",
+        "description": "If you love working with data, should you become a data scientist or an AI engineer? Here's how I made my choice.",
+        "authorId": "william",
+        "shortTitle": "Data Science vs. AI: How I Would Choose My Path",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:18:08.146Z"
+    },
+    {
+        "id": "vs-business-analytics",
+        "url": "/ai-data-scientist/vs-business-analytics",
+        "title": "Data Science vs Business Analytics: How I'd Choose My Path",
+        "description": "I once struggled to choose between data science and business analytics. If you're in the same boat, I'll guide you to find the right fit.",
+        "authorId": "ekene",
+        "shortTitle": "Data Science vs Business Analytics: How I'd Choose My Path",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:18:37.231Z"
+    },
+    {
+        "id": "vs-data-engineering",
+        "url": "/ai-data-scientist/vs-data-engineering",
+        "title": "Data Science vs. Data Engineering: Lessons from My Journey",
+        "description": "I’ve worked on both data science and data engineering projects - here’s what I’ve learned and how you can choose the best path for your career.",
+        "authorId": "ekene",
+        "shortTitle": "Data Science vs. Data Engineering: Lessons from My Journey",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:18:59.298Z"
+    },
+    {
+        "id": "vs-statistics",
+        "url": "/ai-data-scientist/vs-statistics",
+        "title": "Data Science vs Statistics: How do they compare?",
+        "description": "Not sure whether to pursue data science or statistics? This guide breaks down the key differences, career paths, and skills you need to make an informed choice.",
+        "authorId": "ekene",
+        "shortTitle": "Data Science vs Statistics: How do they compare?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:19:18.126Z"
+    },
+    {
+        "id": "vs-computer-science",
+        "url": "/ai-data-scientist/vs-computer-science",
+        "title": "Data Science vs. Computer Science: Which Path to Choose",
+        "description": "Data science or computer science? Learn the tools, roles, and paths in each field to decide which fits your strengths and career goals.",
+        "authorId": "ekene",
+        "shortTitle": "Data Science vs. Computer Science: Which Path to Choose",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:19:35.604Z"
+    },
+    {
+        "id": "vs-data-analytics",
+        "url": "/ai-data-scientist/vs-data-analytics",
+        "title": "Data Science vs. Data Analytics: Which is Right for You?",
+        "description": "Data science vs. Data analytics? This guide breaks down roles, tools, and growth opportunities for aspiring data professionals.",
+        "authorId": "william",
+        "shortTitle": "Data Science vs. Data Analytics: Which is Right for You?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:19:57.480Z"
+    },
+    {
+        "id": "vs-machine-learning",
+        "url": "/ai-data-scientist/vs-machine-learning",
+        "title": "Data Science vs Machine Learning: How are they different?",
+        "description": "Excited about a career in data science or machine learning? Learn the differences, key skills, tools, and how to choose the role that aligns with your ambitions.",
+        "authorId": "ekene",
+        "shortTitle": "Data Science vs Machine Learning: How are they different?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:20:27.949Z"
+    },
+    {
+        "id": "how-to-become",
+        "url": "/full-stack/how-to-become",
+        "title": "How to Become a Full Stack Developer: Career Guide",
+        "description": "Want to become a full stack developer? Discover essential skills, tools, and practical steps to kickstart your career in web development.",
+        "authorId": "ekene",
+        "shortTitle": "How to Become a Full Stack Developer: Career Guide",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:21:20.539Z"
+    },
+    {
+        "id": "vs-java",
+        "url": "/golang/vs-java",
+        "title": "Go vs Java: Choosing the Right Language for Your Projects",
+        "description": "Comparing Go vs Java for your projects? Explore features like concurrency, memory management, and learning curves to find the right fit for your needs.",
+        "authorId": "ekene",
+        "shortTitle": "Go vs Java: Choosing the Right Language for Your Projects",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:21:45.446Z"
+    },
+    {
+        "id": "vs-javascript",
+        "url": "/java/vs-javascript",
+        "title": "Java vs JavaScript: Key Differences Explained",
+        "description": "Understand the unique strengths of Java and JavaScript to decide which suits your programming needs best.",
+        "authorId": "ekene",
+        "shortTitle": "Java vs JavaScript: Key Differences Explained",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:22:05.705Z"
+    },
+    {
+        "id": "career-path",
+        "url": "/ai-data-scientist/career-path",
+        "title": "Is Data Science a Good Career? Advice From a Pro",
+        "description": "Is data science a good career choice? Learn from a professional about the benefits, growth potential, and how to thrive in this exciting field.",
+        "authorId": "fernando",
+        "shortTitle": "Is Data Science a Good Career? Advice From a Pro",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:23:45.855Z"
+    },
+    {
+        "id": "skills",
+        "url": "/ai-data-scientist/skills",
+        "title": "Top 11 Data Science Skills to Master in 2026",
+        "description": "Looking to excel in data science? Learn the must-have skills for 2026 with our expert guide and advance your data science career.",
+        "authorId": "fernando",
+        "shortTitle": "Top 11 Data Science Skills to Master in 2026",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:24:20.343Z"
+    },
+    {
+        "id": "tools",
+        "url": "/ai-data-scientist/tools",
+        "title": "Data Science Tools: Our Top 11 Recommendations for 2026",
+        "description": "Master your data science projects with our top 11 tools for 2025! Discover the best platforms for data analysis, visualization, and machine learning.",
+        "authorId": "fernando",
+        "shortTitle": "Data Science Tools: Our Top 11 Recommendations for 2026",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:24:39.440Z"
+    },
+    {
+        "id": "job-description",
+        "url": "/devops/job-description",
+        "title": "DevOps Engineer Job Description [2026 Template]",
+        "description": "Create the perfect DevOps Engineer job description with our 2026 template, tailored to attract top talent in today's tech landscape.",
+        "authorId": "william",
+        "shortTitle": "DevOps Engineer Job Description [2026 Template]",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:25:07.259Z"
+    },
+    {
+        "id": "vs-agile",
+        "url": "/devops/vs-agile",
+        "title": "DevOps vs Agile Methodology: Key Differences & Applications",
+        "description": "Explore the contrasts between DevOps and Agile: Understand their principles, differences, and how to apply them effectively in projects.",
+        "authorId": "ekene",
+        "shortTitle": "DevOps vs Agile Methodology: Key Differences & Applications",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:26:31.868Z"
+    },
+    {
+        "id": "vs-devsecops",
+        "url": "/devops/vs-devsecops",
+        "title": "DevOps vs DevSecOps: Key Differences and Best Fit",
+        "description": "DevOps vs DevSecOps: Learn the key differences, benefits, and how to choose the best approach for your needs and applications.",
+        "authorId": "ekene",
+        "shortTitle": "DevOps vs DevSecOps: Key Differences and Best Fit",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:26:53.619Z"
+    },
+    {
+        "id": "rest-api",
+        "url": "/golang/rest-api",
+        "title": "How to Build a Rest API in Golang (Detailed Tutorial)",
+        "description": "Want to build a REST API in Golang? Follow our detailed tutorial to set up, code, and deploy your API with best practices and clear examples.",
+        "authorId": "william",
+        "shortTitle": "How to Build a Rest API in Golang (Detailed Tutorial)",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:29:20.755Z"
+    },
+    {
+        "id": "vs-python",
+        "url": "/java/vs-python",
+        "title": "Java vs Python: Which will suit you best?",
+        "description": "Wondering which language is right for you? Explore our comprehensive Java vs Python guide to find the best option for your career.",
+        "authorId": "ekene",
+        "shortTitle": "Java vs Python: Which will suit you best?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:29:43.258Z"
+    },
+    {
+        "id": "test-automation",
+        "url": "/devops/test-automation",
+        "title": "DevOps Test Automation: How to accelerate software delivery",
+        "description": "Want to deliver software faster? Dive into the power of DevOps test automation and transform your testing pipeline with proven techniques.",
+        "authorId": "fernando",
+        "shortTitle": "DevOps Test Automation: How to accelerate software delivery",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:30:02.528Z"
+    },
+    {
+        "id": "vs-developer",
+        "url": "/devops/vs-developer",
+        "title": "DevOps Vs. Developer: What Are The Key Differences?",
+        "description": "Understand the differences between DevOps and Developer roles. Find out which career aligns with your skills and future goals.",
+        "authorId": "william",
+        "shortTitle": "DevOps Vs. Developer: What Are The Key Differences?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:31:28.130Z"
+    },
+    {
+        "id": "tools",
+        "url": "/devops/tools",
+        "title": "21 Best DevOps Tools from Essentials to Advanced and Pro",
+        "description": "Maximize efficiency with top DevOps tools for all expertise levels. Find the perfect solutions to automate, integrate, and optimize your software delivery pipeline.",
+        "authorId": "fernando",
+        "shortTitle": "21 Best DevOps Tools from Essentials to Advanced and Pro",
+        "group": "Guides",
+        "updatedAt": "2026-01-15T11:50:53.757Z"
+    },
+    {
+        "id": "technologies",
+        "url": "/frontend/technologies",
+        "title": "Top 12 Frontend Technologies to Use in 2026: Expert Advice",
+        "description": "Master the frontend landscape with our curated list of 12 essential technologies. Expert tips on selecting the best tools for your web projects.",
+        "authorId": "fernando",
+        "shortTitle": "Top 12 Frontend Technologies to Use in 2026: Expert Advice",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:32:21.171Z"
+    },
+    {
+        "id": "automation-tools",
+        "url": "/devops/automation-tools",
+        "title": "6 Best DevOps Automation Tools: Streamline your workflow",
+        "description": "Explore the best DevOps automation tools designed to optimize CI/CD, reduce manual tasks, and drive efficiency in your development cycle.",
+        "authorId": "fernando",
+        "shortTitle": "6 Best DevOps Automation Tools: Streamline your workflow",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:32:42.954Z"
+    },
+    {
+        "id": "best-practices",
+        "url": "/devops/best-practices",
+        "title": "14 DevOps Best Practices and Methods You Should Know",
+        "description": "Learn DevOps best practices for building efficient workflows, from code integration to monitoring, and avoid common DevOps anti-patterns.",
+        "authorId": "william",
+        "shortTitle": "14 DevOps Best Practices and Methods You Should Know",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:33:00.467Z"
+    },
+    {
+        "id": "job-description",
+        "url": "/backend/job-description",
+        "title": "Backend Developer Job Description [2026 Template]",
+        "description": "",
+        "authorId": "ekene",
+        "shortTitle": "Backend Developer Job Description [2026 Template]",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:33:49.124Z"
+    },
+    {
+        "id": "automation",
+        "url": "/devops/automation",
+        "title": "What is DevOps Automation? 8 Best Practices & Advice",
+        "description": "Streamline your DevOps pipeline! Explore what DevOps automation is and the 8 best practices for seamless delivery.",
+        "authorId": "fernando",
+        "shortTitle": "What is DevOps Automation? 8 Best Practices & Advice",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:34:05.891Z"
+    },
+    {
+        "id": "shift-left-testing",
+        "url": "/devops/shift-left-testing",
+        "title": "Why Does DevOps Recommend Shift-Left Testing Principles?",
+        "description": "Understand why DevOps emphasizes shift-left testing to boost early bug detection, reduce costs, and improve release cycles.",
+        "authorId": "william",
+        "shortTitle": "Why Does DevOps Recommend Shift-Left Testing Principles?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:34:27.987Z"
+    },
+    {
+        "id": "job-description",
+        "url": "/frontend/job-description",
+        "title": "Frontend Developer Job Description [2026 Template]",
+        "description": "Learn how to write the perfect frontend developer job description and get my best tips on how to recruit frontend dev talent effectively.",
+        "authorId": "william",
+        "shortTitle": "Frontend Developer Job Description [2026 Template]",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:35:10.547Z"
+    },
+    {
+        "id": "lifecycle",
+        "url": "/devops/lifecycle",
+        "title": "What Are the 7 Key Phases of the DevOps Lifecycle?",
+        "description": "Master the DevOps lifecycle by exploring its 7 phases, designed to enhance collaboration, streamline processes, and deliver software with agility.",
+        "authorId": "william",
+        "shortTitle": "What Are the 7 Key Phases of the DevOps Lifecycle?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:36:21.643Z"
+    },
+    {
+        "id": "job-description",
+        "url": "/full-stack/job-description",
+        "title": "Full Stack Developer Job Description [2026 Template]",
+        "description": "Looking to hire a Fullstack Engineer? Get the complete job description, skills, and responsibilities right here!",
+        "authorId": "william",
+        "shortTitle": "Full Stack Developer Job Description [2026 Template]",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:36:37.849Z"
+    },
+    {
+        "id": "web-developer-portfolio",
+        "url": "/frontend/web-developer-portfolio",
+        "title": "Top 10 Web Developer Portfolio Templates - A Pro’s Pick",
+        "description": "Build an impressive online presence with these 10 handpicked web developer portfolio templates.",
+        "authorId": "ekene",
+        "shortTitle": "Top 10 Web Developer Portfolio Templates - A Pro’s Pick",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:36:58.612Z"
+    },
+    {
+        "id": "vs-full-stack",
+        "url": "/devops/vs-full-stack",
+        "title": "DevOps engineer vs Full stack developer: Which is best?",
+        "description": "DevOps engineer vs Full stack developer: Compare the roles, required skills, and future prospects to make an informed career choice.",
+        "authorId": "ekene",
+        "shortTitle": "DevOps engineer vs Full stack developer: Which is best?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:37:17.906Z"
+    },
+    {
+        "id": "vs-backend",
+        "url": "/full-stack/vs-backend",
+        "title": "Full stack vs Back end: What are the differences?",
+        "description": "Full-stack vs Back-end: Learn the key differences in skills, roles, and technologies and find the right development path for you.",
+        "authorId": "william",
+        "shortTitle": "Full stack vs Back end: What are the differences?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:37:41.155Z"
+    },
+    {
+        "id": "frameworks",
+        "url": "/backend/frameworks",
+        "title": "Top 7 Backend Frameworks to Use in 2026: Pro Advice",
+        "description": "Get expert advice on backend frameworks for 2026. Learn about the top 7 frameworks that can elevate your development process.",
+        "authorId": "fernando",
+        "shortTitle": "Top 7 Backend Frameworks to Use in 2026: Pro Advice",
+        "group": "Guides",
+        "updatedAt": "2026-02-24T17:00:31.169Z"
+    },
+    {
+        "id": "frameworks",
+        "url": "/frontend/frameworks",
+        "title": "Top 7 Frontend Frameworks to Use in 2026: Pro Advice",
+        "description": "Get expert advice on frontend frameworks for 2026. Elevate your web development process with these top picks.",
+        "authorId": "fernando",
+        "shortTitle": "Top 7 Frontend Frameworks to Use in 2026: Pro Advice",
+        "group": "Guides",
+        "updatedAt": "2026-02-24T17:00:59.924Z"
+    },
+    {
+        "id": "principles",
+        "url": "/devops/principles",
+        "title": "11 Core DevOps Principles to Master",
+        "description": "Elevate your game by understanding this set of key DevOps principles and practices. Gain pro insights for a more efficient, collaborative workflow!",
+        "authorId": "fernando",
+        "shortTitle": "11 Core DevOps Principles to Master",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:39:29.153Z"
+    },
+    {
+        "id": "skills",
+        "url": "/devops/skills",
+        "title": "10+ In-Demand DevOps Engineer Skills to Master",
+        "description": "Find out exactly what it takes to be a successful DevOps engineer with my recommendations for essential DevOps skills",
+        "authorId": "fernando",
+        "shortTitle": "10+ In-Demand DevOps Engineer Skills to Master",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:40:15.668Z"
+    },
+    {
+        "id": "technologies",
+        "url": "/backend/technologies",
+        "title": "Top 10+ Backend Technologies to Use in 2026: Expert Advice",
+        "description": "Looking for the best backend technologies in 2026? Check out our expert list of top tools for developers.",
+        "authorId": "fernando",
+        "shortTitle": "Top 10+ Backend Technologies to Use in 2026: Expert Advice",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:40:44.180Z"
+    },
+    {
+        "id": "career-path",
+        "url": "/devops/career-path",
+        "title": "Is DevOps engineering a good career path in 2026?",
+        "description": "Learn why a DevOps career path is a smart choice in 2025. Get insights into demand, growth, and earning potential in DevOps.",
+        "authorId": "ekene",
+        "shortTitle": "Is DevOps engineering a good career path in 2026?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:41:09.780Z"
+    },
+    {
+        "id": "devops-engineer",
+        "url": "/devops/devops-engineer",
+        "title": "What is a DevOps Engineer? Responsibilities & Roles in 2026",
+        "description": "Explore the responsibilities and roles of a DevOps Engineer in 2026. Gain insights into the evolving field of DevOps and what it takes to succeed.",
+        "authorId": "ekene",
+        "shortTitle": "What is a DevOps Engineer? Responsibilities & Roles in 2026",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:42:44.440Z"
+    },
+    {
+        "id": "how-to-become-frontend-developer",
+        "url": "/frontend/how-to-become-frontend-developer",
+        "title": "How to Become a Front-End Developer in 7 Steps",
+        "description": "Learn how to become a front-end developer in 7 clear steps. Start your coding journey with practical tips and resources today!",
+        "authorId": "william",
+        "shortTitle": "How to Become a Front-End Developer in 7 Steps",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:43:10.518Z"
+    },
+    {
+        "id": "developer-skills",
+        "url": "/full-stack/developer-skills",
+        "title": "8 In-Demand Full Stack Developer Skills to Master",
+        "description": "Master these 8 in-demand full stack developer skills and become a standout candidate for your next job application.",
+        "authorId": "fernando",
+        "shortTitle": "8 In-Demand Full Stack Developer Skills to Master",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:44:03.587Z"
+    },
+    {
+        "id": "developer-skills",
+        "url": "/frontend/developer-skills",
+        "title": "12 In-Demand Front End Developer Skills to Master",
+        "description": "Master these 12 in-demand front end developer skills and become a standout candidate in the web development field.",
+        "authorId": "fernando",
+        "shortTitle": "12 In-Demand Front End Developer Skills to Master",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:44:21.086Z"
+    },
+    {
+        "id": "devops-vs-sre",
+        "url": "/devops/devops-vs-sre",
+        "title": "DevOps vs SRE: Key Differences Explained",
+        "description": "DevOps vs SRE: Discover which role suits your career best. Learn key differences, skills required, and career prospects in our detailed guide.",
+        "authorId": "william",
+        "shortTitle": "DevOps vs SRE: Key Differences Explained",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:45:29.701Z"
+    },
+    {
+        "id": "how-to-become-devops-engineer",
+        "url": "/devops/how-to-become-devops-engineer",
+        "title": "How to become a DevOps Engineer in 2026",
+        "description": "Want to become a DevOps engineer? Our 2026 guide covers skills, certifications, and expert career advice. Start your journey today!",
+        "authorId": "william",
+        "shortTitle": "How to become a DevOps Engineer in 2026",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:45:47.177Z"
+    },
+    {
+        "id": "project-ideas",
+        "url": "/backend/project-ideas",
+        "title": "20 Backend Project Ideas to take you from Beginner to Pro",
+        "description": "Seeking backend projects to enhance your skills? Explore our top 20 project ideas, from simple apps to complex systems. Start building today!",
+        "authorId": "fernando",
+        "shortTitle": "20 Backend Project Ideas to take you from Beginner to Pro",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:47:22.361Z"
+    },
+    {
+        "id": "languages",
+        "url": "/frontend/languages",
+        "title": "What Front End Programming Languages Should You Learn?",
+        "description": "Get ahead in web development. Discover the essential frontend languages every pro developer uses!",
+        "authorId": "william",
+        "shortTitle": "What Front End Programming Languages Should You Learn?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:47:41.281Z"
+    },
+    {
+        "id": "vs-software-engineer",
+        "url": "/full-stack/vs-software-engineer",
+        "title": "Full Stack Developer or Software Engineer – Which Way to Go?",
+        "description": "Unsure about your dev career path? Compare full stack developer and software engineer roles to make an informed decision.",
+        "authorId": "william",
+        "shortTitle": "Full Stack Developer or Software Engineer – Which Way to Go?",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:47:58.798Z"
+    },
+    {
+        "id": "developer-skills",
+        "url": "/java/developer-skills",
+        "title": "13 Must-Have Java Full-stack Developer Skills in 2026",
+        "description": "Master the essential skills every Java full stack developer needs. Boost your career with our expert tips!",
+        "authorId": "william",
+        "shortTitle": "13 Must-Have Java Full-stack Developer Skills in 2026",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:48:13.835Z"
+    },
+    {
+        "id": "developer-tools",
+        "url": "/backend/developer-tools",
+        "title": "25 Essential Backend Development Tools for 2026",
+        "description": "Elevate your coding with backend developer tools that bring efficiency, scalability, and innovation to your projects. Improve your development process today!",
+        "authorId": "fernando",
+        "shortTitle": "25 Essential Backend Development Tools for 2026",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:48:37.051Z"
+    },
+    {
+        "id": "developer-skills",
+        "url": "/backend/developer-skills",
+        "title": "8 In-Demand Backend Developer Skills to Master",
+        "description": "Learn what the essential backend developer skills are that you should learn and master to advance in your career.",
+        "authorId": "fernando",
+        "shortTitle": "8 In-Demand Backend Developer Skills to Master",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:48:54.149Z"
+    },
+    {
+        "id": "languages",
+        "url": "/backend/languages",
+        "title": "The 5 Best Backend Development Languages to Master (2026)",
+        "description": "Discover the best backend development languages to learn right now for career development, with practical tips from an experienced developer.",
+        "authorId": "fernando",
+        "shortTitle": "The 5 Best Backend Development Languages to Master (2026)",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:49:08.567Z"
+    },
+    {
+        "id": "free-resources-to-learn-llms",
+        "url": "/guides/free-resources-to-learn-llms",
+        "title": "5 Free Resources to Master LLMs",
+        "description": "Looking to dive into the fascinating world of Language Models (LLMs)? Discover the top 5 free resources that will help you learn and excel in understanding LLMs. From comprehensive tutorials to interactive courses, this blog post provides you with the ultimate guide to sharpen your skills and unravel the potential of language models. Start your journey today and become a pro in LLMs without spending a dime!",
+        "authorId": "william",
+        "shortTitle": "5 Free Resources to Master LLMs",
+        "group": "Guides",
+        "updatedAt": "2025-12-19T16:49:39.662Z"
+    },
+    {
+        "id": "how-to-setup-a-jump-server",
+        "url": "/guides/how-to-setup-a-jump-server",
+        "title": "Jump Servers: What, Why and How",
+        "description": "Learn what is a Jump Server and how to set it up for SSH access.",
+        "authorId": "kamran",
+        "shortTitle": "Jump Servers: What, Why and How",
+        "group": "Guides",
+        "updatedAt": "2025-12-09T12:50:44.834Z"
+    },
+    {
+        "id": "setup-and-auto-renew-ssl-certificates",
+        "url": "/guides/setup-and-auto-renew-ssl-certificates",
+        "title": "Guide to Let's Encrypt SSL Setup",
+        "description": "Learn how to protect your website using Let's Encrypt SSL Certificates.",
+        "authorId": "kamran",
+        "shortTitle": "Guide to Let's Encrypt SSL Setup",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T15:28:14.111Z"
+    },
+    {
+        "id": "single-command-database-setup",
+        "url": "/guides/single-command-database-setup",
+        "title": "Single Command Database Setup",
+        "description": "Learn how to run MySQL, PostgreSQL, or MongoDB in Docker with single Command",
+        "authorId": "kamran",
+        "shortTitle": "Single Command Database Setup",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T15:28:15.359Z"
+    },
+    {
+        "id": "consistency-patterns-in-distributed-systems",
+        "url": "/guides/consistency-patterns-in-distributed-systems",
+        "title": "Consistency Patterns",
+        "description": "Everything you need to know about Week, Strong and Eventual Consistency",
+        "authorId": "kamran",
+        "shortTitle": "Consistency Patterns",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T15:28:16.470Z"
+    },
+    {
+        "id": "session-based-authentication",
+        "url": "/guides/session-based-authentication",
+        "title": "Session Based Authentication Guide",
+        "description": "Learn what is Session Based Authentication and how to implement it in Node.js",
+        "authorId": "kamran",
+        "shortTitle": "Session Based Authentication Guide",
+        "group": "Guides",
+        "updatedAt": "2025-10-20T06:20:39.224Z"
+    },
+    {
+        "id": "http-basic-authentication",
+        "url": "/guides/http-basic-authentication",
+        "title": "HTTP Basic Authentication",
+        "description": "Learn what is HTTP Basic Authentication and how to implement it in Node.js",
+        "authorId": "kamran",
+        "shortTitle": "HTTP Basic Authentication",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:42:45.896Z"
+    },
+    {
+        "id": "basics-of-authentication",
+        "url": "/guides/basics-of-authentication",
+        "title": "Basics of Authentication",
+        "description": "Learn the basics of Authentication and Authorization",
+        "authorId": "kamran",
+        "shortTitle": "Basics of Authentication",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T15:28:20.706Z"
+    },
+    {
+        "id": "avoid-render-blocking-javascript-with-async-defer",
+        "url": "/guides/avoid-render-blocking-javascript-with-async-defer",
+        "title": "Async and Defer Script Loading",
+        "description": "Learn how to avoid render blocking JavaScript using async and defer scripts.",
+        "authorId": "kamran",
+        "shortTitle": "Async and Defer Script Loading",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:45:52.749Z"
+    },
+    {
+        "id": "what-are-web-vitals",
+        "url": "/guides/what-are-web-vitals",
+        "title": "What are Web Vitals?",
+        "description": "Learn what are the core web vitals and how to measure them.",
+        "authorId": "kamran",
+        "shortTitle": "What are Web Vitals?",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:58:44.431Z"
+    },
+    {
+        "id": "what-is-sli-slo-sla",
+        "url": "/guides/what-is-sli-slo-sla",
+        "title": "SLIs, SLOs and SLAs",
+        "description": "Learn what are different indicators for performance identification of any service.",
+        "authorId": "kamran",
+        "shortTitle": "SLIs, SLOs and SLAs",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:56:49.831Z"
+    },
+    {
+        "id": "ci-cd",
+        "url": "/guides/ci-cd",
+        "title": "What is CI and CD?",
+        "description": "Learn the basics of CI/CD and how to implement that with GitHub Actions.",
+        "authorId": "kamran",
+        "shortTitle": "What is CI and CD?",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:48:34.314Z"
+    },
+    {
+        "id": "sso",
+        "url": "/guides/sso",
+        "title": "SSO — Single Sign On",
+        "description": "Learn the basics of SAML and understand how does Single Sign On work.",
+        "authorId": "kamran",
+        "shortTitle": "SSO — Single Sign On",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:57:32.627Z"
+    },
+    {
+        "id": "oauth",
+        "url": "/guides/oauth",
+        "title": "OAuth — Open Authorization",
+        "description": "Learn and understand what is OAuth and how it works",
+        "authorId": "kamran",
+        "shortTitle": "OAuth — Open Authorization",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:54:09.368Z"
+    },
+    {
+        "id": "jwt-authentication",
+        "url": "/guides/jwt-authentication",
+        "title": "JWT Authentication",
+        "description": "Understand what is JWT authentication and how is it implemented",
+        "authorId": "kamran",
+        "shortTitle": "JWT Authentication",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:49:28.352Z"
+    },
+    {
+        "id": "token-authentication",
+        "url": "/guides/token-authentication",
+        "title": "Token Based Authentication",
+        "description": "Understand what is token based authentication and how it is implemented",
+        "authorId": "kamran",
+        "shortTitle": "Token Based Authentication",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:57:58.469Z"
+    },
+    {
+        "id": "session-based-authentication-visually-explained",
+        "url": "/guides/session-based-authentication-visually-explained",
+        "title": "Session Based Authentication Visually Explained",
+        "description": "Understand what is session based authentication and how it is implemented",
+        "authorId": "kamran",
+        "shortTitle": "Session Based Authentication Visually Explained",
+        "group": "Guides",
+        "updatedAt": "2025-10-20T06:20:21.474Z"
+    },
+    {
+        "id": "basic-authentication",
+        "url": "/guides/basic-authentication",
+        "title": "Basic Authentication",
+        "description": "Understand what is basic authentication and how it is implemented",
+        "authorId": "kamran",
+        "shortTitle": "Basic Authentication",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:47:09.628Z"
+    },
+    {
+        "id": "character-encodings",
+        "url": "/guides/character-encodings",
+        "title": "Character Encodings",
+        "description": "Covers the basics of character encodings and explains ASCII vs Unicode",
+        "authorId": "kamran",
+        "shortTitle": "Character Encodings",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:48:04.921Z"
+    },
+    {
+        "id": "unfamiliar-codebase",
+        "url": "/guides/unfamiliar-codebase",
+        "title": "Unfamiliar Codebase",
+        "description": "Tips on getting familiar with an unfamiliar codebase",
+        "authorId": "kamran",
+        "shortTitle": "Unfamiliar Codebase",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:58:22.371Z"
+    },
+    {
+        "id": "why-build-it-and-they-will-come-wont-work-anymore",
+        "url": "/guides/why-build-it-and-they-will-come-wont-work-anymore",
+        "title": "Build it and they will come?",
+        "description": "Why “build it and they will come” alone won’t work anymore",
+        "authorId": "peter-thaleikis",
+        "shortTitle": "Build it and they will come?",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T15:29:23.737Z"
+    },
+    {
+        "id": "dhcp-in-one-picture",
+        "url": "/guides/dhcp-in-one-picture",
+        "title": "DHCP in One Picture",
+        "description": "Here is what happens when a new device joins the network.",
+        "authorId": "kamran",
+        "shortTitle": "DHCP in One Picture",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:48:59.210Z"
+    },
+    {
+        "id": "ssl-tls-https-ssh",
+        "url": "/guides/ssl-tls-https-ssh",
+        "title": "SSL vs TLS vs SSH",
+        "description": "Quick tidbit on the differences between SSL, TLS, HTTPS and SSH",
+        "authorId": "kamran",
+        "shortTitle": "SSL vs TLS vs SSH",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:57:10.906Z"
+    },
+    {
+        "id": "asymptotic-notation",
+        "url": "/guides/asymptotic-notation",
+        "title": "Asymptotic Notation",
+        "description": "Learn the basics of measuring the time and space complexity of algorithms",
+        "authorId": "kamran",
+        "shortTitle": "Asymptotic Notation",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:43:58.489Z"
+    },
+    {
+        "id": "big-o-notation",
+        "url": "/guides/big-o-notation",
+        "title": "Big-O Notation",
+        "description": "Easy to understand explanation of Big-O notation without any fancy terms",
+        "authorId": "kamran",
+        "shortTitle": "Big-O Notation",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:47:37.252Z"
+    },
+    {
+        "id": "random-numbers",
+        "url": "/guides/random-numbers",
+        "title": "Random Numbers: Are they?",
+        "description": "Learn how they are generated and why they may not be truly random.",
+        "authorId": "kamran",
+        "shortTitle": "Random Numbers: Are they?",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:54:57.098Z"
+    },
+    {
+        "id": "what-is-internet",
+        "url": "/guides/what-is-internet",
+        "title": "How does the internet work?",
+        "description": "Learn the basics of internet and everything involved with this short video series",
+        "authorId": "kamran",
+        "shortTitle": "How does the internet work?",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T15:29:32.806Z"
+    },
+    {
+        "id": "scaling-databases",
+        "url": "/guides/scaling-databases",
+        "title": "Scaling Databases",
+        "description": "Learn the ups and downs of different database scaling strategies",
+        "authorId": "kamran",
+        "shortTitle": "Scaling Databases",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:55:57.686Z"
+    },
+    {
+        "id": "levels-of-seniority",
+        "url": "/guides/levels-of-seniority",
+        "title": "Levels of Seniority",
+        "description": "How to Step Up as a Junior, Mid Level or a Senior Developer?",
+        "authorId": "kamran",
+        "shortTitle": "Levels of Seniority",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T15:29:38.792Z"
+    },
+    {
+        "id": "design-patterns-for-humans",
+        "url": "/guides/design-patterns-for-humans",
+        "title": "Design Patterns for Humans",
+        "description": "A language agnostic, ultra-simplified explanation to design patterns",
+        "authorId": "kamran",
+        "shortTitle": "Design Patterns for Humans",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T15:29:40.344Z"
+    },
+    {
+        "id": "dns-in-one-picture",
+        "url": "/guides/dns-in-one-picture",
+        "title": "DNS in One Picture",
+        "description": "Quick illustrative guide on how a website is found on the internet.",
+        "authorId": "kamran",
+        "shortTitle": "DNS in One Picture",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T15:29:43.244Z"
+    },
+    {
+        "id": "journey-to-http2",
+        "url": "/guides/journey-to-http2",
+        "title": "Journey to HTTP/2",
+        "description": "The evolution of HTTP. How it all started and where we stand today",
+        "authorId": "kamran",
+        "shortTitle": "Journey to HTTP/2",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T15:29:46.011Z"
+    },
+    {
+        "id": "http-caching",
+        "url": "/guides/http-caching",
+        "title": "HTTP Caching",
+        "description": "Everything you need to know about web caching",
+        "authorId": "kamran",
+        "shortTitle": "HTTP Caching",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T15:29:47.677Z"
+    },
+    {
+        "id": "history-of-javascript",
+        "url": "/guides/history-of-javascript",
+        "title": "Brief History of JavaScript",
+        "description": "How JavaScript was introduced and evolved over the years",
+        "authorId": "kamran",
+        "shortTitle": "Brief History of JavaScript",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T15:29:49.008Z"
+    },
+    {
+        "id": "proxy-servers",
+        "url": "/guides/proxy-servers",
+        "title": "Proxy Servers",
+        "description": "How do proxy servers work and what are forward and reverse proxies?",
+        "authorId": "ebrahim-bharmal",
+        "shortTitle": "Proxy Servers",
+        "group": "Guides",
+        "updatedAt": "2025-08-18T16:41:10.830Z"
+    },
+    {
+        "id": "single-page-cv",
+        "url": "/projects/single-page-cv",
+        "title": "Single-Page CV",
+        "description": "Create a single-page HTML CV to showcase your career history",
+        "shortTitle": "Single-Page CV",
+        "group": "Projects",
+        "updatedAt": "2026-01-13T15:59:05.206Z"
+    },
+    {
+        "id": "basic-html-website",
+        "url": "/projects/basic-html-website",
+        "title": "Basic HTML Website",
+        "description": "Create simple HTML only website with multiple pages.",
+        "shortTitle": "Basic HTML Website",
+        "group": "Projects",
+        "updatedAt": "2026-01-13T16:01:51.030Z"
+    },
+    {
+        "id": "portfolio-website",
+        "url": "/projects/portfolio-website",
+        "title": "Personal Portfolio",
+        "description": "Convert the previous simple HTML website into a personal portfolio.",
+        "shortTitle": "Personal Portfolio",
+        "group": "Projects",
+        "updatedAt": "2026-01-13T16:02:31.194Z"
+    },
+    {
+        "id": "changelog-component",
+        "url": "/projects/changelog-component",
+        "title": "Changelog Component",
+        "description": "Create a changelog component for a website using HTML and CSS.",
+        "shortTitle": "Changelog Component",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T09:50:02.604Z"
+    },
+    {
+        "id": "testimonial-cards",
+        "url": "/projects/testimonial-cards",
+        "title": "Testimonial Cards",
+        "description": "Create testimonial cards for a website using HTML and CSS.",
+        "shortTitle": "Testimonial Cards",
+        "group": "Projects",
+        "updatedAt": "2026-01-13T16:04:27.816Z"
+    },
+    {
+        "id": "datepicker-ui",
+        "url": "/projects/datepicker-ui",
+        "title": "Datepicker UI",
+        "description": "Create a simple datepicker UI using HTML and CSS.",
+        "shortTitle": "Datepicker UI",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T09:50:03.430Z"
+    },
+    {
+        "id": "accessible-form-ui",
+        "url": "/projects/accessible-form-ui",
+        "title": "Accessible Form UI",
+        "description": "Create an accessible form UI using HTML and CSS.",
+        "shortTitle": "Accessible Form UI",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T09:50:04.393Z"
+    },
+    {
+        "id": "image-grid",
+        "url": "/projects/image-grid",
+        "title": "Image Grid Layout",
+        "description": "Create a grid layout of images using HTML and CSS.",
+        "shortTitle": "Image Grid Layout",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T17:01:40.375Z"
+    },
+    {
+        "id": "tooltip-ui",
+        "url": "/projects/tooltip-ui",
+        "title": "Tooltip UI",
+        "description": "Create a tooltip for navigation items using only HTML and CSS.",
+        "shortTitle": "Tooltip UI",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T16:13:55.997Z"
+    },
+    {
+        "id": "js-greeting-builder",
+        "url": "/projects/js-greeting-builder",
+        "title": "Greeting Builder",
+        "description": "Build a small greeting helper from reusable string functions.",
+        "shortTitle": "Greeting Builder",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:10:03.106Z"
+    },
+    {
+        "id": "js-temperature-converter",
+        "url": "/projects/js-temperature-converter",
+        "title": "Temperature Converter",
+        "description": "Write temperature conversion and formatting functions.",
+        "shortTitle": "Temperature Converter",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:39:37.431Z"
+    },
+    {
+        "id": "js-number-checker",
+        "url": "/projects/js-number-checker",
+        "title": "Number Checker",
+        "description": "Create boolean helper functions that describe a number.",
+        "shortTitle": "Number Checker",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:10:05.210Z"
+    },
+    {
+        "id": "js-string-formatter",
+        "url": "/projects/js-string-formatter",
+        "title": "String Formatter",
+        "description": "Normalize names with string cleanup and formatting functions.",
+        "shortTitle": "String Formatter",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:10:06.251Z"
+    },
+    {
+        "id": "js-price-calculator",
+        "url": "/projects/js-price-calculator",
+        "title": "Price Calculator",
+        "description": "Calculate discount, tax, and final price with small functions.",
+        "shortTitle": "Price Calculator",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:10:07.253Z"
+    },
+    {
+        "id": "js-cart-total-calculator",
+        "url": "/projects/js-cart-total-calculator",
+        "title": "Cart Total Calculator",
+        "description": "Summarize cart totals from arrays of item objects.",
+        "shortTitle": "Cart Total Calculator",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:10:08.302Z"
+    },
+    {
+        "id": "js-grade-report-generator",
+        "url": "/projects/js-grade-report-generator",
+        "title": "Grade Report Generator",
+        "description": "Turn numeric scores into grade report objects.",
+        "shortTitle": "Grade Report Generator",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:10:09.348Z"
+    },
+    {
+        "id": "js-task-list-utilities",
+        "url": "/projects/js-task-list-utilities",
+        "title": "Task List Utilities",
+        "description": "Write task list helpers that return updated arrays.",
+        "shortTitle": "Task List Utilities",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:10:10.621Z"
+    },
+    {
+        "id": "js-expense-summary",
+        "url": "/projects/js-expense-summary",
+        "title": "Expense Summary",
+        "description": "Calculate totals and find the largest expense from object arrays.",
+        "shortTitle": "Expense Summary",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:10:11.777Z"
+    },
+    {
+        "id": "js-product-search-and-filter",
+        "url": "/projects/js-product-search-and-filter",
+        "title": "Product Search and Filter",
+        "description": "Build search and filter helpers for a product list.",
+        "shortTitle": "Product Search and Filter",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:10:13.014Z"
+    },
+    {
+        "id": "js-user-profile-formatter",
+        "url": "/projects/js-user-profile-formatter",
+        "title": "User Profile Formatter",
+        "description": "Format nested user data into a smaller profile summary.",
+        "shortTitle": "User Profile Formatter",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:10:14.069Z"
+    },
+    {
+        "id": "js-quiz-score-calculator",
+        "url": "/projects/js-quiz-score-calculator",
+        "title": "Quiz Score Calculator",
+        "description": "Score quiz answers and return a result summary.",
+        "shortTitle": "Quiz Score Calculator",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:10:15.111Z"
+    },
+    {
+        "id": "js-json-response-normalizer",
+        "url": "/projects/js-json-response-normalizer",
+        "title": "JSON Response Normalizer",
+        "description": "Normalize API-shaped JSON data into article summaries.",
+        "shortTitle": "JSON Response Normalizer",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:10:16.262Z"
+    },
+    {
+        "id": "js-password-rule-checker",
+        "url": "/projects/js-password-rule-checker",
+        "title": "Password Rule Checker",
+        "description": "Validate a password by reporting which rules failed.",
+        "shortTitle": "Password Rule Checker",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:10:17.491Z"
+    },
+    {
+        "id": "js-order-status-helper",
+        "url": "/projects/js-order-status-helper",
+        "title": "Order Status Helper",
+        "description": "Summarize nested order data for a support dashboard.",
+        "shortTitle": "Order Status Helper",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T15:10:18.877Z"
+    },
+    {
+        "id": "simple-tabs",
+        "url": "/projects/simple-tabs",
+        "title": "Tabs",
+        "description": "Create a simple tabs component using HTML, CSS, and JavaScript.",
+        "shortTitle": "Tabs",
+        "group": "Projects",
+        "updatedAt": "2026-06-05T15:00:17.082Z"
+    },
+    {
+        "id": "cookie-consent",
+        "url": "/projects/cookie-consent",
+        "title": "Cookie Consent",
+        "description": "Create a simple cookie consent banner using JavaScript.",
+        "shortTitle": "Cookie Consent",
+        "group": "Projects",
+        "updatedAt": "2026-06-05T15:00:34.764Z"
+    },
+    {
+        "id": "restricted-textarea",
+        "url": "/projects/restricted-textarea",
+        "title": "Restricted Textarea",
+        "description": "Create a textarea with live character count and a max character limit.",
+        "shortTitle": "Restricted Textarea",
+        "group": "Projects",
+        "updatedAt": "2026-06-05T15:00:36.516Z"
+    },
+    {
+        "id": "accordion",
+        "url": "/projects/accordion",
+        "title": "Accordion",
+        "description": "Create an accordion component using HTML, CSS, and JavaScript.",
+        "shortTitle": "Accordion",
+        "group": "Projects",
+        "updatedAt": "2026-06-05T15:00:38.134Z"
+    },
+    {
+        "id": "age-calculator",
+        "url": "/projects/age-calculator",
+        "title": "Age Calculator",
+        "description": "Create an age calculator using HTML, CSS, and JavaScript.",
+        "shortTitle": "Age Calculator",
+        "group": "Projects",
+        "updatedAt": "2026-06-05T15:00:39.904Z"
+    },
+    {
+        "id": "flash-cards",
+        "url": "/projects/flash-cards",
+        "title": "Flash Cards",
+        "description": "Create a flash card app using JavaScript frameworks.",
+        "shortTitle": "Flash Cards",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T14:58:16.997Z"
+    },
+    {
+        "id": "server-stats",
+        "url": "/projects/server-stats",
+        "title": "Server Performance Stats",
+        "description": "Write a script to analyse basic server performance stats.",
+        "shortTitle": "Server Performance Stats",
+        "group": "Projects",
+        "updatedAt": "2026-01-13T16:25:16.633Z"
+    },
+    {
+        "id": "task-tracker",
+        "url": "/projects/task-tracker",
+        "title": "Task Tracker",
+        "description": "Build a CLI app to track your tasks and manage your to-do list.",
+        "shortTitle": "Task Tracker",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T10:55:50.640Z"
+    },
+    {
+        "id": "github-user-activity",
+        "url": "/projects/github-user-activity",
+        "title": "GitHub User Activity",
+        "description": "Use GitHub API to fetch user activity and display it in the terminal.",
+        "shortTitle": "GitHub User Activity",
+        "group": "Projects",
+        "updatedAt": "2026-01-16T11:23:43.193Z"
+    },
+    {
+        "id": "log-archive-tool",
+        "url": "/projects/log-archive-tool",
+        "title": "Log Archive Tool",
+        "description": "Build a tool to archive logs from the CLI with the date and time.",
+        "shortTitle": "Log Archive Tool",
+        "group": "Projects",
+        "updatedAt": "2026-01-13T16:28:56.804Z"
+    },
+    {
+        "id": "expense-tracker",
+        "url": "/projects/expense-tracker",
+        "title": "Expense Tracker",
+        "description": "Build a simple expense tracker to manage your finances.",
+        "shortTitle": "Expense Tracker",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T10:57:10.535Z"
+    },
+    {
+        "id": "nginx-log-analyser",
+        "url": "/projects/nginx-log-analyser",
+        "title": "Nginx Log Analyser",
+        "description": "Write a simple tool to analyze logs from the command line.",
+        "shortTitle": "Nginx Log Analyser",
+        "group": "Projects",
+        "updatedAt": "2026-05-26T12:58:53.777Z"
+    },
+    {
+        "id": "github-actions-deployment-workflow",
+        "url": "/projects/github-actions-deployment-workflow",
+        "title": "GitHub Pages Deployment",
+        "description": "Write a simple GitHub Actions workflow to deploy a static website to GitHub Pages.",
+        "shortTitle": "GitHub Pages Deployment",
+        "group": "Projects",
+        "updatedAt": "2026-01-16T11:22:55.951Z"
+    },
+    {
+        "id": "number-guessing-game",
+        "url": "/projects/number-guessing-game",
+        "title": "Number Guessing Game",
+        "description": "Build a simple number guessing game to test your luck.",
+        "shortTitle": "Number Guessing Game",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T10:57:34.493Z"
+    },
+    {
+        "id": "ssh-remote-server-setup",
+        "url": "/projects/ssh-remote-server-setup",
+        "title": "SSH Remote Server Setup",
+        "description": "Setup a basic remote linux server and configure it to allow SSH.",
+        "shortTitle": "SSH Remote Server Setup",
+        "group": "Projects",
+        "updatedAt": "2026-01-13T16:32:34.008Z"
+    },
+    {
+        "id": "unit-converter",
+        "url": "/projects/unit-converter",
+        "title": "Unit Converter",
+        "description": "Unit converter to convert between different units of measurement.",
+        "shortTitle": "Unit Converter",
+        "group": "Projects",
+        "updatedAt": "2026-06-05T15:00:43.331Z"
+    },
+    {
+        "id": "personal-blog",
+        "url": "/projects/personal-blog",
+        "title": "Personal Blog",
+        "description": "Build a personal blog to write and publish articles on various topics.",
+        "shortTitle": "Personal Blog",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T10:58:12.345Z"
+    },
+    {
+        "id": "static-site-server",
+        "url": "/projects/static-site-server",
+        "title": "Static Site Server",
+        "description": "Setup a basic linux server and configure it to serve a static site.",
+        "shortTitle": "Static Site Server",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T10:58:22.403Z"
+    },
+    {
+        "id": "basic-dns",
+        "url": "/projects/basic-dns",
+        "title": "Basic DNS Setup",
+        "description": "Purchase a custom domain and set up basic DNS records.",
+        "shortTitle": "Basic DNS Setup",
+        "group": "Projects",
+        "updatedAt": "2025-09-02T16:53:48.117Z"
+    },
+    {
+        "id": "weather-api-wrapper-service",
+        "url": "/projects/weather-api-wrapper-service",
+        "title": "Weather API",
+        "description": "Build a weather API that fetches and returns weather data.",
+        "shortTitle": "Weather API",
+        "group": "Projects",
+        "updatedAt": "2026-01-13T16:40:03.609Z"
+    },
+    {
+        "id": "blogging-platform-api",
+        "url": "/projects/blogging-platform-api",
+        "title": "Blogging Platform API",
+        "description": "Build a RESTful API for a personal blogging platform",
+        "shortTitle": "Blogging Platform API",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T10:59:02.448Z"
+    },
+    {
+        "id": "simple-monitoring-dashboard",
+        "url": "/projects/simple-monitoring-dashboard",
+        "title": "Simple Monitoring",
+        "description": "Set up a basic monitoring dashboard using Netdata.",
+        "shortTitle": "Simple Monitoring",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T10:59:13.857Z"
+    },
+    {
+        "id": "dummy-systemd-service",
+        "url": "/projects/dummy-systemd-service",
+        "title": "Dummy Systemd Service",
+        "description": "Create a long-running systemd service that logs to a file.",
+        "shortTitle": "Dummy Systemd Service",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T10:59:26.671Z"
+    },
+    {
+        "id": "todo-list-api",
+        "url": "/projects/todo-list-api",
+        "title": "Todo List API",
+        "description": "Build a RESTful API to allow users to manage their to-do list.",
+        "shortTitle": "Todo List API",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:00:57.855Z"
+    },
+    {
+        "id": "basic-dockerfile",
+        "url": "/projects/basic-dockerfile",
+        "title": "Basic Dockerfile",
+        "description": "Build a basic Dockerfile to create a Docker image.",
+        "shortTitle": "Basic Dockerfile",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:01:07.554Z"
+    },
+    {
+        "id": "expense-tracker-api",
+        "url": "/projects/expense-tracker-api",
+        "title": "Expense Tracker API",
+        "description": "Build an API for an expense tracker application.",
+        "shortTitle": "Expense Tracker API",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:01:17.656Z"
+    },
+    {
+        "id": "ec2-instance",
+        "url": "/projects/ec2-instance",
+        "title": "EC2 Instance",
+        "description": "Create an EC2 instance on AWS and connect to it using SSH.",
+        "shortTitle": "EC2 Instance",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:01:27.523Z"
+    },
+    {
+        "id": "github-trending-cli",
+        "url": "/projects/github-trending-cli",
+        "title": "GitHub Trending CLI",
+        "description": "CLI application that talks to GitHub API and shows the trending repositories",
+        "shortTitle": "GitHub Trending CLI",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:01:59.539Z"
+    },
+    {
+        "id": "tmdb-cli",
+        "url": "/projects/tmdb-cli",
+        "title": "TMDB CLI Tool",
+        "description": "Use TMDB API to fetch movie information and display it in the terminal.",
+        "shortTitle": "TMDB CLI Tool",
+        "group": "Projects",
+        "updatedAt": "2026-01-16T11:21:57.986Z"
+    },
+    {
+        "id": "job-listings-scraper",
+        "url": "/projects/job-listings-scraper",
+        "title": "Python Job Listings Scraper",
+        "description": "Build a scraper that collects job listings from the Fake Python Jobs site.",
+        "shortTitle": "Python Job Listings Scraper",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T09:50:05.195Z"
+    },
+    {
+        "id": "pharmaceutical-sales-data",
+        "url": "/projects/pharmaceutical-sales-data",
+        "title": "Analysing Pharma Sales Data",
+        "description": "Analyse pharmaceutical sales data using Python, Pandas, and Matplotlib.",
+        "shortTitle": "Analysing Pharma Sales Data",
+        "group": "Projects",
+        "updatedAt": "2026-04-09T15:11:00.314Z"
+    },
+    {
+        "id": "cleaning-netflix-dataset",
+        "url": "/projects/cleaning-netflix-dataset",
+        "title": "Clean the Netflix Dataset",
+        "description": "Learn to clean the Netflix dataset using Python and Pandas effectively.",
+        "shortTitle": "Clean the Netflix Dataset",
+        "group": "Projects",
+        "updatedAt": "2026-04-09T15:11:20.991Z"
+    },
+    {
+        "id": "titanic-eda-python",
+        "url": "/projects/titanic-eda-python",
+        "title": "Exploring the Titanic Dataset",
+        "description": "Study Titanic passengers to find what factors improved survival odds.",
+        "shortTitle": "Exploring the Titanic Dataset",
+        "group": "Projects",
+        "updatedAt": "2026-05-22T20:13:17.714Z"
+    },
+    {
+        "id": "data-visualization-tutorial",
+        "url": "/projects/data-visualization-tutorial",
+        "title": "Data Visualization Basics",
+        "description": "Practice creating charts using the Tips dataset in Matplotlib and Seaborn.",
+        "shortTitle": "Data Visualization Basics",
+        "group": "Projects",
+        "updatedAt": "2026-04-09T15:12:22.608Z"
+    },
+    {
+        "id": "stock-price-time-series",
+        "url": "/projects/stock-price-time-series",
+        "title": "Stock Price Analysis",
+        "description": "Download historical stock data and analyse it with Pandas time series tools.",
+        "shortTitle": "Stock Price Analysis",
+        "group": "Projects",
+        "updatedAt": "2026-04-09T15:12:52.110Z"
+    },
+    {
+        "id": "querying-sql-python",
+        "url": "/projects/querying-sql-python",
+        "title": "Querying with SQL & Python",
+        "description": "Connect Python to a SQLite database and write queries for business questions.",
+        "shortTitle": "Querying with SQL & Python",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T09:52:38.160Z"
+    },
+    {
+        "id": "clean-csv",
+        "url": "/projects/clean-csv",
+        "title": "Clean a CSV with Pandas",
+        "description": "Clean a messy synthetic employee dataset using a structured 5-step workflow.",
+        "shortTitle": "Clean a CSV with Pandas",
+        "group": "Projects",
+        "updatedAt": "2026-04-09T15:13:52.141Z"
+    },
+    {
+        "id": "ecommerce-data-analysis",
+        "url": "/projects/ecommerce-data-analysis",
+        "title": "E-Commerce Analysis",
+        "description": "Explore the UCI Online Retail Dataset with Pandas for business insights.",
+        "shortTitle": "E-Commerce Analysis",
+        "group": "Projects",
+        "updatedAt": "2026-04-09T15:14:19.718Z"
+    },
+    {
+        "id": "exploring-iris-dataset",
+        "url": "/projects/exploring-iris-dataset",
+        "title": "Exploring the Iris Dataset",
+        "description": "Perform a complete exploratory analysis on the classic Iris dataset.",
+        "shortTitle": "Exploring the Iris Dataset",
+        "group": "Projects",
+        "updatedAt": "2026-04-09T15:14:43.405Z"
+    },
+    {
+        "id": "pandas-time-series",
+        "url": "/projects/pandas-time-series",
+        "title": "Pandas Time Series",
+        "description": "Learn how Pandas handles dates and times using a vehicle sales dataset.",
+        "shortTitle": "Pandas Time Series",
+        "group": "Projects",
+        "updatedAt": "2026-04-09T15:15:17.393Z"
+    },
+    {
+        "id": "quiz-app",
+        "url": "/projects/quiz-app",
+        "title": "Quiz App",
+        "description": "Build a browser-based quiz application to test any knowledge",
+        "shortTitle": "Quiz App",
+        "group": "Projects",
+        "updatedAt": "2026-06-05T15:00:45.289Z"
+    },
+    {
+        "id": "weather-app",
+        "url": "/projects/weather-app",
+        "title": "Weather Web App",
+        "description": "Build a weather app that fetches and displays weather for a given location.",
+        "shortTitle": "Weather Web App",
+        "group": "Projects",
+        "updatedAt": "2026-06-05T15:00:46.890Z"
+    },
+    {
+        "id": "github-random-repo",
+        "url": "/projects/github-random-repo",
+        "title": "GitHub Random Repository",
+        "description": "Create a GitHub random repository finder using GitHub API.",
+        "shortTitle": "GitHub Random Repository",
+        "group": "Projects",
+        "updatedAt": "2026-06-05T15:00:48.602Z"
+    },
+    {
+        "id": "custom-dropdown",
+        "url": "/projects/custom-dropdown",
+        "title": "Custom Dropdown",
+        "description": "Create a custom dropdown using HTML, CSS, and JavaScript.",
+        "shortTitle": "Custom Dropdown",
+        "group": "Projects",
+        "updatedAt": "2026-06-05T15:00:50.387Z"
+    },
+    {
+        "id": "task-tracker-js",
+        "url": "/projects/task-tracker-js",
+        "title": "Task Tracker",
+        "description": "Create a task tracker with a to-do list using JavaScript.",
+        "shortTitle": "Task Tracker",
+        "group": "Projects",
+        "updatedAt": "2026-06-05T15:00:52.099Z"
+    },
+    {
+        "id": "reddit-client",
+        "url": "/projects/reddit-client",
+        "title": "Reddit Client",
+        "description": "Create a Reddit client with customizable subreddit lanes.",
+        "shortTitle": "Reddit Client",
+        "group": "Projects",
+        "updatedAt": "2026-06-05T15:00:53.675Z"
+    },
+    {
+        "id": "temperature-converter",
+        "url": "/projects/temperature-converter",
+        "title": "Temperature Converter",
+        "description": "Build a temperature converter that converts between different units.",
+        "shortTitle": "Temperature Converter",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T17:01:59.688Z"
+    },
+    {
+        "id": "pomodoro-timer",
+        "url": "/projects/pomodoro-timer",
+        "title": "Pomodoro Timer",
+        "description": "Create a pomodoro tracker application for productivity",
+        "shortTitle": "Pomodoro Timer",
+        "group": "Projects",
+        "updatedAt": "2026-06-12T14:58:17.969Z"
+    },
+    {
+        "id": "configuration-management",
+        "url": "/projects/configuration-management",
+        "title": "Configuration Management",
+        "description": "Write an Ansible playbook to configure a Linux server.",
+        "shortTitle": "Configuration Management",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:12:20.501Z"
+    },
+    {
+        "id": "caching-server",
+        "url": "/projects/caching-server",
+        "title": "Caching Proxy",
+        "description": "Build a caching server that caches responses from other servers.",
+        "shortTitle": "Caching Proxy",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:14:32.371Z"
+    },
+    {
+        "id": "iac-digitalocean",
+        "url": "/projects/iac-digitalocean",
+        "title": "IaC on DigitalOcean",
+        "description": "Write Terraform code to create a Droplet on DigitalOcean",
+        "shortTitle": "IaC on DigitalOcean",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:14:43.214Z"
+    },
+    {
+        "id": "markdown-note-taking-app",
+        "url": "/projects/markdown-note-taking-app",
+        "title": "Markdown Note-taking App",
+        "description": "Build a note-taking app that uses markdown for formatting.",
+        "shortTitle": "Markdown Note-taking App",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:15:07.986Z"
+    },
+    {
+        "id": "nodejs-service-deployment",
+        "url": "/projects/nodejs-service-deployment",
+        "title": "Node.js Service Deployment",
+        "description": "Use GitHub Actions to Deploy a Node.js Service to a remote server",
+        "shortTitle": "Node.js Service Deployment",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:15:26.103Z"
+    },
+    {
+        "id": "dockerized-service-deployment",
+        "url": "/projects/dockerized-service-deployment",
+        "title": "Dockerized Service",
+        "description": "Use GitHub Actions to Deploy a Dockerized Node.js Service",
+        "shortTitle": "Dockerized Service",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:15:48.495Z"
+    },
+    {
+        "id": "url-shortening-service",
+        "url": "/projects/url-shortening-service",
+        "title": "URL Shortening Service",
+        "description": "Build a URL Shortener API that helps shorten long URLs.",
+        "shortTitle": "URL Shortening Service",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:16:29.648Z"
+    },
+    {
+        "id": "broadcast-server",
+        "url": "/projects/broadcast-server",
+        "title": "Broadcast Server",
+        "description": "Build a server that can broadcast messages to connected clients.",
+        "shortTitle": "Broadcast Server",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:16:49.979Z"
+    },
+    {
+        "id": "multi-container-service",
+        "url": "/projects/multi-container-service",
+        "title": "Multi-Container Application",
+        "description": "Use Docker Compose to run a multi-container application",
+        "shortTitle": "Multi-Container Application",
+        "group": "Projects",
+        "updatedAt": "2026-01-22T19:24:10.025Z"
+    },
+    {
+        "id": "automated-backups",
+        "url": "/projects/automated-backups",
+        "title": "Automated DB Backups",
+        "description": "Setup a scheduled workflow to backup a Database every 12 hours",
+        "shortTitle": "Automated DB Backups",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:18:57.541Z"
+    },
+    {
+        "id": "ecommerce-api",
+        "url": "/projects/ecommerce-api",
+        "title": "E-Commerce API",
+        "description": "E-Commerce platform with cart and payment gateway integration.",
+        "shortTitle": "E-Commerce API",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:19:30.181Z"
+    },
+    {
+        "id": "bastion-host",
+        "url": "/projects/bastion-host",
+        "title": "Bastion Host",
+        "description": "Setup a bastion host for managing access to private infrastructure.",
+        "shortTitle": "Bastion Host",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:20:00.484Z"
+    },
+    {
+        "id": "file-integrity-checker",
+        "url": "/projects/file-integrity-checker",
+        "title": "File Integrity Checker",
+        "description": "Verify the integrity of application log files to detect tampering.",
+        "shortTitle": "File Integrity Checker",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:20:30.887Z"
+    },
+    {
+        "id": "linux-server-setup",
+        "url": "/projects/linux-server-setup",
+        "title": "Linux Server Setup",
+        "description": "Learn to set up and secure a Linux server from scratch.",
+        "shortTitle": "Linux Server Setup",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T09:52:38.957Z"
+    },
+    {
+        "id": "fitness-workout-tracker",
+        "url": "/projects/fitness-workout-tracker",
+        "title": "Workout Tracker",
+        "description": "App to let users track their workouts and progress.",
+        "shortTitle": "Workout Tracker",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:20:56.486Z"
+    },
+    {
+        "id": "vpn-server-setup",
+        "url": "/projects/vpn-server-setup",
+        "title": "VPN Server Setup",
+        "description": "Set up a WireGuard or OpenVPN server to secure remote access.",
+        "shortTitle": "VPN Server Setup",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T09:52:40.124Z"
+    },
+    {
+        "id": "image-processing-service",
+        "url": "/projects/image-processing-service",
+        "title": "Image Processing Service",
+        "description": "Build a service that allows users to upload and process images.",
+        "shortTitle": "Image Processing Service",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:21:09.837Z"
+    },
+    {
+        "id": "stans-navigation-deployment",
+        "url": "/projects/stans-navigation-deployment",
+        "title": "STANS Nav System Deploy",
+        "description": "Deploy and manage the STANS system using Docker, Nginx, and CI/CD.",
+        "shortTitle": "STANS Nav System Deploy",
+        "group": "Projects",
+        "updatedAt": "2026-04-11T09:41:36.004Z"
+    },
+    {
+        "id": "multi-tier-deployment",
+        "url": "/projects/multi-tier-deployment",
+        "title": "Multi-Tier Deployment",
+        "description": "Deploy database, backend, and frontend as separate Docker containers.",
+        "shortTitle": "Multi-Tier Deployment",
+        "group": "Projects",
+        "updatedAt": "2026-03-30T06:54:49.641Z"
+    },
+    {
+        "id": "openai-api-python",
+        "url": "/projects/openai-api-python",
+        "title": "OpenAI API in Python",
+        "description": "Call OpenAI models directly from Python, beyond the ChatGPT interface.",
+        "shortTitle": "OpenAI API in Python",
+        "group": "Projects",
+        "updatedAt": "2026-04-09T15:16:43.334Z"
+    },
+    {
+        "id": "blue-green-deployment",
+        "url": "/projects/blue-green-deployment",
+        "title": "Blue-Green Deployment",
+        "description": "Setup a blue-green deployment strategy for your application.",
+        "shortTitle": "Blue-Green Deployment",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:21:33.451Z"
+    },
+    {
+        "id": "monitoring",
+        "url": "/projects/monitoring",
+        "title": "Prometheus and Grafana",
+        "description": "Setup monitoring using Prometheus and visualize metrics in Grafana.",
+        "shortTitle": "Prometheus and Grafana",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:22:02.768Z"
+    },
+    {
+        "id": "movie-reservation-system",
+        "url": "/projects/movie-reservation-system",
+        "title": "Movie Reservation System",
+        "description": "Build a system that allows users to reserve movie tickets.",
+        "shortTitle": "Movie Reservation System",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:22:27.375Z"
+    },
+    {
+        "id": "multiservice-docker",
+        "url": "/projects/multiservice-docker",
+        "title": "Multi-Service Application",
+        "description": "Setup a multi-service optimized docker implementation",
+        "shortTitle": "Multi-Service Application",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:22:41.485Z"
+    },
+    {
+        "id": "realtime-leaderboard-system",
+        "url": "/projects/realtime-leaderboard-system",
+        "title": "Real-time Leaderboard",
+        "description": "Create a real-time leaderboard system for ranking and scoring.",
+        "shortTitle": "Real-time Leaderboard",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:23:07.356Z"
+    },
+    {
+        "id": "service-discovery",
+        "url": "/projects/service-discovery",
+        "title": "Service Discovery",
+        "description": "Setup service discovery with dummy services and Consul",
+        "shortTitle": "Service Discovery",
+        "group": "Projects",
+        "updatedAt": "2025-09-02T16:54:31.531Z"
+    },
+    {
+        "id": "stories-feature",
+        "url": "/projects/stories-feature",
+        "title": "24hr Story Feature",
+        "description": "Create a client-side instagram stories feature clone.",
+        "shortTitle": "24hr Story Feature",
+        "group": "Projects",
+        "updatedAt": "2026-06-05T15:00:57.020Z"
+    },
+    {
+        "id": "database-backup-utility",
+        "url": "/projects/database-backup-utility",
+        "title": "Database Backup Utility",
+        "description": "Build a database backup utility that can backup and restore any DB",
+        "shortTitle": "Database Backup Utility",
+        "group": "Projects"
+    },
+    {
+        "id": "scalable-ecommerce-platform",
+        "url": "/projects/scalable-ecommerce-platform",
+        "title": "Scalable E-Commerce Platform",
+        "description": "Build an e-commerce platform using microservices architecture.",
+        "shortTitle": "Scalable E-Commerce Platform",
+        "group": "Projects",
+        "updatedAt": "2026-01-15T11:26:48.067Z"
+    },
+    {
+        "id": "e2e-test-ecommerce-app",
+        "url": "/projects/e2e-test-ecommerce-app",
+        "title": "Writing an end-to-end (e2e) test cases for an e-commerce app",
+        "description": "In this project, you will write end-to-end (e2e) test cases for an e-commerce application for an online book store.",
+        "shortTitle": "Writing an end-to-end (e2e) test cases for an e-commerce app",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T09:52:41.091Z"
+    },
+    {
+        "id": "pricing-comparison-table",
+        "url": "/projects/pricing-comparison-table",
+        "title": "Pricing Comparison Table",
+        "description": "Build a single-page pricing comparison using a real, accessible HTML table.",
+        "shortTitle": "Pricing Comparison Table",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T18:41:26.639Z"
+    },
+    {
+        "id": "blog-post-page",
+        "url": "/projects/blog-post-page",
+        "title": "Blog Post Page",
+        "description": "Build a single semantic HTML blog post with proper text elements, links, and a figure.",
+        "shortTitle": "Blog Post Page",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T19:30:51.303Z"
+    },
+    {
+        "id": "contact-form",
+        "url": "/projects/contact-form",
+        "title": "Contact Form",
+        "description": "Build an accessible HTML contact form with real labels, grouped controls, and browser validation.",
+        "shortTitle": "Contact Form",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T19:33:53.273Z"
+    },
+    {
+        "id": "photo-showcase",
+        "url": "/projects/photo-showcase",
+        "title": "Photo Showcase",
+        "description": "Build an HTML photo showcase page with proper alt text, figures with captions, and an embedded video.",
+        "shortTitle": "Photo Showcase",
+        "group": "Projects",
+        "updatedAt": "2026-05-25T19:37:39.087Z"
+    },
+    {
+        "id": "pricing-cards",
+        "url": "/projects/pricing-cards",
+        "title": "Pricing Cards",
+        "description": "Create a row of three pricing cards using HTML and CSS.",
+        "shortTitle": "Pricing Cards",
+        "group": "Projects",
+        "updatedAt": "2026-06-08T11:48:29.000Z"
+    },
+    {
+        "id": "theme-switcher",
+        "url": "/projects/theme-switcher",
+        "title": "Theme Switcher with CSS Variables",
+        "description": "Build a theme switcher that changes a card using CSS variables",
+        "shortTitle": "Theme Switcher with CSS Variables",
+        "group": "Projects",
+        "updatedAt": "2026-06-08T13:47:35.094Z"
+    }
+]

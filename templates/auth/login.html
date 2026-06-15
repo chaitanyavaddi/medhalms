@@ -1,138 +1,65 @@
-{% extends "base.html" %}
-{% load static %}
+{% extends "auth/auth_base.html" %}
 {% load partials %}
 
-{% block title %}Sign in · MyApp{% endblock %}
+{% block auth_title %}Sign in{% endblock %}
 
-{% block body_class %}no-top-gradient{% endblock %}
-{% block top_class %}{% endblock %}
-{% block site_header %}{% endblock %}
-{% block hero %}{% endblock %}
-{% block site_footer %}{% endblock %}
+{% block brand_heading %}Welcome<br>back to <em>{{ SITE_NAME }}</em>.{% endblock %}
+{% block brand_tagline %}Sign in to pick up where you left off.{% endblock %}
+{% block brand_card_title %}Trusted by learners{% endblock %}
 
-{% block extra_head %}
-  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-  <style>
-    body { background: #fafafb; }
-    .auth-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
-    .auth-card { background: #fff; border: 1px solid #e0ddd8; border-radius: 12px; padding: 2.5rem 2rem; width: 100%; max-width: 380px; }
-    .auth-logo { margin-bottom: 1.5rem; }
-    .auth-logo svg { width: 40px; height: 40px; }
-    .auth-heading { font-family: var(--brand-font); font-size: 1.5rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.3rem; }
-    .auth-sub { font-size: 0.875rem; color: #6b6b6b; margin-bottom: 1.5rem; }
-    .btn-google { display: flex; align-items: center; gap: 0.6rem; width: 100%; padding: 0.6rem 1rem; border: 1px solid #e0ddd8; border-radius: 7px; background: #fff; font-size: 0.875rem; font-family: inherit; color: #1a1a1a; cursor: pointer; text-decoration: none; transition: background 0.12s; margin-bottom: 1rem; }
-    .btn-google:hover { background: #f5f4f0; }
-    .auth-divider { text-align: center; color: #b4b4bc; font-size: 0.8rem; margin-bottom: 1rem; position: relative; }
-    .auth-divider::before, .auth-divider::after { content: ''; position: absolute; top: 50%; width: 42%; height: 1px; background: #e0ddd8; }
-    .auth-divider::before { left: 0; } .auth-divider::after { right: 0; }
-    .auth-form { display: flex; flex-direction: column; gap: 0.75rem; }
-    .auth-field input, .auth-field textarea { width: 100%; border: 1px solid #e0ddd8; border-radius: 7px; padding: 0.55rem 0.75rem; font-size: 0.875rem; font-family: inherit; box-sizing: border-box; }
-    .auth-field input:focus { outline: none; border-color: #aaa; }
-    .pw-wrap { position: relative; }
-    .pw-wrap input { width: 100%; padding-right: 4rem; box-sizing: border-box; }
-    .pw-forgot { position: absolute; right: 2rem; top: 50%; transform: translateY(-50%); color: #6b6b6b; }
-    .pw-toggle { position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #6b6b6b; padding: 0; }
-    .icon-eye-off { display: none; }
-    .btn-primary { background: #1a1a1a; color: #fff; border: none; border-radius: 7px; padding: 0.6rem 1rem; font-size: 0.875rem; font-family: inherit; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: opacity 0.15s; }
-    .btn-primary:hover { opacity: 0.8; }
-    .btn-spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .auth-footer { font-size: 0.8rem; color: #6b6b6b; text-align: center; margin-top: 1rem; }
-    .auth-footer a { color: #1a1a1a; }
-    .auth-messages { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-bottom: 0; padding: 0; }
-    .auth-message { font-size: 0.85rem; padding: 9px 13px; border-radius: 7px; border: 1px solid transparent; }
-    .auth-message--error { background: #feecec; border-color: #fca5a5; color: #dc2626; }
-    .auth-message--success { background: #e5f5ee; border-color: #6ee7b7; color: #059669; }
-  </style>
-{% endblock %}
+{% block auth_form %}
+<h1 class="auth-heading">Sign in</h1>
+<p class="auth-sub">Login to access your account</p>
 
-{% block content %}
-<div class="auth-page">
-  <div class="auth-card">
-    <div class="auth-logo">
-      <a href="/">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="40" height="40" rx="10" fill="var(--accent-bg, #ede9fe)"/>
-          <text x="20" y="26" font-family="Georgia,serif" font-size="18" font-weight="400" fill="var(--brand-primary, #3730a3)" text-anchor="middle">A</text>
-        </svg>
-      </a>
-    </div>
+<a href="{% url 'authentication:google-login' %}" class="btn-google">
+  <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+    <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+    <path d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z" fill="#FBBC05"/>
+    <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 6.294C4.672 4.169 6.656 3.58 9 3.58z" fill="#EA4335"/>
+  </svg>
+  Continue with Google
+</a>
+<div class="auth-divider">or</div>
 
-    <h1 class="auth-heading">Welcome back</h1>
-    <p class="auth-sub">Sign in to your account</p>
-
-    <a href="{% url 'google_login' %}" class="btn-google">
-      <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-        <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
-        <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
-        <path d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z" fill="#FBBC05"/>
-        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 6.294C4.672 4.169 6.656 3.58 9 3.58z" fill="#EA4335"/>
-      </svg>
-      Continue with Google
-    </a>
-    <div class="auth-divider">or</div>
-
-    {% partialdef login-form inline %}
-    <form method="post" class="auth-form"
-          hx-post="{% url 'auth_login' %}"
-          hx-target="#login-form"
-          hx-swap="outerHTML"
-          hx-indicator="#login-btn"
-          id="login-form">
-      {% csrf_token %}
-      {% if messages %}
-        <ul class="auth-messages">
-          {% for m in messages %}
-            <li class="auth-message auth-message--{{ m.tags }}">{{ m }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-      <div class="auth-field">
-        <input type="email" name="email" placeholder="you@example.com"
-               autocomplete="email" value="{{ data.email }}" autofocus>
-      </div>
-      <div class="auth-field">
-        <div class="pw-wrap">
-          <input type="password" name="password" placeholder="••••••••"
-                 autocomplete="current-password">
-          <a href="{% url 'auth_forgot_password' %}" class="pw-forgot" tabindex="-1" title="Forgot password?">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
-          </a>
-          <button type="button" class="pw-toggle" tabindex="-1">
-            <svg class="icon-eye" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
-            <svg class="icon-eye-off" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></svg>
-          </button>
-        </div>
-      </div>
-      <button type="submit" class="btn-primary" id="login-btn">
-        <span class="btn-label">Sign in</span>
-        <span class="btn-spinner"></span>
-      </button>
-    </form>
-    {% endpartialdef %}
-
-    <p class="auth-footer">Don't have an account? <a href="{% url 'auth_signup' %}">Sign up</a></p>
+{% partialdef login-form inline %}
+<form method="post" class="auth-form"
+      hx-post="{% url 'authentication:login' %}"
+      hx-target="#login-form"
+      hx-swap="outerHTML"
+      hx-indicator="#login-btn"
+      id="login-form">
+  {% csrf_token %}
+  {% if messages %}
+    <ul class="auth-messages">
+      {% for m in messages %}
+        <li class="auth-message auth-message--{{ m.tags }}">{{ m }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  <div class="auth-field">
+    <input type="email" name="email" placeholder="Your email"
+           autocomplete="email" value="{{ data.email|default:'' }}" autofocus>
   </div>
-</div>
-{% endblock %}
+  <div class="auth-field">
+    <div class="pw-wrap">
+      <input type="password" name="password" placeholder="••••••••"
+             autocomplete="current-password">
+      <a href="{% url 'authentication:forgot-password' %}" class="pw-forgot" tabindex="-1" title="Forgot password?">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
+      </a>
+      <button type="button" class="pw-toggle" tabindex="-1">
+        <svg class="icon-eye" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+        <svg class="icon-eye-off" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></svg>
+      </button>
+    </div>
+  </div>
+  <button type="submit" class="btn-primary" id="login-btn">
+    <span class="btn-label">Sign in</span>
+    <span class="btn-spinner"></span>
+  </button>
+</form>
+{% endpartialdef %}
 
-{% block extra_js %}
-<script>
-document.addEventListener('click', function(e) {
-  var btn = e.target.closest('.pw-toggle');
-  if (!btn) return;
-  var input = btn.closest('.pw-wrap').querySelector('input');
-  var eyeOn = btn.querySelector('.icon-eye');
-  var eyeOff = btn.querySelector('.icon-eye-off');
-  if (input.type === 'password') {
-    input.type = 'text';
-    eyeOn.style.display = 'none';
-    eyeOff.style.display = 'inline';
-  } else {
-    input.type = 'password';
-    eyeOn.style.display = 'inline';
-    eyeOff.style.display = 'none';
-  }
-});
-</script>
+<p class="auth-footer">Don't have an account? <a href="{% url 'authentication:signup' %}">Sign up</a></p>
 {% endblock %}

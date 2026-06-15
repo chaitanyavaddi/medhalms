@@ -1,0 +1,11 @@
+<!-- thread_nav.html: tn_groups, tn_active_id, tn_base_url, tn_target -->
+<nav class="tn-nav" aria-label="Thread navigation">
+  {% for group in tn_groups %}
+  <div class="tn-group">
+    <span class="tn-group-label">{{ group.label }}</span>
+    {% for item in group.items %}
+    <button type="button" class="tn-item{% if item.id == tn_active_id %} is-active{% endif %}" hx-get="{{ tn_base_url }}{{ item.id }}/" hx-target="{{ tn_target|default:'#cp-detail' }}" hx-swap="innerHTML" hx-push-url="{{ tn_base_url }}{{ item.id }}/">{{ item.name }}</button>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</nav>

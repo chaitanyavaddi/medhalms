@@ -17,7 +17,6 @@ INSTALLED_APPS = [
     "website",
     "authentication",
     "dashboard",
-    "orgs",
 ]
 
 MIDDLEWARE = [
@@ -28,7 +27,6 @@ MIDDLEWARE = [
     "core.middleware.CacheableResponseMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "core.middleware.SubdomainMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -68,60 +66,61 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
-USE_I18N = True
-USE_TZ = True
+TIME_ZONE     = "UTC"
+USE_I18N      = True
+USE_TZ        = True
 
-STATIC_URL = "/static/"
+STATIC_URL       = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT      = BASE_DIR / "staticfiles"
 
 AUTH_USER_MODEL = "users.User"
-LOGIN_URL = "/login/"
+LOGIN_URL       = "/login/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-MAIN_DOMAIN = "myapp.localhost:8000"
+# ── Site ──────────────────────────────────────────────────────────────
+SITE_NAME = os.environ.get("SITE_NAME", "MedhaEduTech")
 
+# ── Background tasks ──────────────────────────────────────────────────
+TASKS = {
+    "default": {
+        "BACKEND": "django.tasks.backends.immediate.ImmediateBackend",
+    }
+}
+
+# ── Auth validation ───────────────────────────────────────────────────
+NAME_LENGTH_RANGE     = (2,  50)   # (min, max)
+PASSWORD_LENGTH_RANGE = (8, 128)   # (min, max)
+
+# ── Google OAuth ──────────────────────────────────────────────────────
 GOOGLE_CLIENT_ID     = os.environ.get("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 209715200   # 200 MB — covers large video uploads
-FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760    # 10 MB — files above this go to temp disk
+# ── File uploads ──────────────────────────────────────────────────────
+DATA_UPLOAD_MAX_MEMORY_SIZE = 209715200   # 200 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760    # 10 MB
 
-# ── Bunny.net storage ─────────────────────────────────────────────
+# ── Bunny.net storage ─────────────────────────────────────────────────
 BUNNY_STORAGE_ENDPOINT = os.environ.get("BUNNY_STORAGE_ENDPOINT", "https://sg.storage.bunnycdn.com")
 BUNNY_STORAGE_ZONE     = os.environ.get("BUNNY_STORAGE_ZONE",     "your-zone")
 BUNNY_ACCESS_KEY       = os.environ.get("BUNNY_ACCESS_KEY",       "")
 BUNNY_CDN_BASE         = os.environ.get("BUNNY_CDN_BASE",         "https://cdn.myapp.com")
 
-# ── Brand colours ────────────────────────────────────────────────────
-BRAND_PRIMARY   = "#e67f0f"
-BRAND_SECONDARY = "#f5f2ee"
+# ── Brand — 5 variables control the entire look and feel ─────────────
+# Change these here; never hardcode colors in templates or CSS.
+BRAND_DARK    = "#07111f"   # sidebar gradient top (darkest navy)
+BRAND_NAVY    = "#0c2258"   # sidebar gradient mid
+BRAND_BLUE    = "#1550be"   # primary blue — buttons, links, active states
+BRAND_ACCENT  = "#e67f0f"   # orange accent — CTAs, highlights, active icons
+BRAND_SURFACE = "#f5f2ee"   # warm cream — content area background
 
-# ── Brand fonts ──────────────────────────────────────────────────────
-# Paste any Google Fonts (or other) URL here — it will be loaded in every page.
-# BRAND_FONT_FAMILY must match the font-family name(s) in that URL.
-BRAND_FONT_URL    = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
-BRAND_FONT_FAMILY = "'Inter', system-ui, sans-serif"
+# Typography — IBM Plex Sans is loaded unconditionally in base.html.
+# Override BRAND_FONT_FAMILY here if you swap fonts.
+BRAND_FONT_URL    = ""
+BRAND_FONT_FAMILY = "'IBM Plex Sans', 'Inter', system-ui, sans-serif"
 
-CLOUDFLARE_API_TOKEN = os.environ.get('CLOUDFLARE_API_TOKEN', '')
-CLOUDFLARE_ZONE_ID   = os.environ.get('CLOUDFLARE_ZONE_ID',   '')
-
-RESEND_API_KEY      = os.environ.get('RESEND_API_KEY', '')
-EMAIL_FROM_NOREPLY  = os.environ.get('EMAIL_FROM_NOREPLY', 'App <noreply@myapp.com>')
-EMAIL_FROM_UPDATES  = os.environ.get('EMAIL_FROM_UPDATES',  'App <updates@myapp.com>')
-
-RESERVED_SUBDOMAINS = [
-    "dashboard", "billing", "contact", "me", "app", "api", "admin",
-    "login", "logout", "signup", "register", "auth", "oauth",
-    "account", "accounts", "profile", "settings", "config",
-    "www", "mail", "email", "smtp", "pop", "imap", "ftp", "sftp",
-    "ssh", "vpn", "cdn", "static", "assets", "media", "files",
-    "ns", "ns1", "ns2", "dns", "mx", "ssl", "secure",
-    "help", "support", "docs", "documentation", "status", "health",
-    "news", "about", "jobs", "careers", "legal", "privacy",
-    "terms", "press", "partners", "developers", "dev",
-    "localhost", "test", "staging", "prod", "production", "demo",
-    "beta", "alpha", "internal", "intranet", "portal", "myapp",
-]
+# ── Email ─────────────────────────────────────────────────────────────
+RESEND_API_KEY     = os.environ.get("RESEND_API_KEY", "")
+EMAIL_FROM_NOREPLY = os.environ.get("EMAIL_FROM_NOREPLY", "App <noreply@myapp.com>")
+EMAIL_FROM_UPDATES = os.environ.get("EMAIL_FROM_UPDATES", "App <updates@myapp.com>")

@@ -1,6 +1,12 @@
 from .base import *
 
 DEBUG = True
+
+TASKS = {
+    "default": {
+        "BACKEND": "django.tasks.backends.dummy.DummyBackend",
+    }
+}
 ALLOWED_HOSTS = ["*"]
 
 MAIN_DOMAIN = "myapp.lvh.me:8000"

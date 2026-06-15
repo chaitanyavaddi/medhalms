@@ -6,8 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}MyApp{% endblock %}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg?c={{ brand_primary|urlencode }}">
-  {% if brand_font_url %}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="{{ brand_font_url }}" rel="stylesheet">{% endif %}
-  <style>:root{--brand-primary:{{ brand_primary }};--brand-secondary:{{ brand_secondary }};--brand-font:{{ brand_font_family }};--font-ui:{{ brand_font_family }};--font-serif:{{ brand_font_family }};--font-reading:{{ brand_font_family }};}</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  {% if brand_font_url %}<link href="{{ brand_font_url }}" rel="stylesheet">{% endif %}
+  <style>:root{--brand-dark:{{ brand_dark }};--brand-navy:{{ brand_navy }};--brand-blue:{{ brand_blue }};--brand-accent:{{ brand_accent }};--brand-surface:{{ brand_surface }};--brand-primary:{{ brand_accent }};--font-ui:{{ brand_font_family|safe }};}</style>
   <script src="https://unpkg.com/htmx.org@1.9.10/dist/htmx.min.js" defer></script>
   {% block extra_head %}{% endblock %}
 </head>
@@ -20,7 +24,7 @@
       <nav class="site-nav">
         <a href="/" class="site-name">MyApp</a>
         <div class="nav-links">
-          <a href="{% url 'auth_login' %}" class="nav-link">Login</a>
+          <a href="{% url 'authentication:login' %}" class="nav-link">Login</a>
         </div>
       </nav>
     </header>

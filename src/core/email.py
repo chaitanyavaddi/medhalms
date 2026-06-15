@@ -1,5 +1,5 @@
 import logging
-import threading
+
 import resend
 from django.conf import settings
 
@@ -19,7 +19,7 @@ def send_email(to, subject, html, from_email=None):
     try:
         client.Emails.send({
             'from': from_email or settings.EMAIL_FROM_NOREPLY,
-            'to': [to] if isinstance(to, str) else to,
+            'to':   [to] if isinstance(to, str) else to,
             'subject': subject,
             'html': html,
         })
@@ -36,19 +36,3 @@ def send_batch(emails):
             client.Batch.send(emails[i:i + 100])
     except Exception as e:
         logger.error('Failed to send batch emails: %s', e)
-
-
-def send_email_async(to, subject, html, from_email=None):
-    threading.Thread(
-        target=send_email,
-        args=(to, subject, html, from_email),
-        daemon=True,
-    ).start()
-
-
-def send_batch_async(emails):
-    threading.Thread(
-        target=send_batch,
-        args=(emails,),
-        daemon=True,
-    ).start()

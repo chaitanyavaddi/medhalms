@@ -5,5 +5,7 @@
         "**/.idea": true,
         "**/.pytest_cache": true,
         "**/.venv": true
-    }
+    },
+    "html.validate.styles": false,
+    "css.lint.validProperties": []
 }
