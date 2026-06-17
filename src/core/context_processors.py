@@ -17,4 +17,6 @@ def brand(request):
         # Backwards-compat aliases used by base.html / app_base.html
         'brand_primary':   settings.BRAND_ACCENT,
         'brand_secondary': settings.BRAND_SURFACE,
+        # Third-party tokens needed in templates
+        'LOGO_DEV_TOKEN': settings.LOGO_DEV_TOKEN,
     }

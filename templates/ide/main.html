@@ -1,0 +1,52 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Coding Labs{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/ide.css' %}">{% endblock %}
+{% block content_class %}dash-content--edge{% endblock %}
+{% block topbar_title %}<h2 class="dash-page-title">Coding Labs</h2>{% endblock %}
+{% block content %}
+<div class="ide-layout">
+
+  <aside class="ide-sidebar">
+    <div class="ide-sidebar-header">
+      <span class="ide-sidebar-title">Labs</span>
+      <button type="button" class="ide-new-btn" hx-get="{% url 'ide:lab_create_modal' %}" hx-target="#modal-slot" hx-swap="innerHTML">+ New Lab</button>
+    </div>
+    <div class="ide-lab-list">
+      {% for lab in labs %}
+      <a href="{% url 'ide:lab' lab.id %}" class="ide-lab-item {% if active_lab and active_lab.id == lab.id %}is-active{% endif %}" hx-get="{% url 'ide:lab' lab.id %}" hx-target="#ide-detail" hx-swap="innerHTML" hx-push-url="true" onclick="ideLabClick(this)">
+        <img src="https://img.logo.dev/{{ lab.logo_domain }}?token={{ LOGO_DEV_TOKEN }}&retina=true" class="ide-lab-icon" alt="{{ lab.language }}" onerror="this.style.display='none'">
+        <div class="ide-lab-info">
+          <span class="ide-lab-name">{{ lab.name }}</span>
+          <span class="ide-lab-lang">{{ lab.language }}</span>
+        </div>
+      </a>
+      {% empty %}
+      <p class="ide-lab-empty">No labs yet.<br>Create your first one!</p>
+      {% endfor %}
+    </div>
+  </aside>
+
+  <div class="ide-detail" id="ide-detail">
+    {% if active_lab %}
+    {% include "ide/lab_detail.html" with lab=active_lab embed_url=embed_url %}
+    {% else %}
+    <div class="ide-empty-state">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+      <span>Select a lab or create a new one.</span>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+<div id="modal-slot"></div>
+{% block extra_js %}
+<script>
+function ideLabClick(el) {
+  document.querySelectorAll('.ide-lab-item').forEach(function (i) { i.classList.remove('is-active'); });
+  el.classList.add('is-active');
+  document.getElementById('ide-detail').innerHTML = '<div class="ide-loading-state"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ide-spinner"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg><span>Loading editor…</span></div>';
+}
+</script>
+{% endblock %}
+{% endblock %}

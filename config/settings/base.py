@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     "website",
     "authentication",
     "dashboard",
+    "ide",
 ]
 
 MIDDLEWARE = [
@@ -119,6 +120,9 @@ BRAND_SURFACE = "#f5f2ee"   # warm cream — content area background
 # Override BRAND_FONT_FAMILY here if you swap fonts.
 BRAND_FONT_URL    = ""
 BRAND_FONT_FAMILY = "'IBM Plex Sans', 'Inter', system-ui, sans-serif"
+
+# ── Third-party integrations ──────────────────────────────────────────
+LOGO_DEV_TOKEN = os.environ.get("LOGO_DEV_TOKEN", "")
 
 # ── Email ─────────────────────────────────────────────────────────────
 RESEND_API_KEY     = os.environ.get("RESEND_API_KEY", "")

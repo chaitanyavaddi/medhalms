@@ -1,0 +1,74 @@
+{% load static %}
+<div class="ide-modal-backdrop" onclick="if(event.target===this)document.getElementById('modal-slot').innerHTML=''">
+  <div class="ide-modal" onclick="event.stopPropagation()">
+    <div class="ide-modal-header">
+      <h3>New Lab</h3>
+      <button type="button" class="ide-modal-close" onclick="document.getElementById('modal-slot').innerHTML=''">&times;</button>
+    </div>
+    <form hx-post="{% url 'ide:lab_create' %}" hx-target="#modal-slot" hx-swap="innerHTML">
+      {% csrf_token %}
+      <div class="ide-modal-body">
+        {% if messages %}<div class="ide-modal-errors">{% for m in messages %}<p class="ide-modal-error-msg">{{ m }}</p>{% endfor %}</div>{% endif %}
+
+        <div class="ide-modal-field">
+          <label for="lab-name">Lab Name</label>
+          <input type="text" id="lab-name" name="name" placeholder="e.g. Functions Practice" value="{{ data.name|default:'' }}" autocomplete="off">
+        </div>
+
+        <div class="ide-modal-field ide-modal-field--type">
+          <label>Lab Type</label>
+          <div class="ide-modal-tabs">
+            <button type="button" class="ide-tab-btn is-active" data-tab="language" onclick="ideTabSwitch(this)">Languages <span class="ide-tab-count">{{ language_options|length }}</span></button>
+            <button type="button" class="ide-tab-btn" data-tab="web" onclick="ideTabSwitch(this)">Web Tech <span class="ide-tab-count">{{ web_options|length }}</span></button>
+            <button type="button" class="ide-tab-btn" data-tab="database" onclick="ideTabSwitch(this)">Databases <span class="ide-tab-count">{{ database_options|length }}</span></button>
+          </div>
+          <div class="ide-tab-panel" data-panel="language">
+            <div class="ide-lang-grid">
+              {% for opt in language_options %}<button type="button" class="ide-lang-opt {% if data.oc_slug == opt.oc_slug %}is-selected{% endif %}" data-slug="{{ opt.oc_slug }}" data-category="language" onclick="idePickLang(this)"><img src="https://img.logo.dev/{{ opt.logo_domain }}?token={{ LOGO_DEV_TOKEN }}&retina=true" alt="{{ opt.name }}" onerror="this.style.display='none'"><span>{{ opt.name }}</span></button>{% endfor %}
+            </div>
+          </div>
+          <div class="ide-tab-panel" data-panel="web" hidden>
+            <div class="ide-lang-grid">
+              {% for opt in web_options %}<button type="button" class="ide-lang-opt {% if data.oc_slug == opt.oc_slug %}is-selected{% endif %}" data-slug="{{ opt.oc_slug }}" data-category="web" onclick="idePickLang(this)"><img src="https://img.logo.dev/{{ opt.logo_domain }}?token={{ LOGO_DEV_TOKEN }}&retina=true" alt="{{ opt.name }}" onerror="this.style.display='none'"><span>{{ opt.name }}</span></button>{% endfor %}
+            </div>
+          </div>
+          <div class="ide-tab-panel" data-panel="database" hidden>
+            <div class="ide-lang-grid">
+              {% for opt in database_options %}<button type="button" class="ide-lang-opt {% if data.oc_slug == opt.oc_slug %}is-selected{% endif %}" data-slug="{{ opt.oc_slug }}" data-category="database" onclick="idePickLang(this)"><img src="https://img.logo.dev/{{ opt.logo_domain }}?token={{ LOGO_DEV_TOKEN }}&retina=true" alt="{{ opt.name }}" onerror="this.style.display='none'"><span>{{ opt.name }}</span></button>{% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" name="oc_slug" id="oc-slug-input" value="{{ data.oc_slug|default:'' }}">
+        <input type="hidden" name="category" id="category-input" value="{{ data.category|default:'' }}">
+      </div>
+      <div class="ide-modal-footer">
+        <button type="button" class="ide-modal-cancel" onclick="document.getElementById('modal-slot').innerHTML=''">Cancel</button>
+        <button type="submit" class="ide-modal-submit">Create Lab</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+function ideTabSwitch(btn) {
+  var modal = btn.closest('.ide-modal');
+  modal.querySelectorAll('.ide-tab-btn').forEach(function (b) { b.classList.remove('is-active'); });
+  modal.querySelectorAll('.ide-tab-panel').forEach(function (p) { p.hidden = true; });
+  btn.classList.add('is-active');
+  var panel = modal.querySelector('[data-panel="' + btn.dataset.tab + '"]');
+  if (panel) panel.hidden = false;
+}
+function idePickLang(btn) {
+  var modal = btn.closest('.ide-modal');
+  modal.querySelectorAll('.ide-lang-opt').forEach(function (b) { b.classList.remove('is-selected'); });
+  btn.classList.add('is-selected');
+  document.getElementById('oc-slug-input').value = btn.dataset.slug;
+  document.getElementById('category-input').value = btn.dataset.category;
+}
+(function () {
+  var sel = document.querySelector('.ide-lang-opt.is-selected');
+  if (!sel) return;
+  var tabBtn = document.querySelector('.ide-tab-btn[data-tab="' + sel.dataset.category + '"]');
+  if (tabBtn) ideTabSwitch(tabBtn);
+})();
+</script>

@@ -30,8 +30,8 @@ html { font-size: 16px; scrollbar-gutter: stable; }
   --nav-section-color:  #9ca3af;
 
   /* Topbar */
-  --topbar-bg:     #ffffff;
-  --topbar-border: #e5e7eb;
+  --topbar-bg:     linear-gradient(90deg, var(--brand-navy) 0%, var(--brand-blue) 100%);
+  --topbar-border: rgba(255,255,255,0.08);
 
   /* Content */
   --content-bg: var(--brand-surface);
@@ -502,6 +502,37 @@ body.dash-app--collapsed .dash-collapse-chevron {
 }
 
 .dash-user-btn:hover { background: #f3f4f6; }
+
+/* ── Topbar dark overrides (topbar matches sidebar bg) ── */
+
+.dash-search-wrap {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.1);
+}
+.dash-search-wrap:focus-within {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.2);
+}
+.dash-search-wrap > svg { color: rgba(255,255,255,0.4); }
+
+.dash-search-input { color: rgba(255,255,255,0.88); }
+.dash-search-input::placeholder { color: rgba(255,255,255,0.3); }
+
+.dash-search-kbd {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.3);
+}
+
+.dash-icon-btn { color: rgba(255,255,255,0.55); }
+.dash-icon-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+.dash-hamburger { color: rgba(255,255,255,0.55); }
+.dash-hamburger:hover { background: rgba(255,255,255,0.08); }
+
+.dash-user-btn { color: rgba(255,255,255,0.88); }
+.dash-user-btn:hover { background: rgba(255,255,255,0.08); }
+.dash-user-btn svg { color: rgba(255,255,255,0.4); }
 
 .dash-user-display {
   max-width: 120px;
