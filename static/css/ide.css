@@ -40,16 +40,16 @@
   font-size: 11px;
   font-weight: 700;
   color: #fff;
-  background: #6366f1;
+  background: var(--brand-accent);
   border: none;
   border-radius: 5px;
   padding: 5px 11px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: filter 0.15s;
   letter-spacing: 0.01em;
   flex-shrink: 0;
 }
-.ide-new-btn:hover { background: #4f46e5; }
+.ide-new-btn:hover { filter: brightness(0.88); }
 
 .ide-lab-list {
   flex: 1;
@@ -557,9 +557,9 @@
   color: #e2e8f0;
 }
 .ide-lang-opt.is-selected {
-  border-color: #6366f1;
-  background: rgba(99,102,241,0.12);
-  color: #a5b4fc;
+  border-color: var(--brand-accent);
+  background: color-mix(in srgb, var(--brand-accent) 12%, transparent);
+  color: var(--brand-accent);
 }
 
 .ide-lang-opt img {
@@ -593,15 +593,15 @@
 
 .ide-modal-submit {
   padding: 9px 22px;
-  background: #6366f1;
+  background: var(--brand-accent);
   border: none;
   color: #fff;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: filter 0.15s;
   font-family: inherit;
   letter-spacing: 0.01em;
 }
-.ide-modal-submit:hover { background: #4f46e5; }
+.ide-modal-submit:hover { filter: brightness(0.88); }

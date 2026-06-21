@@ -1,0 +1,86 @@
+<div class="um-modal-backdrop">
+  <div class="um-modal">
+    <div class="um-modal-header">
+      <h3 class="um-modal-title">{% if user_obj %}Edit User{% else %}Add {{ role|title }}{% endif %}</h3>
+      <button type="button" class="um-modal-close"
+              onclick="document.getElementById('um-modal-slot').innerHTML=''">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    {% if error %}
+    <div class="um-form-error">{{ error }}</div>
+    {% endif %}
+
+    <form hx-post="{% if user_obj %}{% url 'users:edit' user_obj.pk %}{% else %}{% url 'users:create' %}{% endif %}"
+          hx-target="#um-modal-slot"
+          hx-swap="innerHTML">
+      {% csrf_token %}
+      <input type="hidden" name="role" value="{{ role }}">
+
+      <div class="um-form-row">
+        <div class="um-form-field">
+          <label>First name</label>
+          <input type="text" name="first_name"
+                 value="{{ form_data.first_name }}"
+                 placeholder="First name">
+        </div>
+        <div class="um-form-field">
+          <label>Last name</label>
+          <input type="text" name="last_name"
+                 value="{{ form_data.last_name }}"
+                 placeholder="Last name">
+        </div>
+      </div>
+
+      {% if user_obj %}
+      <div class="um-form-field">
+        <label>Email</label>
+        <input type="email" value="{{ user_obj.email }}" disabled class="um-input-disabled">
+      </div>
+      {% else %}
+      <div class="um-form-field">
+        <label>Email <span class="um-required">*</span></label>
+        <input type="email" name="email"
+               value="{{ form_data.email }}"
+               placeholder="user@example.com" required>
+      </div>
+      {% endif %}
+
+      <div class="um-form-field">
+        <label>Status</label>
+        <select name="status">
+          <option value="active"   {% if not user_obj or user_obj.status == 'active'   %}selected{% endif %}>Active</option>
+          <option value="inactive" {% if user_obj.status == 'inactive' %}selected{% endif %}>Inactive</option>
+          <option value="pending"  {% if user_obj.status == 'pending'  %}selected{% endif %}>Pending</option>
+          <option value="banned"   {% if user_obj.status == 'banned'   %}selected{% endif %}>Banned</option>
+        </select>
+      </div>
+
+      <div class="um-form-field">
+        <label>
+          Password
+          {% if user_obj %}
+            <span class="um-hint">(leave blank to keep current)</span>
+          {% else %}
+            <span class="um-required">*</span>
+          {% endif %}
+        </label>
+        <input type="password" name="password"
+               placeholder="{% if user_obj %}New password (optional){% else %}Set a password{% endif %}"
+               {% if not user_obj %}required{% endif %}>
+      </div>
+
+      <div class="um-form-actions">
+        <button type="button" class="um-btn-secondary"
+                onclick="document.getElementById('um-modal-slot').innerHTML=''">Cancel</button>
+        <button type="submit" class="um-btn-primary">
+          {% if user_obj %}Save changes{% else %}Create user{% endif %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

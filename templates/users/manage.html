@@ -1,0 +1,80 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Users{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/users.css' %}">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.0/js/dataTables.min.js"></script>
+{% endblock %}
+
+{% block content_class %}dash-content--edge{% endblock %}
+{% block topbar_title %}<h2 class="dash-page-title">Users</h2>{% endblock %}
+
+{% block content %}
+<div class="um-layout">
+
+  <aside class="um-thread">
+    <nav class="tn-nav">
+      <div class="tn-group">
+        <span class="tn-group-label">Role</span>
+        <a class="tn-item {% if role_slug == 'students' %}is-active{% endif %}"
+           href="{% url 'users:students' %}">Students</a>
+        <a class="tn-item {% if role_slug == 'trainers' %}is-active{% endif %}"
+           href="{% url 'users:trainers' %}">Trainers</a>
+        <a class="tn-item {% if role_slug == 'staff' %}is-active{% endif %}"
+           href="{% url 'users:staff' %}">Staff</a>
+        <a class="tn-item {% if role_slug == 'admins' %}is-active{% endif %}"
+           href="{% url 'users:admins' %}">Admins</a>
+      </div>
+    </nav>
+  </aside>
+
+  <div class="um-main" id="um-content">
+    {% include "users/partials/user_table.html" %}
+  </div>
+
+</div>
+
+<div id="um-modal-slot"></div>
+
+<script>
+(function () {
+  var dt;
+
+  function initDataTable() {
+    if ($.fn.dataTable.isDataTable('#um-grid')) {
+      $('#um-grid').DataTable().destroy();
+    }
+    dt = new DataTable('#um-grid', {
+      dom: 'tip',
+      pageLength: 20,
+      language: {
+        emptyTable:  '<div class="um-empty-state"><p>No users found.</p></div>',
+        zeroRecords: '<div class="um-empty-state"><p>No matching users.</p></div>',
+        info:        'Showing _START_ – _END_ of _TOTAL_',
+        infoEmpty:   'No users',
+        infoFiltered:'(filtered from _MAX_)',
+        paginate: { previous: '‹', next: '›' },
+      },
+    });
+    var searchEl = document.getElementById('um-search');
+    if (searchEl) {
+      searchEl.addEventListener('input', function () {
+        dt.search(this.value).draw();
+      });
+    }
+  }
+
+  $(document).ready(function () {
+    initDataTable();
+  });
+
+  // After modal CRUD success: full page reload to reflect changes
+  document.body.addEventListener('closeModal', function () {
+    window.location.reload();
+  });
+})();
+</script>
+{% endblock %}

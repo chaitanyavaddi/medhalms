@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     "authentication",
     "dashboard",
     "ide",
+    "jobs",
 ]
 
 MIDDLEWARE = [
@@ -81,7 +82,7 @@ LOGIN_URL       = "/login/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # ── Site ──────────────────────────────────────────────────────────────
-SITE_NAME = os.environ.get("SITE_NAME", "MedhaEduTech")
+SITE_NAME = os.environ.get("SITE_NAME", "MedhaLMS")
 
 # ── Background tasks ──────────────────────────────────────────────────
 TASKS = {
@@ -122,7 +123,8 @@ BRAND_FONT_URL    = ""
 BRAND_FONT_FAMILY = "'IBM Plex Sans', 'Inter', system-ui, sans-serif"
 
 # ── Third-party integrations ──────────────────────────────────────────
-LOGO_DEV_TOKEN = os.environ.get("LOGO_DEV_TOKEN", "")
+LOGO_DEV_TOKEN   = os.environ.get("LOGO_DEV_TOKEN", "")
+JOBSPY_API_URL   = os.environ.get("JOBSPY_API_URL", "https://jobspy-production-76c6.up.railway.app")
 
 # ── Email ─────────────────────────────────────────────────────────────
 RESEND_API_KEY     = os.environ.get("RESEND_API_KEY", "")

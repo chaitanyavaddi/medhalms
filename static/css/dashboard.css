@@ -1059,6 +1059,7 @@ body.dash-app--collapsed .dash-nav-panel .dash-nav-label { opacity: 0; }
   text-align: left;
   cursor: pointer;
   line-height: 1.4;
+  text-decoration: none;
   transition: background 0.12s, color 0.12s;
 }
 .tn-item:hover {

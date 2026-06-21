@@ -24,6 +24,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Role(models.TextChoices):
         STUDENT = 'student', 'Student'
         TRAINER = 'trainer', 'Trainer'
+        STAFF   = 'staff',   'Staff'
         ADMIN   = 'admin',   'Admin'
 
     class Gender(models.TextChoices):

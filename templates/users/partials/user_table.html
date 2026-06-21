@@ -1,0 +1,61 @@
+<div class="um-main-hd">
+  <h2 class="um-main-title">{{ role_plural }}</h2>
+  <div class="um-main-actions">
+    <div class="um-search-wrap">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="search" id="um-search" class="um-search" placeholder="Search…">
+    </div>
+    <button class="um-add-btn"
+            hx-get="{% url 'users:create' %}?role={{ role_value }}"
+            hx-target="#um-modal-slot"
+            hx-swap="innerHTML">
+      + Add {{ role_singular }}
+    </button>
+  </div>
+</div>
+
+<div class="um-grid-wrap">
+  <table id="um-grid" style="width:100%">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th>Joined</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td data-order="{% if u.first_name %}{{ u.first_name }} {{ u.last_name }}{% else %}{{ u.email }}{% endif %}">
+          <div class="um-name-cell">
+            <span class="um-avatar">
+              {% if u.first_name %}{{ u.first_name|first|upper }}{% if u.last_name %}{{ u.last_name|first|upper }}{% endif %}{% else %}{{ u.email|first|upper }}{% endif %}
+            </span>
+            <span>{% if u.first_name or u.last_name %}{{ u.first_name }} {{ u.last_name }}{% else %}<span style="color:#9ca3af">—</span>{% endif %}</span>
+          </div>
+        </td>
+        <td>{{ u.email }}</td>
+        <td data-order="{{ u.status }}">
+          <span class="um-badge um-badge--{{ u.status }}">{{ u.get_status_display }}</span>
+        </td>
+        <td>{{ u.created_at|date:"M d, Y" }}</td>
+        <td class="um-actions-cell">
+          <button class="um-action-btn"
+                  hx-get="{% url 'users:edit' u.pk %}"
+                  hx-target="#um-modal-slot"
+                  hx-swap="innerHTML">Edit</button>
+          <button class="um-action-btn um-action-btn--danger"
+                  hx-get="{% url 'users:delete' u.pk %}"
+                  hx-target="#um-modal-slot"
+                  hx-swap="innerHTML">Delete</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
