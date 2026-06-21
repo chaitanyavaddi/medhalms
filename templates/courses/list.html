@@ -1,0 +1,82 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Courses{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/courses.css' %}">{% endblock %}
+{% block topbar_title %}<h2 class="dash-page-title">Courses</h2>{% endblock %}
+
+{% block content %}
+<div class="cl-page">
+
+  <div class="cl-hd">
+    <h1 class="cl-hd-title">All Courses</h1>
+    {% if request.user.is_superuser %}
+    <button class="cl-new-btn"
+            hx-get="{% url 'courses:create' %}"
+            hx-target="#cr-modal-slot"
+            hx-swap="innerHTML">
+      + New Course
+    </button>
+    {% endif %}
+  </div>
+
+  {% if courses %}
+  <div class="cl-grid">
+    {% for course in courses %}
+    <a href="{% url 'courses:detail' course.pk %}" class="cl-card">
+      {% if course.thumbnail %}
+      <div class="cl-card-thumb" style="background-image:url({{ course.thumbnail }})"></div>
+      {% else %}
+      <div class="cl-card-thumb cl-card-thumb--empty">
+        <svg class="cl-empty-icon" width="40" height="40" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+      </div>
+      {% endif %}
+      <div class="cl-card-body">
+        <h3 class="cl-card-title">{{ course.name }}</h3>
+        {% if course.trainers.exists %}
+        <p class="cl-card-trainers">
+          {% for t in course.trainers.all %}{{ t.get_full_name|default:t.email }}{% if not forloop.last %}, {% endif %}{% endfor %}
+        </p>
+        {% endif %}
+        <div class="cl-card-meta">
+          <span class="cl-badge cl-badge--{{ course.status }}">{{ course.get_status_display }}</span>
+          <span class="cl-card-chapters">{{ course.total_chapters }} chapter{{ course.total_chapters|pluralize }}</span>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="cl-empty">
+    <svg class="cl-empty-icon" width="52" height="52" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+    </svg>
+    <p>No courses yet.</p>
+    {% if request.user.is_superuser %}
+    <button class="cl-new-btn"
+            hx-get="{% url 'courses:create' %}"
+            hx-target="#cr-modal-slot"
+            hx-swap="innerHTML">
+      Create your first course
+    </button>
+    {% endif %}
+  </div>
+  {% endif %}
+
+</div>
+
+<div id="cr-modal-slot"></div>
+
+<script>
+  document.body.addEventListener('closeModal', function () {
+    document.getElementById('cr-modal-slot').innerHTML = '';
+    window.location.reload();
+  });
+</script>
+{% endblock %}

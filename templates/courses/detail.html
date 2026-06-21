@@ -1,0 +1,794 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}{{ course.name }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/courses.css' %}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.bubble.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/video.js@8.23.8/dist/video-js.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content_class %}dash-content--edge{% endblock %}
+{% block topbar_title %}<h2 class="dash-page-title">{{ course.name }}</h2>{% endblock %}
+
+{% block content %}
+<div class="cr-layout">
+
+  <!-- ── Left thread ── -->
+  <aside class="cr-thread">
+    <div class="cr-thread-hd">
+      <h3 class="cr-course-name">{{ course.name }}</h3>
+      <div class="cr-thread-actions">
+        {% if can_manage %}
+        <button class="cr-add-btn"
+                hx-get="{% url 'courses:module_create' course.pk %}"
+                hx-target="#cr-modal-slot"
+                hx-swap="innerHTML">
+          + Module
+        </button>
+        <button class="cr-thread-edit-btn" title="Edit course"
+                hx-get="{% url 'courses:edit' course.pk %}"
+                hx-target="#cr-modal-slot"
+                hx-swap="innerHTML">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        </button>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="cr-thread-scroll">
+      {% for module in course.modules.all %}
+      <details class="cr-module" {% if active_chapter and active_chapter.module.pk == module.pk %}open{% elif forloop.first %}open{% endif %}>
+        <summary>
+          <svg class="cr-module-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+          <span class="cr-module-title">{{ module.title }}</span>
+          {% if can_manage %}
+          <span class="cr-module-actions">
+            <button class="cr-module-action" title="Rename module"
+                    hx-get="{% url 'courses:module_edit' course.pk module.pk %}"
+                    hx-target="#cr-modal-slot"
+                    hx-swap="innerHTML"
+                    onclick="event.preventDefault(); event.stopPropagation();">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+              </svg>
+            </button>
+            <button class="cr-module-action cr-module-action--del" title="Delete module"
+                    hx-get="{% url 'courses:module_delete' course.pk module.pk %}"
+                    hx-target="#cr-modal-slot"
+                    hx-swap="innerHTML"
+                    onclick="event.preventDefault(); event.stopPropagation();">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+                <path d="M10 11v6"/><path d="M14 11v6"/>
+                <path d="M9 6V4h6v2"/>
+              </svg>
+            </button>
+          </span>
+          {% endif %}
+        </summary>
+
+        <div class="cr-chapter-list">
+          {% for chapter in module.chapters.all %}
+          <div class="cr-chapter-item {% if active_chapter and active_chapter.pk == chapter.pk %}is-active{% endif %}">
+            <a class="cr-chapter-link"
+               href="{% url 'courses:chapter' course.pk chapter.pk %}"
+               title="{{ chapter.title }}">{{ chapter.title }}</a>
+            {% if can_manage %}
+            <span class="cr-chapter-item-actions">
+              <button class="cr-chapter-action" title="Rename"
+                      hx-get="{% url 'courses:chapter_edit' course.pk module.pk chapter.pk %}"
+                      hx-target="#cr-modal-slot"
+                      hx-swap="innerHTML">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+                </svg>
+              </button>
+              <button class="cr-chapter-action cr-chapter-action--del" title="Delete"
+                      hx-get="{% url 'courses:chapter_delete' course.pk module.pk chapter.pk %}"
+                      hx-target="#cr-modal-slot"
+                      hx-swap="innerHTML">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </span>
+            {% endif %}
+          </div>
+          {% endfor %}
+
+          {% if can_manage %}
+          <button class="cr-add-chapter-btn"
+                  hx-get="{% url 'courses:chapter_create' course.pk module.pk %}"
+                  hx-target="#cr-modal-slot"
+                  hx-swap="innerHTML">
+            + Add chapter
+          </button>
+          {% endif %}
+        </div>
+      </details>
+      {% empty %}
+      <div class="cr-editor-empty" style="padding:32px 16px; font-size:13px; color:#9ca3af; text-align:center;">
+        No modules yet.{% if can_manage %} Click&nbsp;<strong>+ Module</strong>&nbsp;above.{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </aside>
+
+  <!-- ── Right editor panel ── -->
+  <div class="cr-editor">
+    {% if active_chapter %}
+
+    <div class="cr-editor-topbar">
+      <a href="{% url 'courses:list' %}" style="font-size:13px;color:#6b7280;text-decoration:none;display:flex;align-items:center;gap:5px;margin-right:auto;">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+          <path d="M13 4L7 10L13 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        All Courses
+      </a>
+      <span class="cr-save-status" id="cr-save-status">Saved</span>
+    </div>
+
+    <div class="cr-editor-scroll" id="cr-editor-scroll">
+      <div class="cr-editor-inner" id="cr-editor-inner">
+        {% if can_manage %}
+        <input type="text" id="editor-title" class="cr-title-input"
+               placeholder="Chapter title" value="{{ active_chapter.title }}" autocomplete="off">
+        {% else %}
+        <input type="text" id="editor-title" class="cr-title-input"
+               value="{{ active_chapter.title }}" readonly>
+        {% endif %}
+        <div id="quill-editor"></div>
+      </div>
+    </div>
+
+    {% else %}
+    <div class="cr-editor-empty">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d1d5db"
+           stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10 9 9 9 8 9"/>
+      </svg>
+      <p>Select a chapter to start editing.</p>
+      {% if can_manage %}
+      <p style="font-size:12px;">Add a module, then add chapters inside it.</p>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<div id="cr-modal-slot"></div>
+{% csrf_token %}
+
+{% if active_chapter %}
+{{ active_chapter.content|json_script:"chapter-body-data" }}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/video.js@8.23.8/dist/video.min.js"></script>
+
+<script>
+(function () {
+
+  // ── Modal slot: reload page on closeModal ─────────────────────────────────
+  document.body.addEventListener('closeModal', function () {
+    document.getElementById('cr-modal-slot').innerHTML = '';
+    window.location.reload();
+  });
+
+  {% if not active_chapter %}return;{% endif %}
+
+  {% if active_chapter %}
+  var CAN_MANAGE    = {% if can_manage %}true{% else %}false{% endif %};
+  var SAVE_URL      = '{% url "courses:chapter_save" course.pk active_chapter.pk %}';
+  var UPLOAD_URL    = '{% url "courses:upload" %}';
+  {% endif %}
+  var csrfToken     = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  var statusEl      = document.getElementById('cr-save-status');
+  var autosaveTimer = null;
+  var isSaving      = false;
+  var saveAbort     = null;
+
+  // ── Quill custom blots ────────────────────────────────────────────────────
+
+  var ImageBlot = Quill.import('formats/image');
+  class HnImageBlot extends ImageBlot {
+    static create(value) {
+      var src  = typeof value === 'object' ? (value.src || '') : (value || '');
+      var node = super.create(src);
+      if (typeof value === 'object') {
+        if (value.width)     { node.setAttribute('data-width', value.width); node.style.width = value.width; }
+        if (value.align)     node.setAttribute('data-align',     value.align);
+        if (value.wrap)      node.setAttribute('data-wrap',      value.wrap);
+        if (value.grayscale) node.setAttribute('data-grayscale', value.grayscale);
+      }
+      return node;
+    }
+    static value(node) {
+      return {
+        src:       node.getAttribute('src')            || '',
+        width:     node.getAttribute('data-width')     || node.style.width || '',
+        align:     node.getAttribute('data-align')     || '',
+        wrap:      node.getAttribute('data-wrap')      || '',
+        grayscale: node.getAttribute('data-grayscale') || '',
+      };
+    }
+  }
+  HnImageBlot.blotName = 'image';
+  Quill.register(HnImageBlot, true);
+
+  var BlockEmbed = Quill.import('blots/block/embed');
+  class UploadBlot extends BlockEmbed {
+    static create(id) {
+      var node = super.create();
+      node.setAttribute('data-upload-id', id);
+      node.innerHTML =
+        '<div class="upload-progress-inner" style="width:0%"></div>' +
+        '<span class="upload-progress-label">Uploading…</span>' +
+        '<span class="upload-spinner"></span>';
+      return node;
+    }
+    static value(node) { return node.getAttribute('data-upload-id'); }
+  }
+  UploadBlot.blotName  = 'upload-placeholder';
+  UploadBlot.tagName   = 'div';
+  UploadBlot.className = 'upload-progress-bar';
+  Quill.register(UploadBlot);
+
+  class HnVideoBlot extends BlockEmbed {
+    static create(value) {
+      var node  = super.create();
+      var src   = (typeof value === 'object') ? (value.src   || '') : (value || '');
+      var width = (typeof value === 'object') ? (value.width || '') : '';
+      var align = (typeof value === 'object') ? (value.align || '') : '';
+      node.setAttribute('data-src', src);
+      node.setAttribute('contenteditable', 'false');
+      if (width) { node.setAttribute('data-width', width); node.style.width = width; }
+      if (align) node.setAttribute('data-align', align);
+      return node;
+    }
+    static value(node) {
+      return {
+        src:   node.getAttribute('data-src')   || '',
+        width: node.getAttribute('data-width') || node.style.width || '',
+        align: node.getAttribute('data-align') || '',
+        wrap:  node.getAttribute('data-wrap')  || '',
+      };
+    }
+  }
+  HnVideoBlot.blotName  = 'hn-video';
+  HnVideoBlot.tagName   = 'div';
+  HnVideoBlot.className = 'hn-video-blot';
+  Quill.register(HnVideoBlot);
+
+  // ── Quill init ────────────────────────────────────────────────────────────
+
+  var quill = new Quill('#quill-editor', {
+    theme:    'bubble',
+    readOnly: !CAN_MANAGE,
+    placeholder: CAN_MANAGE ? 'Start writing…' : '',
+    modules: {
+      toolbar: CAN_MANAGE ? [
+        [{ header: 2 }, { header: 3 }],
+        ['bold', 'italic', 'underline'],
+        ['blockquote'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['link'],
+      ] : false,
+      clipboard: {
+        matchers: [
+          ['IMG', function (node, delta) {
+            var src = node.getAttribute('src') || '';
+            if (src.startsWith('data:')) return new (Quill.import('delta'))();
+            return delta;
+          }],
+        ],
+      },
+    },
+  });
+
+  var tooltipInput = quill.theme && quill.theme.tooltip &&
+    quill.theme.tooltip.root.querySelector('input[data-link]');
+  if (tooltipInput) tooltipInput.dataset.link = 'https://example.com/path';
+
+  // ── Load existing content ─────────────────────────────────────────────────
+
+  var bodyData = document.getElementById('chapter-body-data');
+  if (bodyData) {
+    quill.clipboard.dangerouslyPasteHTML(JSON.parse(bodyData.textContent));
+    quill.setSelection(quill.getLength(), 0);
+    setTimeout(initEditorVideos, 0);
+  }
+
+  // ── Video.js helpers ──────────────────────────────────────────────────────
+
+  function initEditorVideos() {
+    quill.root.querySelectorAll('div.hn-video-blot:not([data-vjs])').forEach(function (wrapper) {
+      var src = wrapper.getAttribute('data-src');
+      if (!src) return;
+      wrapper.innerHTML = '';
+      var vid = document.createElement('video');
+      vid.setAttribute('src', src);
+      vid.setAttribute('preload', 'metadata');
+      vid.setAttribute('playsinline', '');
+      vid.classList.add('video-js', 'vjs-default-skin');
+      var vjsId = 'vjs-cr-' + Math.random().toString(36).slice(2, 8);
+      vid.id = vjsId;
+      wrapper.appendChild(vid);
+      wrapper.setAttribute('data-vjs', vjsId);
+      wrapper.setAttribute('contenteditable', 'false');
+      var player = videojs(vjsId, { controls: true, fluid: true, responsive: true, preload: 'metadata' });
+      wrapper._vjsPlayer = player;
+    });
+  }
+
+  function getEditorBody() {
+    var clone = quill.root.cloneNode(true);
+    clone.querySelectorAll('div.hn-video-blot').forEach(function (wrapper) {
+      var clean = document.createElement('div');
+      clean.className = 'hn-video-blot';
+      ['data-src','data-width','data-align','data-wrap'].forEach(function (attr) {
+        if (wrapper.getAttribute(attr)) clean.setAttribute(attr, wrapper.getAttribute(attr));
+      });
+      if (wrapper.style.width) clean.style.width = wrapper.style.width;
+      wrapper.parentNode.replaceChild(clean, wrapper);
+    });
+    return clone.innerHTML;
+  }
+
+  // ── Autosave ──────────────────────────────────────────────────────────────
+
+  function setStatus(text, cls) {
+    statusEl.textContent = text;
+    statusEl.className   = 'cr-save-status' + (cls ? ' ' + cls : '');
+  }
+
+  function scheduleAutosave() {
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(doAutosave, 2000);
+  }
+
+  function doAutosave(onComplete) {
+    if (!CAN_MANAGE) return;
+    var title = document.getElementById('editor-title').value.trim();
+    clearTimeout(autosaveTimer);
+    if (saveAbort) saveAbort.abort();
+    saveAbort = new AbortController();
+    isSaving  = true;
+    setStatus('Saving…', 'is-saving');
+    var start = Date.now();
+    var data  = new FormData();
+    data.append('title', title);
+    data.append('body',  getEditorBody());
+    fetch(SAVE_URL, {
+      method:  'POST',
+      headers: { 'X-CSRFToken': csrfToken },
+      body:    data,
+      signal:  saveAbort.signal,
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (json) {
+        isSaving = false; saveAbort = null;
+        var delay = Math.max(0, 500 - (Date.now() - start));
+        setTimeout(function () {
+          if (json.error) { setStatus('Error', 'is-error'); }
+          else            { setStatus('Saved', 'is-saved'); }
+          if (onComplete) onComplete(json);
+        }, delay);
+      })
+      .catch(function (err) {
+        if (err && err.name === 'AbortError') return;
+        isSaving = false; saveAbort = null;
+        setStatus('Error', 'is-error');
+        if (onComplete) onComplete(null);
+      });
+  }
+
+  if (CAN_MANAGE) {
+    document.getElementById('editor-title').addEventListener('input', scheduleAutosave);
+    quill.on('text-change', function (delta, old, source) {
+      if (source !== Quill.sources.SILENT) scheduleAutosave();
+    });
+  }
+
+  // Save before navigating away
+  window.addEventListener('beforeunload', function () {
+    if (isSaving || autosaveTimer) {
+      clearTimeout(autosaveTimer);
+      doAutosave();
+    }
+  });
+
+  {% if can_manage %}
+  // ── Toast ─────────────────────────────────────────────────────────────────
+
+  var toastContainer = document.createElement('div');
+  toastContainer.className = 'toast-container';
+  document.body.appendChild(toastContainer);
+
+  function showToast(message) {
+    var t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = message;
+    toastContainer.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add('toast--in'); });
+    setTimeout(function () {
+      t.classList.remove('toast--in');
+      t.addEventListener('transitionend', function () { t.remove(); }, { once: true });
+    }, 4500);
+  }
+
+  // ── Upload ────────────────────────────────────────────────────────────────
+
+  var uploadCounter = 0;
+  var activeUploads = 0;
+
+  window.addEventListener('beforeunload', function (e) {
+    if (activeUploads > 0) { e.preventDefault(); e.returnValue = ''; }
+  });
+
+  function compressImage(file) {
+    return new Promise(function (resolve) {
+      if (!file.type.startsWith('image/') || file.type === 'image/gif' || file.size < 200 * 1024) {
+        resolve(file); return;
+      }
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth, h = img.naturalHeight;
+        var MAX = 1920, scale = Math.min(1, MAX / w, MAX / h);
+        if (scale === 1 && file.size < 500 * 1024) { resolve(file); return; }
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.round(w * scale); canvas.height = Math.round(h * scale);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(function (blob) {
+          if (!blob || blob.size >= file.size) { resolve(file); return; }
+          resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
+        }, 'image/jpeg', 0.85);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    });
+  }
+
+  function removePlaceholder(id) {
+    var p = quill.root.querySelector('[data-upload-id="' + id + '"]');
+    if (!p) return;
+    var blot = Quill.find(p);
+    if (blot) quill.deleteText(quill.getIndex(blot), 1, Quill.sources.SILENT);
+  }
+
+  function doUpload(file) {
+    var id    = 'up-' + (++uploadCounter);
+    var range = quill.getSelection(true) || { index: quill.getLength() };
+    quill.insertEmbed(range.index, 'upload-placeholder', id, Quill.sources.USER);
+    quill.setSelection(range.index + 1, 0);
+    activeUploads++;
+
+    function setProgress(pct) {
+      var bar = quill.root.querySelector('[data-upload-id="' + id + '"] .upload-progress-inner');
+      if (bar) bar.style.width = pct + '%';
+    }
+
+    var fd = new FormData();
+    fd.append('file', file);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', UPLOAD_URL);
+    xhr.setRequestHeader('X-CSRFToken', csrfToken);
+    xhr.upload.addEventListener('progress', function (e) {
+      if (e.lengthComputable) setProgress(Math.round(e.loaded / e.total * 90));
+    });
+    xhr.addEventListener('load', function () {
+      activeUploads--;
+      var data = {};
+      try { data = JSON.parse(xhr.responseText); } catch (e) {}
+      if (data.error) { removePlaceholder(id); showToast(data.error); return; }
+      setProgress(100);
+      var placeholder = quill.root.querySelector('[data-upload-id="' + id + '"]');
+      if (!placeholder) return;
+      var blotIndex = quill.getIndex(Quill.find(placeholder));
+      quill.deleteText(blotIndex, 1, Quill.sources.SILENT);
+      if (data.url) {
+        if (data.type === 'image') {
+          quill.insertEmbed(blotIndex, 'image', data.url, Quill.sources.USER);
+        } else {
+          quill.insertEmbed(blotIndex, 'hn-video', { src: data.url }, Quill.sources.USER);
+          setTimeout(initEditorVideos, 0);
+        }
+        quill.insertText(blotIndex + 1, '\n', Quill.sources.USER);
+        quill.setSelection(blotIndex + 2, 0);
+      }
+      scheduleAutosave();
+    });
+    xhr.addEventListener('error', function () {
+      activeUploads--;
+      removePlaceholder(id);
+      showToast('Upload failed — check your connection.');
+    });
+    xhr.send(fd);
+  }
+
+  function uploadFile(file) {
+    if (!file) return;
+    var allowed = ['image/jpeg','image/png','image/gif','image/webp','video/mp4','video/webm','video/quicktime'];
+    if (!allowed.includes(file.type)) return;
+    if (file.type.startsWith('video/') && file.size > 30 * 1024 * 1024) {
+      showToast('Video must be under 30 MB'); return;
+    }
+    if (file.type.startsWith('image/') && file.size > 10 * 1024 * 1024) {
+      showToast('Image must be under 10 MB'); return;
+    }
+    compressImage(file).then(doUpload);
+  }
+
+  // ── Plus button ───────────────────────────────────────────────────────────
+
+  var editorInner  = document.getElementById('cr-editor-inner');
+  var plusTrigger  = document.createElement('div');
+  plusTrigger.className = 'editor-plus-trigger';
+  plusTrigger.innerHTML =
+    '<button class="editor-plus-btn" title="Insert">' +
+      '<svg width="12" height="12" viewBox="0 0 12 12" fill="none">' +
+        '<line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+        '<line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+      '</svg>' +
+    '</button>';
+  editorInner.appendChild(plusTrigger);
+
+  var plusMenu = document.createElement('div');
+  plusMenu.className = 'editor-plus-menu';
+  plusMenu.innerHTML =
+    '<button data-action="image" title="Image">' +
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>' +
+    '</button>' +
+    '<button data-action="video" title="Video">' +
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>' +
+    '</button>';
+  editorInner.appendChild(plusMenu);
+
+  var plusBtn  = plusTrigger.querySelector('.editor-plus-btn');
+  var plusOpen = false;
+
+  function setMenuOpen(open) {
+    plusOpen = open;
+    plusBtn.classList.toggle('is-open', open);
+    plusMenu.classList.toggle('is-open', open);
+  }
+  function hidePlus() { plusTrigger.classList.remove('is-visible'); setMenuOpen(false); }
+
+  function updatePlus() {
+    var range = quill.getSelection();
+    if (!range || range.length > 0) { hidePlus(); return; }
+    var lineInfo = quill.getLine(range.index);
+    if (!lineInfo || !lineInfo[0]) { hidePlus(); return; }
+    if (lineInfo[0].domNode.textContent.trim() !== '') { hidePlus(); return; }
+    var bounds   = quill.getBounds(range.index);
+    var editorEl = document.getElementById('quill-editor');
+    var top      = editorEl.offsetTop + bounds.top + (bounds.height - 28) / 2;
+    plusTrigger.style.top = top + 'px';
+    plusMenu.style.top    = top + 'px';
+    plusTrigger.classList.add('is-visible');
+  }
+
+  quill.on('selection-change', function (range) { if (!range) hidePlus(); else updatePlus(); });
+  quill.on('text-change', function () { setTimeout(updatePlus, 0); });
+
+  plusBtn.addEventListener('click', function (e) { e.stopPropagation(); setMenuOpen(!plusOpen); });
+  plusMenu.addEventListener('click', function (e) {
+    var action = e.target.closest('[data-action]');
+    if (!action) return;
+    setMenuOpen(false);
+    var input = document.createElement('input');
+    input.type   = 'file';
+    input.accept = action.dataset.action === 'image' ? 'image/*' : 'video/mp4,video/webm,video/quicktime';
+    input.addEventListener('change', function () { uploadFile(input.files[0]); });
+    input.click();
+  });
+  document.addEventListener('click', function () { if (plusOpen) setMenuOpen(false); });
+
+  // Paste image
+  quill.root.addEventListener('paste', function (e) {
+    var items = (e.clipboardData || {}).items || [];
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].kind === 'file' && items[i].type.match(/^image\//)) {
+        e.preventDefault(); e.stopImmediatePropagation();
+        uploadFile(items[i].getAsFile()); return;
+      }
+    }
+  }, true);
+
+  // Drag and drop
+  quill.root.addEventListener('drop', function (e) {
+    var files = (e.dataTransfer || {}).files || [];
+    if (files.length) { e.preventDefault(); Array.from(files).forEach(uploadFile); }
+  });
+  quill.root.addEventListener('dragover', function (e) { e.preventDefault(); });
+
+  // Guard Backspace/Delete around embeds
+  function isMediaBlot(b) {
+    return b && b.statics &&
+      (b.statics.blotName === 'image' || b.statics.blotName === 'hn-video');
+  }
+  quill.root.addEventListener('keydown', function (e) {
+    if (e.key !== 'Backspace' && e.key !== 'Delete') return;
+    var range = quill.getSelection();
+    if (!range || range.length > 0) return;
+    if (e.key === 'Backspace' && range.index > 0) {
+      var r1 = quill.getLeaf(range.index - 1);
+      if (isMediaBlot(r1 && r1[0])) { e.preventDefault(); e.stopImmediatePropagation(); return; }
+    }
+    if (e.key === 'Delete') {
+      var r2 = quill.getLeaf(range.index);
+      if (isMediaBlot(r2 && r2[0])) { e.preventDefault(); e.stopImmediatePropagation(); }
+    }
+  }, true);
+
+  // ── Image/video overlay ───────────────────────────────────────────────────
+
+  (function () {
+    var mediaOverlay = null;
+    var activeMedia  = null;
+
+    var SVG_LEFT   = '<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><rect x="0" y="0" width="10" height="1.5" rx=".75" fill="currentColor"/><rect x="0" y="3.25" width="7" height="1.5" rx=".75" fill="currentColor"/><rect x="0" y="6.5" width="8.5" height="1.5" rx=".75" fill="currentColor"/></svg>';
+    var SVG_CENTER = '<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><rect x="0" y="0" width="10" height="1.5" rx=".75" fill="currentColor"/><rect x="1.5" y="3.25" width="7" height="1.5" rx=".75" fill="currentColor"/><rect x=".75" y="6.5" width="8.5" height="1.5" rx=".75" fill="currentColor"/></svg>';
+    var SVG_RIGHT  = '<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><rect x="0" y="0" width="10" height="1.5" rx=".75" fill="currentColor"/><rect x="3" y="3.25" width="7" height="1.5" rx=".75" fill="currentColor"/><rect x="1.5" y="6.5" width="8.5" height="1.5" rx=".75" fill="currentColor"/></svg>';
+    var SVG_DELETE = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1L1 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+    var SVG_WRAP   = '<svg width="12" height="10" viewBox="0 0 12 10" fill="none"><rect x="0" y="0" width="4.5" height="4.5" rx=".6" fill="currentColor" opacity=".75"/><rect x="5.5" y="0" width="6.5" height="1.3" rx=".65" fill="currentColor"/><rect x="5.5" y="2.5" width="5" height="1.3" rx=".65" fill="currentColor"/><rect x="0" y="6" width="12" height="1.3" rx=".65" fill="currentColor"/><rect x="0" y="8.5" width="8.5" height="1.3" rx=".65" fill="currentColor"/></svg>';
+    var SVG_BW     = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 1a5 5 0 0 1 0 10z" fill="currentColor"/></svg>';
+
+    function positionOverlay() {
+      if (!mediaOverlay || !activeMedia) return;
+      var rect = activeMedia.getBoundingClientRect();
+      mediaOverlay.style.left   = (rect.left + window.scrollX) + 'px';
+      mediaOverlay.style.top    = (rect.top  + window.scrollY) + 'px';
+      mediaOverlay.style.width  = rect.width  + 'px';
+      mediaOverlay.style.height = rect.height + 'px';
+    }
+
+    function removeOverlay() {
+      if (mediaOverlay) { mediaOverlay.parentNode && mediaOverlay.parentNode.removeChild(mediaOverlay); mediaOverlay = null; }
+      activeMedia = null;
+    }
+
+    function deleteActiveMedia() {
+      if (!activeMedia) return;
+      if (activeMedia._vjsPlayer) { try { activeMedia._vjsPlayer.dispose(); } catch (e) {} activeMedia._vjsPlayer = null; }
+      var blot = Quill.find(activeMedia);
+      if (blot) quill.deleteText(quill.getIndex(blot), 1, Quill.sources.USER);
+      removeOverlay();
+      scheduleAutosave();
+    }
+
+    function createOverlay(el) {
+      removeOverlay();
+      activeMedia = el;
+      var isVideo = el.classList.contains('hn-video-blot');
+      var overlay = document.createElement('div');
+      overlay.className = 'img-overlay';
+      var bar = document.createElement('div');
+      bar.className = 'img-align-bar';
+      var parentAlign = el.getAttribute('data-align') || '';
+      var isWrapped   = el.getAttribute('data-wrap') === 'true';
+      [{ value: '', svg: SVG_LEFT, title: 'Left' }, { value: 'center', svg: SVG_CENTER, title: 'Center' }, { value: 'right', svg: SVG_RIGHT, title: 'Right' }]
+        .forEach(function (a) {
+          var btn = document.createElement('button');
+          btn.type = 'button'; btn.title = a.title; btn.innerHTML = a.svg;
+          if (a.value === parentAlign || (a.value === '' && !parentAlign)) btn.classList.add('active');
+          if (a.value === 'center' && isWrapped) { btn.disabled = true; btn.classList.add('img-btn-disabled'); }
+          btn.addEventListener('mousedown', function (e) {
+            e.preventDefault(); e.stopPropagation();
+            if (btn.disabled) return;
+            if (a.value) el.setAttribute('data-align', a.value); else el.removeAttribute('data-align');
+            bar.querySelectorAll('button:not(.img-delete-btn):not(.img-wrap-btn)').forEach(function (b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            scheduleAutosave(); requestAnimationFrame(positionOverlay);
+          });
+          bar.appendChild(btn);
+        });
+
+      var sep = document.createElement('span'); sep.className = 'img-toolbar-sep'; bar.appendChild(sep);
+
+      var wrapBtn = document.createElement('button');
+      wrapBtn.type = 'button'; wrapBtn.title = 'Wrap text'; wrapBtn.className = 'img-wrap-btn'; wrapBtn.innerHTML = SVG_WRAP;
+      if (el.getAttribute('data-wrap') === 'true') wrapBtn.classList.add('active');
+      wrapBtn.addEventListener('mousedown', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        if (el.getAttribute('data-wrap') === 'true') { el.removeAttribute('data-wrap'); wrapBtn.classList.remove('active'); }
+        else { el.setAttribute('data-wrap', 'true'); wrapBtn.classList.add('active'); }
+        scheduleAutosave(); createOverlay(el);
+      });
+      bar.appendChild(wrapBtn);
+
+      if (!isVideo) {
+        var bwBtn = document.createElement('button');
+        bwBtn.type = 'button'; bwBtn.title = 'B&W'; bwBtn.innerHTML = SVG_BW;
+        if (el.getAttribute('data-grayscale') === 'true') bwBtn.classList.add('active');
+        bwBtn.addEventListener('mousedown', function (e) {
+          e.preventDefault(); e.stopPropagation();
+          if (el.getAttribute('data-grayscale') === 'true') { el.removeAttribute('data-grayscale'); bwBtn.classList.remove('active'); }
+          else { el.setAttribute('data-grayscale', 'true'); bwBtn.classList.add('active'); }
+          scheduleAutosave();
+        });
+        bar.appendChild(bwBtn);
+      }
+
+      var sep2 = document.createElement('span'); sep2.className = 'img-toolbar-sep'; bar.appendChild(sep2);
+
+      var delBtn = document.createElement('button');
+      delBtn.type = 'button'; delBtn.title = isVideo ? 'Delete video' : 'Delete image';
+      delBtn.className = 'img-delete-btn'; delBtn.innerHTML = SVG_DELETE;
+      delBtn.addEventListener('mousedown', function (e) { e.preventDefault(); e.stopPropagation(); deleteActiveMedia(); });
+      bar.appendChild(delBtn);
+      overlay.appendChild(bar);
+
+      var handle = document.createElement('div');
+      handle.className = 'img-resize-handle';
+      handle.addEventListener('mousedown', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        var startX = e.clientX;
+        var startW = el.offsetWidth || (isVideo ? 640 : el.naturalWidth) || 200;
+        var maxW   = quill.root.offsetWidth;
+        function onMove(ev) {
+          var newW = Math.max(isVideo ? 200 : 80, Math.min(maxW, startW + (ev.clientX - startX)));
+          el.style.width = newW + 'px'; el.style.height = 'auto'; positionOverlay();
+        }
+        function onUp() {
+          document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp);
+          el.setAttribute('data-width', el.style.width); scheduleAutosave();
+        }
+        document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp);
+      });
+      overlay.appendChild(handle);
+
+      document.body.appendChild(overlay);
+      mediaOverlay = overlay;
+      requestAnimationFrame(positionOverlay);
+    }
+
+    quill.root.addEventListener('click', function (e) {
+      var img = e.target.closest('img');
+      var vid = e.target.closest('div.hn-video-blot');
+      var target = img || vid;
+      if (target && quill.root.contains(target)) { createOverlay(target); } else { removeOverlay(); }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (!activeMedia) return;
+      if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); deleteActiveMedia(); }
+      if (e.key === 'Escape') removeOverlay();
+    });
+    document.addEventListener('click', function (e) {
+      if (!activeMedia) return;
+      if (mediaOverlay && mediaOverlay.contains(e.target)) return;
+      if (activeMedia === e.target) return;
+      removeOverlay();
+    }, true);
+    window.addEventListener('scroll',  positionOverlay, true);
+    window.addEventListener('resize',  positionOverlay);
+    quill.on('text-change', function () { requestAnimationFrame(positionOverlay); });
+  })();
+
+  {% endif %}{# end can_manage #}
+
+})();
+</script>
+{% endblock %}

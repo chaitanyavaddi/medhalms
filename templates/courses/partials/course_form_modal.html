@@ -1,0 +1,63 @@
+<div class="cr-modal-backdrop">
+  <div class="cr-modal">
+    <div class="cr-modal-header">
+      <h3 class="cr-modal-title">{% if course %}Edit Course{% else %}New Course{% endif %}</h3>
+      <button type="button" class="cr-modal-close"
+              onclick="document.getElementById('cr-modal-slot').innerHTML=''">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    {% if error %}<div class="cr-form-error">{{ error }}</div>{% endif %}
+
+    <form hx-post="{% if course %}{% url 'courses:edit' course.pk %}{% else %}{% url 'courses:create' %}{% endif %}"
+          hx-target="#cr-modal-slot"
+          hx-swap="innerHTML">
+      {% csrf_token %}
+
+      <div class="cr-form-field">
+        <label>Course name <span style="color:#ef4444">*</span></label>
+        <input type="text" name="name" value="{{ course.name|default:'' }}"
+               placeholder="e.g. Python for Beginners" required autofocus>
+      </div>
+
+      <div class="cr-form-field">
+        <label>Description</label>
+        <textarea name="description" placeholder="Short description…">{{ course.description|default:'' }}</textarea>
+      </div>
+
+      <div class="cr-form-field">
+        <label>Status</label>
+        <select name="status">
+          <option value="draft"     {% if not course or course.status == 'draft'     %}selected{% endif %}>Draft</option>
+          <option value="published" {% if course and course.status == 'published' %}selected{% endif %}>Published</option>
+        </select>
+      </div>
+
+      {% if trainers %}
+      <div class="cr-form-field">
+        <label>Assign trainers <span style="font-weight:400;color:#9ca3af;text-transform:none;letter-spacing:0">(hold Ctrl/⌘ to select multiple)</span></label>
+        <select name="trainers" multiple>
+          {% for t in trainers %}
+          <option value="{{ t.pk }}"
+            {% if course and t in course.trainers.all %}selected{% endif %}>
+            {{ t.get_full_name|default:t.email }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+
+      <div class="cr-form-actions">
+        <button type="button" class="cr-btn-secondary"
+                onclick="document.getElementById('cr-modal-slot').innerHTML=''">Cancel</button>
+        <button type="submit" class="cr-btn-primary">
+          {% if course %}Save changes{% else %}Create course{% endif %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
