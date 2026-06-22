@@ -1,11 +1,19 @@
+import json
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseForbidden, JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views import View
 
 from courses.models import Course
+from utils.view_helper import htmx, redirect_to
+
 from .models import Interview, InterviewAnswer, InterviewSession, Question
+from .schemas import InterviewSchema
+
+FORM_TEMPLATE = 'interviews/form.html'
 
 
 class InterviewListView(LoginRequiredMixin, View):
@@ -15,74 +23,78 @@ class InterviewListView(LoginRequiredMixin, View):
 
 
 class InterviewCreateView(LoginRequiredMixin, View):
-    def _ctx(self, data=None, interview=None, error=None):
+    def _ctx(self, data=None):
         return {
-            'interview': interview,
-            'courses':   Course.objects.all(),
+            'interview':    None,
+            'courses':      Course.objects.all(),
             'difficulties': Interview.Difficulty.choices,
-            'data': data or {},
-            'error': error,
+            'data':         data or {},
         }
 
     def get(self, request):
         if not request.user.is_superuser:
             return HttpResponseForbidden()
-        return render(request, 'interviews/form.html', self._ctx())
+        return render(request, FORM_TEMPLATE, self._ctx())
 
     def post(self, request):
         if not request.user.is_superuser:
             return HttpResponseForbidden()
-        title  = request.POST.get('title', '').strip()
-        prompt = request.POST.get('persona_prompt', '').strip()
-        if not title or not prompt:
-            return render(request, 'interviews/form.html',
-                          self._ctx(data=request.POST, error='Title and persona prompt are required.'))
+        hx     = htmx(request)
+        schema = InterviewSchema.from_post(request)
+        tmpl   = f'{FORM_TEMPLATE}#interview-form' if hx else FORM_TEMPLATE
+        if not schema.is_valid():
+            return render(request, tmpl, self._ctx(data=request.POST))
         iv = Interview.objects.create(
-            title          = title,
-            persona_prompt = prompt,
-            difficulty     = request.POST.get('difficulty', Interview.Difficulty.INTERMEDIATE),
-            max_duration   = int(request.POST.get('max_duration', 30)),
+            title          = schema.title,
+            persona_prompt = schema.persona_prompt,
+            difficulty     = schema.difficulty,
+            max_duration   = schema.max_duration,
             created_by     = request.user,
         )
-        iv.courses.set(request.POST.getlist('courses'))
-        _save_questions(iv, request.POST)
-        return redirect('interviews:detail', pk=iv.pk)
+        iv.courses.set(schema.courses)
+        _save_questions(iv, schema.questions)
+        return redirect_to(request, reverse('interviews:detail', args=[iv.pk]))
 
 
 class InterviewUpdateView(LoginRequiredMixin, View):
-    def _ctx(self, interview, data=None, error=None):
+    def _ctx(self, interview, data=None):
+        d = data or {
+            'title':          interview.title,
+            'persona_prompt': interview.persona_prompt,
+            'difficulty':     interview.difficulty,
+            'max_duration':   interview.max_duration,
+        }
         return {
             'interview':    interview,
             'courses':      Course.objects.all(),
             'difficulties': Interview.Difficulty.choices,
-            'data': data or {},
-            'error': error,
+            'data':         d,
         }
 
     def get(self, request, pk):
         if not request.user.is_superuser:
             return HttpResponseForbidden()
         iv = get_object_or_404(Interview, pk=pk)
-        return render(request, 'interviews/form.html', self._ctx(iv))
+        return render(request, FORM_TEMPLATE, self._ctx(iv))
 
     def post(self, request, pk):
         if not request.user.is_superuser:
             return HttpResponseForbidden()
         iv     = get_object_or_404(Interview, pk=pk)
-        title  = request.POST.get('title', '').strip()
-        prompt = request.POST.get('persona_prompt', '').strip()
-        if not title or not prompt:
-            return render(request, 'interviews/form.html',
-                          self._ctx(iv, data=request.POST, error='Title and persona prompt are required.'))
-        iv.title          = title
-        iv.persona_prompt = prompt
-        iv.difficulty     = request.POST.get('difficulty', iv.difficulty)
-        iv.max_duration   = int(request.POST.get('max_duration', iv.max_duration))
+        hx     = htmx(request)
+        schema = InterviewSchema.from_post(request)
+        tmpl   = f'{FORM_TEMPLATE}#interview-form' if hx else FORM_TEMPLATE
+        if not schema.is_valid():
+            return render(request, tmpl, self._ctx(iv, data=request.POST))
+        iv.title          = schema.title
+        iv.persona_prompt = schema.persona_prompt
+        iv.difficulty     = schema.difficulty
+        iv.max_duration   = schema.max_duration
         iv.save()
-        iv.courses.set(request.POST.getlist('courses'))
+        iv.courses.set(schema.courses)
         iv.questions.all().delete()
-        _save_questions(iv, request.POST)
-        return redirect('interviews:detail', pk=iv.pk)
+        _save_questions(iv, schema.questions)
+        return redirect_to(request, reverse('interviews:detail', args=[iv.pk]))
 
 
 class InterviewDeleteView(LoginRequiredMixin, View):
@@ -90,15 +102,12 @@ class InterviewDeleteView(LoginRequiredMixin, View):
         if not request.user.is_superuser:
             return HttpResponseForbidden()
         get_object_or_404(Interview, pk=pk).delete()
-        return redirect('interviews:list')
+        return redirect_to(request, reverse('interviews:list'))
 
 
-def _save_questions(interview, post):
-    texts = post.getlist('question_text')
-    for i, text in enumerate(texts):
-        text = text.strip()
-        if text:
-            Question.objects.create(interview=interview, order=i + 1, text=text)
+def _save_questions(interview, question_texts):
+    for i, text in enumerate(question_texts):
+        Question.objects.create(interview=interview, order=i + 1, text=text)
 
 
 class InterviewDetailView(LoginRequiredMixin, View):
@@ -111,7 +120,7 @@ class SessionStartView(LoginRequiredMixin, View):
     def post(self, request, pk):
         interview = get_object_or_404(Interview, pk=pk)
         session   = InterviewSession.objects.create(interview=interview, user=request.user)
-        return redirect('interviews:session_room', session_pk=session.pk)
+        return redirect_to(request, reverse('interviews:session_room', args=[session.pk]))
 
 
 class SessionRoomView(LoginRequiredMixin, View):
@@ -144,7 +153,7 @@ class SessionEndView(LoginRequiredMixin, View):
         session.status   = InterviewSession.Status.COMPLETED
         session.ended_at = timezone.now()
         session.save(update_fields=['status', 'ended_at'])
-        return JsonResponse({'ok': True, 'result_url': f'/mock/interviews/session/{session_pk}/result/'})
+        return JsonResponse({'ok': True, 'result_url': reverse('interviews:session_result', args=[session_pk])})
 
 
 class SessionResultView(LoginRequiredMixin, View):
@@ -153,9 +162,7 @@ class SessionResultView(LoginRequiredMixin, View):
         return render(request, 'interviews/result.html', {'session': session})
 
     def post(self, request, session_pk):
-        """Store AI-generated feedback (POSTed from browser after Puter call)."""
-        import json
-        session  = get_object_or_404(InterviewSession, pk=session_pk, user=request.user)
+        session = get_object_or_404(InterviewSession, pk=session_pk, user=request.user)
         try:
             feedback = json.loads(request.body)
         except ValueError:
