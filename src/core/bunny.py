@@ -18,12 +18,12 @@ def slugify_filename(name):
     return f"{slug}-{suffix}{ext.lower()}"
 
 
-def upload_file(file_obj, subdomain):
-    """Upload a Django InMemoryUploadedFile to Bunny storage.
+def upload_file(file_obj, folder):
+    """Upload a file to Bunny storage under the given folder prefix.
 
     Args:
         file_obj: Django InMemoryUploadedFile with .name, .content_type, .read(), .size
-        subdomain: blog subdomain used as the storage path prefix
+        folder:   Storage path prefix, e.g. 'courses' → stored as courses/<filename>
 
     Returns:
         cdn_url (str) on success.
@@ -32,7 +32,7 @@ def upload_file(file_obj, subdomain):
         RuntimeError: if Bunny returns an HTTP error.
     """
     filename = slugify_filename(file_obj.name)
-    object_path = f"{subdomain}/{filename}"
+    object_path = f"{folder}/{filename}"
 
     endpoint = settings.BUNNY_STORAGE_ENDPOINT.rstrip('/')
     zone = settings.BUNNY_STORAGE_ZONE

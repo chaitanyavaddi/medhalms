@@ -144,7 +144,9 @@ class CourseUploadView(LoginRequiredMixin, View):
         is_video = f.content_type.startswith('video/')
         try:
             from core.bunny import upload_file
-            url = upload_file(f, 'courses')
+            course_id = request.POST.get('course_id', 'general')
+            folder = f'courses/{course_id}'
+            url = upload_file(f, folder)
         except RuntimeError as e:
             return JsonResponse({'error': str(e)}, status=500)
         return JsonResponse({'url': url, 'type': 'video' if is_video else 'image'})

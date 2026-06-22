@@ -4,9 +4,6 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/courses.css' %}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.bubble.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/video.js@8.23.8/dist/video-js.min.css" rel="stylesheet">
 {% endblock %}
@@ -47,7 +44,7 @@
       {% for module in course.modules.all %}
       <details class="cr-module" {% if active_chapter and active_chapter.module.pk == module.pk %}open{% elif forloop.first %}open{% endif %}>
         <summary>
-          <svg class="cr-module-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none"
+          <svg class="cr-module-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 18l6-6-6-6"/>
           </svg>
@@ -85,7 +82,7 @@
           <div class="cr-chapter-item {% if active_chapter and active_chapter.pk == chapter.pk %}is-active{% endif %}">
             <a class="cr-chapter-link"
                href="{% url 'courses:chapter' course.pk chapter.pk %}"
-               title="{{ chapter.title }}">{{ chapter.title }}</a>
+               title="{{ chapter.title }}"><span>{{ chapter.title }}</span></a>
             {% if can_manage %}
             <span class="cr-chapter-item-actions">
               <button class="cr-chapter-action" title="Rename"
@@ -197,6 +194,7 @@
 
   {% if not active_chapter %}return;{% endif %}
 
+  var COURSE_ID     = {{ course.pk }};
   {% if active_chapter %}
   var CAN_MANAGE    = {% if can_manage %}true{% else %}false{% endif %};
   var SAVE_URL      = '{% url "courses:chapter_save" course.pk active_chapter.pk %}';
@@ -492,6 +490,7 @@
 
     var fd = new FormData();
     fd.append('file', file);
+    fd.append('course_id', COURSE_ID);
     var xhr = new XMLHttpRequest();
     xhr.open('POST', UPLOAD_URL);
     xhr.setRequestHeader('X-CSRFToken', csrfToken);
