@@ -318,20 +318,13 @@
 }
 .cr-chapter-link:hover { background: #f5f6f8; color: #111827; }
 
+.cr-chapter-item.is-active {
+  background: color-mix(in srgb, var(--brand-accent) 10%, #fff);
+}
 .cr-chapter-item.is-active .cr-chapter-link {
-  background: color-mix(in srgb, var(--brand-accent) 9%, #fff);
+  background: transparent;
   color: var(--brand-accent);
   font-weight: 600;
-}
-.cr-chapter-item.is-active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--brand-accent);
-  border-radius: 0 2px 2px 0;
 }
 
 .cr-chapter-item-actions {
@@ -387,20 +380,10 @@
 .cr-editor {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  min-height: 0;
   background: #fff;
 }
 
-.cr-editor-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 24px;
-  height: 44px;
-  border-bottom: 1px solid #f3f4f6;
-  flex-shrink: 0;
-  gap: 14px;
-}
 
 .cr-save-status {
   font-size: 12px;
@@ -497,17 +480,99 @@
 .cr-editor .ql-editor div.hn-video-blot { display: block; max-width: 100%; margin: 0.5rem 0; cursor: pointer; user-select: none; overflow: hidden; }
 .cr-editor .ql-editor::after { content: ''; display: table; clear: both; }
 
-/* Bubble toolbar */
-.cr-editor .ql-bubble .ql-toolbar    { background: #1a1a1a; border-radius: 8px; }
-.cr-editor .ql-bubble .ql-stroke     { stroke: rgba(255,255,255,0.8); }
-.cr-editor .ql-bubble .ql-fill       { fill: rgba(255,255,255,0.8); }
-.cr-editor .ql-bubble .ql-picker-label { color: rgba(255,255,255,0.8); }
-.cr-editor .ql-bubble .ql-active .ql-stroke,
-.cr-editor .ql-bubble .ql-selected .ql-stroke { stroke: #fff; }
-.cr-editor .ql-bubble .ql-active .ql-fill,
-.cr-editor .ql-bubble .ql-selected .ql-fill   { fill: #fff; }
-.cr-editor .ql-bubble .ql-tooltip    { border-radius: 8px; min-width: 300px; }
-.cr-editor .ql-bubble .ql-tooltip input[data-link] { width: 100%; }
+/* ── Custom fixed toolbar ── */
+.cr-toolbar {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 46px;
+  border-bottom: 1px solid #f0f1f3;
+  background: #fff;
+  flex-shrink: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  gap: 0;
+}
+.cr-toolbar::-webkit-scrollbar { display: none; }
+.cr-toolbar--view { justify-content: flex-end; }
+
+.cr-tb-group {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.cr-tb-sep {
+  width: 1px;
+  height: 18px;
+  background: #e5e7eb;
+  margin: 0 6px;
+  flex-shrink: 0;
+}
+
+.cr-tb-spacer { flex: 1; min-width: 12px; }
+
+/* All toolbar buttons — both Quill-managed (ql-*) and custom */
+.cr-toolbar button {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: #4b5563;
+  transition: background 0.1s, color 0.1s;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+}
+.cr-toolbar button:hover { background: #f3f4f6; color: #111827; }
+.cr-toolbar button.ql-active {
+  background: color-mix(in srgb, var(--brand-accent) 12%, transparent);
+  color: var(--brand-accent);
+}
+
+/* Quill auto-injects SVGs into ql-* buttons — inherit our color */
+.cr-toolbar .ql-stroke { stroke: currentColor; fill: none; }
+.cr-toolbar .ql-fill   { fill: currentColor; stroke: none; }
+.cr-toolbar svg        { width: 15px; height: 15px; display: block; }
+
+/* Snow tooltip (link editing) */
+.cr-editor .ql-snow .ql-tooltip {
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  padding: 6px 10px;
+  font-family: inherit;
+  font-size: 13px;
+  z-index: 38;
+}
+.cr-editor .ql-snow .ql-tooltip input[type="text"] {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  height: 30px;
+}
+.cr-editor .ql-snow .ql-tooltip input[type="text"]:focus {
+  border-color: var(--brand-accent);
+}
+/* Hide snow's default toolbar border since we style our own */
+.cr-editor .ql-snow.ql-toolbar,
+#cr-toolbar.ql-toolbar.ql-snow {
+  border: none;
+  padding: 0;
+  font-family: inherit;
+}
 
 /* Upload progress bar */
 .upload-progress-bar {
@@ -550,7 +615,7 @@
 @keyframes cr-spin { to { transform: rotate(360deg); } }
 
 /* Image overlay (align bar + resize) */
-.img-overlay      { position: absolute; pointer-events: none; z-index: 200; outline: 2px solid var(--brand-accent); outline-offset: 1px; border-radius: 2px; }
+.img-overlay      { position: fixed; pointer-events: none; z-index: 39; outline: 2px solid var(--brand-accent); outline-offset: 1px; border-radius: 2px; }
 .img-align-bar    { position: absolute; top: -40px; left: 50%; transform: translateX(-50%); display: flex; gap: 2px; background: #fff; border: 1px solid #e5e7eb; border-radius: 7px; padding: 3px 4px; pointer-events: all; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
 .img-align-bar button { width: 28px; height: 28px; border: none; background: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #6b7280; }
 .img-align-bar button:hover, .img-align-bar button.active { background: #f3f4f6; color: #111827; }
@@ -560,59 +625,6 @@
 .img-toolbar-sep  { width: 1px; height: 18px; background: #e5e7eb; margin: 0 2px; flex-shrink: 0; }
 .img-resize-handle { position: absolute; bottom: -5px; right: -5px; width: 12px; height: 12px; background: var(--brand-accent); border-radius: 2px; cursor: se-resize; pointer-events: all; }
 
-/* Plus insert button */
-.editor-plus-trigger {
-  position: absolute;
-  left: 3rem;
-  transform: translateX(calc(-100% - 12px));
-  display: flex;
-  align-items: center;
-  z-index: 50;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.12s;
-}
-.editor-plus-trigger.is-visible { opacity: 1; pointer-events: auto; }
-.editor-plus-btn {
-  width: 28px; height: 28px;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 50%;
-  background: #fff;
-  color: #9ca3af;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  padding: 0;
-  transition: border-color .15s, color .15s;
-}
-.editor-plus-btn svg { transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.editor-plus-btn:hover, .editor-plus-btn.is-open { border-color: var(--brand-accent); color: var(--brand-accent); }
-.editor-plus-btn.is-open svg { transform: rotate(45deg); }
-
-.editor-plus-menu {
-  position: absolute;
-  left: 3rem;
-  display: flex;
-  gap: 8px;
-  z-index: 50;
-  transform-origin: left center;
-  transform: scale(0);
-  opacity: 0;
-  pointer-events: none;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.15s;
-}
-.editor-plus-menu.is-open { transform: scale(1); opacity: 1; pointer-events: auto; }
-.editor-plus-menu button {
-  width: 32px; height: 32px;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 50%;
-  background: #fff;
-  color: #9ca3af;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  padding: 0;
-  transition: border-color .15s, color .15s;
-}
-.editor-plus-menu button:hover { border-color: var(--brand-accent); color: var(--brand-accent); }
 
 /* Toast */
 .toast-container {
