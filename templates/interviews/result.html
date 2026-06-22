@@ -1,0 +1,108 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Interview Result{% endblock %}
+{% block topbar_title %}<h2 class="dash-page-title">Interview Result</h2>{% endblock %}
+
+{% block extra_head %}
+<script src="https://js.puter.com/v2/"></script>
+<link rel="stylesheet" href="{% static 'css/interviews.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="iv-result-page">
+
+  <div class="iv-result-hd">
+    <h1>{{ session.interview.title }}</h1>
+    <span class="iv-badge iv-badge--{{ session.interview.difficulty }}">{{ session.interview.get_difficulty_display }}</span>
+  </div>
+
+  {% if session.feedback %}
+  <div class="iv-feedback-card" id="iv-feedback-card">
+    <div class="iv-feedback-overall">
+      <span class="iv-feedback-score">{{ session.feedback.overall_score }}<span>/10</span></span>
+      <p class="iv-feedback-summary">{{ session.feedback.summary }}</p>
+    </div>
+    <div class="iv-feedback-questions">
+      {% for ans in session.answers.all %}
+      <div class="iv-feedback-item">
+        <p class="iv-feedback-q">Q{{ ans.question.order }}. {{ ans.question.text }}</p>
+        <p class="iv-feedback-transcript">{{ ans.transcript }}</p>
+        {% if session.feedback.answers %}
+        <p class="iv-feedback-note">{{ session.feedback.answers|dictsort:"order" }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <!-- Feedback not yet generated — generate via Puter in browser -->
+  <div class="iv-feedback-card iv-feedback-generating" id="iv-feedback-card">
+    <div class="iv-feedback-loading">
+      <span class="cr-ai-typing"><span></span><span></span><span></span></span>
+      <p>Generating your feedback…</p>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="iv-result-answers">
+    <h2>Your Answers</h2>
+    {% for ans in session.answers.all %}
+    <div class="iv-answer-item">
+      <p class="iv-answer-q">Q{{ ans.question.order }}. {{ ans.question.text }}</p>
+      <p class="iv-answer-text">{{ ans.transcript|default:"(no answer recorded)" }}</p>
+      <span class="iv-answer-dur">{{ ans.duration_seconds }}s</span>
+    </div>
+    {% empty %}
+    <p style="color:#9ca3af;font-size:13px;">No answers were recorded.</p>
+    {% endfor %}
+  </div>
+
+  <a href="{% url 'interviews:list' %}" class="iv-result-back">← Back to interviews</a>
+
+</div>
+
+{% if not session.feedback %}
+{{ session.answers.all|json_script:"iv-answers-data" }}
+<script>
+(function () {
+  var SESSION_PK = {{ session.pk }};
+  var SAVE_URL   = '/mock/interviews/session/' + SESSION_PK + '/result/';
+  var CSRF       = '{{ csrf_token }}';
+
+  var rawAnswers = JSON.parse(document.getElementById('iv-answers-data').textContent || '[]');
+
+  async function generateFeedback() {
+    if (!puter.auth.isSignedIn()) { await puter.auth.signIn(); }
+
+    var qa = rawAnswers.map(function (a) {
+      return 'Q' + a.fields.question + ': ' + (a.fields.transcript || '(no answer)');
+    }).join('\n\n');
+
+    var prompt = 'You are evaluating a mock interview for "{{ session.interview.title|escapejs }}".\n\n'
+      + 'Here are the questions and the candidate\'s answers:\n\n' + qa + '\n\n'
+      + 'Respond ONLY with a JSON object in this exact format:\n'
+      + '{"overall_score": <1-10>, "summary": "<2-3 sentence overall feedback>", '
+      + '"answers": [{"order": <n>, "feedback": "<1 sentence per answer>"}]}';
+
+    try {
+      var resp = await puter.ai.chat([{ role: 'user', content: prompt }], { model: 'gpt-4o-mini' });
+      var text = typeof resp === 'string' ? resp : (resp.message?.content || resp.text || '');
+      var json = JSON.parse(text.match(/\{[\s\S]*\}/)[0]);
+
+      await fetch(SAVE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+        body: JSON.stringify(json),
+      });
+      window.location.reload();
+    } catch (e) {
+      document.getElementById('iv-feedback-card').innerHTML =
+        '<p style="color:#ef4444;padding:16px;font-size:13px;">Could not generate feedback. Please refresh.</p>';
+    }
+  }
+
+  generateFeedback();
+})();
+</script>
+{% endif %}
+{% endblock %}

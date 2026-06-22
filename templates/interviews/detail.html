@@ -1,0 +1,54 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}{{ interview.title }}{% endblock %}
+{% block topbar_title %}<h2 class="dash-page-title">AI Interviews</h2>{% endblock %}
+
+{% block content %}
+<div class="iv-launch">
+  <div class="iv-launch-card">
+
+    <div class="iv-launch-badge iv-badge--{{ interview.difficulty }}">{{ interview.get_difficulty_display }}</div>
+    <h1 class="iv-launch-title">{{ interview.title }}</h1>
+
+    <div class="iv-launch-meta">
+      <div class="iv-launch-stat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>{{ interview.max_duration }} min max</span>
+      </div>
+      <div class="iv-launch-stat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>{{ interview.question_count }} question{{ interview.question_count|pluralize }}</span>
+      </div>
+    </div>
+
+    <div class="iv-launch-tips">
+      <h3>Before you start</h3>
+      <ul>
+        <li>Find a quiet place — the interviewer will speak to you aloud</li>
+        <li>Hold the <strong>spacebar</strong> (or the mic button) to answer</li>
+        <li>Release when done — your answer is transcribed automatically</li>
+        <li>Allow camera + microphone when prompted</li>
+      </ul>
+    </div>
+
+    <form method="post" action="{% url 'interviews:session_start' interview.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="iv-launch-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Launch Interview
+      </button>
+    </form>
+
+    {% if request.user.is_superuser %}
+    <div class="iv-admin-bar">
+      <a href="{% url 'interviews:edit' interview.pk %}" class="iv-admin-edit-btn">Edit</a>
+      <form method="post" action="{% url 'interviews:delete' interview.pk %}" onsubmit="return confirm('Delete this interview?')">
+        {% csrf_token %}
+        <button type="submit" class="iv-admin-delete-btn">Delete</button>
+      </form>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

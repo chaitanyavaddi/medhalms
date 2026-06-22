@@ -1,0 +1,52 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}AI Interviews{% endblock %}
+{% block topbar_title %}<h2 class="dash-page-title">AI Interviews</h2>{% endblock %}
+
+{% block content %}
+<div class="iv-page">
+
+  <div class="iv-page-hd">
+    <div>
+      <h1 class="iv-page-title">Practice Interviews</h1>
+      <p class="iv-page-sub">AI-powered mock interviews. Push to talk, get instant feedback.</p>
+    </div>
+    {% if request.user.is_superuser %}
+    <a href="{% url 'interviews:create' %}" class="iv-admin-create-btn">+ Create Interview</a>
+    {% endif %}
+  </div>
+
+  {% if interviews %}
+  <div class="iv-grid">
+    {% for iv in interviews %}
+    <div class="iv-card">
+      <div class="iv-card-top">
+        <span class="iv-badge iv-badge--{{ iv.difficulty }}">{{ iv.get_difficulty_display }}</span>
+        <span class="iv-card-duration">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {{ iv.max_duration }} min
+        </span>
+      </div>
+      <h3 class="iv-card-title">{{ iv.title }}</h3>
+      <p class="iv-card-meta">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        {{ iv.question_count }} question{{ iv.question_count|pluralize }}
+      </p>
+      {% if iv.courses.all %}
+      <div class="iv-card-courses">
+        {% for c in iv.courses.all %}<span class="iv-course-tag">{{ c.name }}</span>{% endfor %}
+      </div>
+      {% endif %}
+      <a href="{% url 'interviews:detail' iv.pk %}" class="iv-card-btn">Start Interview</a>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="iv-empty">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <p>No interviews available yet.</p>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

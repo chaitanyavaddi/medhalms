@@ -261,6 +261,17 @@
           <span class="dash-nav-label">Company Mocks</span>
         </a>
 
+        <a href="{% url 'interviews:list' %}" class="dash-nav-item {% if request.resolver_match.app_name == 'interviews' %}is-active{% endif %}">
+          <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+          <span class="dash-nav-label">AI Interviews</span>
+        </a>
+
         <a href="#" class="dash-nav-item">
           <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -443,6 +454,23 @@
 
     // Hide all panels initially
     getPanels().forEach(function (p) { p.classList.add('is-hidden'); });
+
+    // Auto-open the correct sub-panel based on current URL
+    var urlPanelMap = [
+      { prefix: '/mock/',  panelId: 'nav-mock',   label: 'Mock Hub' },
+      { prefix: '/mojo/',  panelId: 'nav-mojo',   label: 'Mojo Hub' },
+      { prefix: '/job360/', panelId: 'nav-job360', label: 'Job 360' },
+    ];
+    var currentPath = window.location.pathname;
+    urlPanelMap.forEach(function (m) {
+      if (!currentPath.startsWith(m.prefix)) return;
+      var panel = document.getElementById(m.panelId);
+      if (!panel) return;
+      panel.classList.remove('is-hidden');
+      navRoot.classList.add('is-hidden');
+      if (backBtn)   backBtn.classList.add('is-visible');
+      if (brandText) brandText.textContent = m.label;
+    });
 
     // Drill into a sub-panel
     document.querySelectorAll('.dash-nav-drill').forEach(function (btn) {

@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     "ide",
     "jobs",
     "courses",
+    "interviews",
 ]
 
 MIDDLEWARE = [

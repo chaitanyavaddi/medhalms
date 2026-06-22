@@ -1,0 +1,286 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}{{ session.interview.title }} — Interview{% endblock %}
+{% block topbar_title %}<h2 class="dash-page-title">{{ session.interview.title }}</h2>{% endblock %}
+{% block content_class %}dash-content--edge{% endblock %}
+
+{% block extra_head %}
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="https://js.puter.com/v2/"></script>
+<link rel="stylesheet" href="{% static 'css/interviews.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="iv-room">
+
+  <!-- ── Video tiles ── -->
+  <div class="iv-tiles">
+
+    <!-- AI interviewer tile -->
+    <div class="iv-tile iv-tile--ai" id="iv-ai-tile">
+      <div class="iv-tile-inner">
+        <div class="iv-avatar-wrap" id="iv-avatar-wrap">
+          <lottie-player
+            id="iv-lottie"
+            src="https://assets10.lottiefiles.com/packages/lf20_kkflmtur.json"
+            background="transparent"
+            speed="1"
+            loop
+            autoplay
+            style="width:220px;height:220px;">
+          </lottie-player>
+          <div class="iv-speaking-ring" id="iv-speaking-ring"></div>
+        </div>
+        <div class="iv-tile-name">
+          AI Interviewer
+          <span class="iv-tile-status" id="iv-ai-status">Waiting…</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- User camera tile -->
+    <div class="iv-tile iv-tile--user" id="iv-user-tile">
+      <div class="iv-tile-inner">
+        <video id="iv-camera" autoplay muted playsinline></video>
+        <div class="iv-cam-off" id="iv-cam-off">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Camera off</span>
+        </div>
+        <div class="iv-tile-name">
+          You
+          <span class="iv-tile-status" id="iv-user-status">Ready</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Question + transcript strip ── -->
+  <div class="iv-info-strip">
+    <div class="iv-question-wrap">
+      <span class="iv-q-counter" id="iv-q-counter">Q 1 / {{ session.interview.question_count }}</span>
+      <p class="iv-q-text" id="iv-q-text">Getting ready…</p>
+    </div>
+    <div class="iv-transcript-wrap">
+      <p class="iv-transcript-live" id="iv-transcript-live"></p>
+    </div>
+  </div>
+
+  <!-- ── Controls ── -->
+  <div class="iv-controls">
+    <button class="iv-ctrl-btn iv-ctrl-btn--cam" id="iv-cam-btn" title="Toggle camera">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+    </button>
+
+    <button class="iv-ctrl-btn iv-ctrl-btn--mic" id="iv-mic-btn" title="Hold to speak">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      <span class="iv-mic-label">Hold to speak</span>
+    </button>
+
+    <button class="iv-ctrl-btn iv-ctrl-btn--end" id="iv-end-btn" title="End interview">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+      End
+    </button>
+  </div>
+
+</div>
+
+{{ questions|json_script:"iv-questions-data" }}
+<script>
+(function () {
+  var SESSION_PK    = {{ session.pk }};
+  var INTERVIEW_TITLE = '{{ session.interview.title|escapejs }}';
+  var PERSONA       = '{{ session.interview.persona_prompt|escapejs }}';
+  var SAVE_URL      = '{% url "interviews:answer_save" session.pk %}';
+  var END_URL       = '{% url "interviews:session_end" session.pk %}';
+  var CSRF          = '{{ csrf_token }}';
+
+  var questions     = JSON.parse(document.getElementById('iv-questions-data').textContent);
+  var currentQ      = 0;
+  var isListening   = false;
+  var isSpeaking    = false;
+  var recognition   = null;
+  var liveTranscript = '';
+  var answerStart   = 0;
+  var cameraOn      = false;
+  var stream        = null;
+
+  // ── Camera ──────────────────────────────────────────────────────────────
+
+  function startCamera() {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      .then(function (s) {
+        stream = s;
+        cameraOn = true;
+        var vid = document.getElementById('iv-camera');
+        vid.srcObject = s;
+        document.getElementById('iv-cam-off').style.display = 'none';
+        document.getElementById('iv-cam-btn').classList.add('is-active');
+      }).catch(function () {
+        document.getElementById('iv-cam-off').style.display = 'flex';
+      });
+  }
+
+  function toggleCamera() {
+    if (cameraOn && stream) {
+      stream.getVideoTracks().forEach(function (t) { t.enabled = !t.enabled; });
+      cameraOn = !cameraOn;
+      document.getElementById('iv-cam-off').style.display = cameraOn ? 'none' : 'flex';
+      document.getElementById('iv-cam-btn').classList.toggle('is-active', cameraOn);
+    } else {
+      startCamera();
+    }
+  }
+
+  // ── TTS ─────────────────────────────────────────────────────────────────
+
+  function speak(text, onEnd) {
+    speechSynthesis.cancel();
+    var utter     = new SpeechSynthesisUtterance(text);
+    utter.rate    = 0.92;
+    utter.pitch   = 1.0;
+    isSpeaking    = true;
+    setAiStatus('Speaking…');
+    setSpeakingRing(true);
+    utter.onend = function () {
+      isSpeaking = false;
+      setSpeakingRing(false);
+      if (onEnd) onEnd();
+    };
+    speechSynthesis.speak(utter);
+  }
+
+  function setSpeakingRing(on) {
+    document.getElementById('iv-speaking-ring').classList.toggle('is-active', on);
+  }
+
+  function setAiStatus(text) {
+    document.getElementById('iv-ai-status').textContent = text;
+  }
+
+  function setUserStatus(text) {
+    document.getElementById('iv-user-status').textContent = text;
+  }
+
+  // ── STT (push-to-talk) ───────────────────────────────────────────────────
+
+  function initRecognition() {
+    var R = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!R) { alert('Speech recognition is not supported in your browser. Please use Chrome.'); return; }
+    recognition = new R();
+    recognition.continuous    = true;
+    recognition.interimResults = true;
+    recognition.lang          = 'en-US';
+    recognition.onresult = function (e) {
+      var interim = '';
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) liveTranscript += e.results[i][0].transcript + ' ';
+        else interim = e.results[i][0].transcript;
+      }
+      document.getElementById('iv-transcript-live').textContent = liveTranscript + interim;
+    };
+    recognition.onerror = function () { stopListening(); };
+  }
+
+  function startListening() {
+    if (isSpeaking || isListening || !recognition) return;
+    liveTranscript = '';
+    answerStart    = Date.now();
+    document.getElementById('iv-transcript-live').textContent = '';
+    recognition.start();
+    isListening = true;
+    setUserStatus('Speaking…');
+    document.getElementById('iv-mic-btn').classList.add('is-recording');
+  }
+
+  function stopListening() {
+    if (!isListening) return;
+    recognition.stop();
+    isListening = false;
+    document.getElementById('iv-mic-btn').classList.remove('is-recording');
+    setUserStatus('Ready');
+    // 3-second grace period so SpeechRecognition flushes final words
+    setTimeout(function () { submitAnswer(liveTranscript.trim()); }, 3000);
+  }
+
+  // ── Answer flow ──────────────────────────────────────────────────────────
+
+  function submitAnswer(transcript) {
+    if (!transcript) { askNextQuestion(); return; }
+    var q        = questions[currentQ];
+    var duration = Math.round((Date.now() - answerStart) / 1000);
+    var fd       = new FormData();
+    fd.append('question_id', q.id);
+    fd.append('transcript', transcript);
+    fd.append('duration', duration);
+    fd.append('csrfmiddlewaretoken', CSRF);
+    fetch(SAVE_URL, { method: 'POST', body: fd });
+    currentQ++;
+    if (currentQ < questions.length) {
+      setAiStatus('Processing…');
+      setTimeout(function () { askNextQuestion(); }, 800);
+    } else {
+      finishInterview();
+    }
+  }
+
+  function askNextQuestion() {
+    if (currentQ >= questions.length) { finishInterview(); return; }
+    var q = questions[currentQ];
+    document.getElementById('iv-q-counter').textContent = 'Q ' + (currentQ + 1) + ' / ' + questions.length;
+    document.getElementById('iv-q-text').textContent    = q.text;
+    document.getElementById('iv-transcript-live').textContent = '';
+    setAiStatus('Speaking…');
+    speak(q.text, function () {
+      setAiStatus('Listening…');
+    });
+  }
+
+  // ── End interview ────────────────────────────────────────────────────────
+
+  function finishInterview() {
+    speechSynthesis.cancel();
+    speak("That's all the questions. Well done! Generating your feedback now.", function () {
+      fetch(END_URL, { method: 'POST', headers: { 'X-CSRFToken': CSRF } })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d.result_url) window.location.href = d.result_url;
+        });
+    });
+  }
+
+  // ── Init ─────────────────────────────────────────────────────────────────
+
+  initRecognition();
+  startCamera();
+
+  // Spacebar PTT
+  document.addEventListener('keydown', function (e) {
+    if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); startListening(); }
+  });
+  document.addEventListener('keyup', function (e) {
+    if (e.code === 'Space') stopListening();
+  });
+
+  // Mic button PTT
+  var micBtn = document.getElementById('iv-mic-btn');
+  micBtn.addEventListener('mousedown',  startListening);
+  micBtn.addEventListener('mouseup',    stopListening);
+  micBtn.addEventListener('touchstart', function (e) { e.preventDefault(); startListening(); });
+  micBtn.addEventListener('touchend',   stopListening);
+
+  document.getElementById('iv-cam-btn').addEventListener('click', toggleCamera);
+  document.getElementById('iv-end-btn').addEventListener('click', function () {
+    if (confirm('End the interview early?')) finishInterview();
+  });
+
+  // Start with intro + first question after 1.5s
+  setTimeout(function () {
+    speak('Hello! Welcome to your ' + INTERVIEW_TITLE + ' interview. I\'ll ask you ' + questions.length + ' questions. Hold space to answer.', function () {
+      askNextQuestion();
+    });
+  }, 1500);
+
+})();
+</script>
+{% endblock %}

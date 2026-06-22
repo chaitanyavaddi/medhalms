@@ -1,0 +1,135 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}{% if interview %}Edit{% else %}Create{% endif %} Interview{% endblock %}
+{% block topbar_title %}<h2 class="dash-page-title">{% if interview %}Edit{% else %}New{% endif %} Interview</h2>{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/interviews.css' %}">{% endblock %}
+
+{% block content %}
+<div class="iv-form-page">
+  <form method="post" class="iv-form">
+    {% csrf_token %}
+
+    {% if error %}
+    <div class="iv-form-error">{{ error }}</div>
+    {% endif %}
+
+    <div class="iv-form-section">
+      <h2>Basic Info</h2>
+
+      <div class="iv-form-row">
+        <label>Title <span class="iv-req">*</span></label>
+        <input type="text" name="title" class="iv-form-input"
+               value="{{ interview.title|default:data.title }}" placeholder="e.g. Python Backend Engineer" required>
+      </div>
+
+      <div class="iv-form-row">
+        <label>Difficulty</label>
+        <select name="difficulty" class="iv-form-input">
+          {% for val, label in difficulties %}
+          <option value="{{ val }}" {% if val == interview.difficulty|default:data.difficulty %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="iv-form-row">
+        <label>Max Duration (minutes)</label>
+        <input type="number" name="max_duration" class="iv-form-input iv-form-input--sm"
+               value="{{ interview.max_duration|default:data.max_duration|default:30 }}" min="5" max="120">
+      </div>
+
+      <div class="iv-form-row">
+        <label>Mapped Courses</label>
+        <div class="iv-form-checkboxes">
+          {% for c in courses %}
+          <label class="iv-checkbox-label">
+            <input type="checkbox" name="courses" value="{{ c.pk }}"
+              {% if interview and c in interview.courses.all %}checked{% endif %}>
+            {{ c.name }}
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="iv-form-row">
+        <label>Interviewer Persona <span class="iv-req">*</span></label>
+        <textarea name="persona_prompt" class="iv-form-input iv-form-textarea" rows="4"
+                  placeholder="e.g. You are a senior Python backend engineer at a product startup. Conduct a focused technical interview covering Django, REST APIs, and databases.">{{ interview.persona_prompt|default:data.persona_prompt }}</textarea>
+        <span class="iv-form-hint">Describe who the AI interviewer is and what topics to focus on.</span>
+      </div>
+    </div>
+
+    <div class="iv-form-section">
+      <div class="iv-form-section-hd">
+        <h2>Questions</h2>
+        <button type="button" class="iv-add-q-btn" id="iv-add-q">+ Add Question</button>
+      </div>
+
+      <div id="iv-questions-list">
+        {% if interview %}
+          {% for q in interview.questions.all %}
+          <div class="iv-q-row" data-index="{{ forloop.counter }}">
+            <span class="iv-q-num">{{ forloop.counter }}</span>
+            <input type="text" name="question_text" class="iv-form-input" value="{{ q.text }}" placeholder="Question text" required>
+            <button type="button" class="iv-q-remove" title="Remove">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1L1 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <p class="iv-form-hint" id="iv-q-empty" {% if interview and interview.question_count %}style="display:none"{% endif %}>
+        No questions yet. Add at least one.
+      </p>
+    </div>
+
+    <div class="iv-form-actions">
+      <a href="{% if interview %}{% url 'interviews:detail' interview.pk %}{% else %}{% url 'interviews:list' %}{% endif %}"
+         class="iv-form-cancel">Cancel</a>
+      <button type="submit" class="iv-form-submit">
+        {% if interview %}Save Changes{% else %}Create Interview{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+(function () {
+  var list  = document.getElementById('iv-questions-list');
+  var empty = document.getElementById('iv-q-empty');
+  var count = list.querySelectorAll('.iv-q-row').length;
+
+  function updateNumbers() {
+    list.querySelectorAll('.iv-q-row').forEach(function (row, i) {
+      row.querySelector('.iv-q-num').textContent = i + 1;
+    });
+    empty.style.display = list.querySelectorAll('.iv-q-row').length ? 'none' : '';
+  }
+
+  function addQuestion(value) {
+    count++;
+    var row = document.createElement('div');
+    row.className = 'iv-q-row';
+    row.innerHTML =
+      '<span class="iv-q-num">' + count + '</span>' +
+      '<input type="text" name="question_text" class="iv-form-input" value="' + (value || '') + '" placeholder="Question text" required>' +
+      '<button type="button" class="iv-q-remove" title="Remove">' +
+        '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1L1 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
+      '</button>';
+    row.querySelector('.iv-q-remove').addEventListener('click', function () {
+      row.remove(); updateNumbers();
+    });
+    list.appendChild(row);
+    row.querySelector('input').focus();
+    empty.style.display = 'none';
+  }
+
+  // Wire existing remove buttons
+  list.querySelectorAll('.iv-q-remove').forEach(function (btn) {
+    btn.addEventListener('click', function () { btn.closest('.iv-q-row').remove(); updateNumbers(); });
+  });
+
+  document.getElementById('iv-add-q').addEventListener('click', function () { addQuestion(); });
+})();
+</script>
+{% endblock %}
