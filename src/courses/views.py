@@ -133,6 +133,13 @@ class CourseUploadView(LoginRequiredMixin, View):
     _allowed = {
         'image/jpeg', 'image/png', 'image/gif', 'image/webp',
         'video/mp4', 'video/webm', 'video/quicktime',
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/msword',
     }
 
     def post(self, request):
@@ -141,7 +148,6 @@ class CourseUploadView(LoginRequiredMixin, View):
             return JsonResponse({'error': 'No file provided'}, status=400)
         if f.content_type not in self._allowed:
             return JsonResponse({'error': 'File type not supported'}, status=400)
-        is_video = f.content_type.startswith('video/')
         try:
             from core.bunny import upload_file
             course_id = request.POST.get('course_id', 'general')
@@ -149,7 +155,14 @@ class CourseUploadView(LoginRequiredMixin, View):
             url = upload_file(f, folder)
         except RuntimeError as e:
             return JsonResponse({'error': str(e)}, status=500)
-        return JsonResponse({'url': url, 'type': 'video' if is_video else 'image'})
+        ct = f.content_type
+        if ct.startswith('image/'):
+            file_type = 'image'
+        elif ct.startswith('video/'):
+            file_type = 'video'
+        else:
+            file_type = 'file'
+        return JsonResponse({'url': url, 'type': file_type, 'filename': f.name, 'mimetype': ct})
 
 
 # ── Modules ──────────────────────────────────────────────────────────────────

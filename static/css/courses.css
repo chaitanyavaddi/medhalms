@@ -647,7 +647,17 @@
 #cr-embed-close:hover { color: #374151; background: #e5e7eb; }
 
 /* Embed blot container */
-.cr-embed-blot { margin: 1rem 0; user-select: none; }
+.cr-embed-blot { position: relative; margin: 1rem 0; user-select: none; }
+.cr-embed-blot[data-align="center"] { margin-left: auto; margin-right: auto; display: block; }
+.cr-embed-blot[data-align="right"]  { margin-left: auto; margin-right: 0; display: block; }
+
+/* Transparent overlay captures clicks on iframes (which eat pointer events) */
+.cr-embed-click-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: pointer;
+}
 
 /* Generic URL embed card */
 .cr-embed-card {
@@ -901,4 +911,169 @@
   color: #374151;
   line-height: 1.6;
   margin: 0 0 24px;
+}
+
+/* ── GitHub embed card variant ── */
+.cr-embed-card--gh {
+  gap: 12px;
+  background: #f6f8fa;
+  border-color: #d0d7de;
+}
+.cr-embed-card--gh:hover { background: #edf2f9; border-color: #b6bfc8; }
+.cr-embed-gh-info { flex: 1; min-width: 0; }
+.cr-embed-gh-title {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cr-embed-gh-sub {
+  font-size: 11.5px;
+  color: #6b7280;
+  margin-top: 2px;
+  font-family: 'IBM Plex Mono', 'Menlo', monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cr-embed-gh-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  background: #e8f4ff;
+  color: #0967d2;
+  border-radius: 4px;
+  flex-shrink: 0;
+  border: 1px solid #bee3f8;
+}
+
+/* ── File attachment blot ── */
+.cr-file-blot { margin: 0.75rem 0; user-select: none; }
+
+.cr-file-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fafafa;
+  transition: border-color 0.12s, background 0.12s;
+}
+.cr-file-card:hover { border-color: #d1d5db; background: #f3f4f6; }
+
+.cr-file-icon {
+  flex-shrink: 0;
+  width: 38px;
+  height: 46px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: #fff;
+  background: #6b7280;
+}
+.cr-file-icon--pdf  { background: #e53e3e; }
+.cr-file-icon--pptx,
+.cr-file-icon--ppt  { background: #dd6b20; }
+.cr-file-icon--xlsx,
+.cr-file-icon--xls  { background: #276749; }
+.cr-file-icon--docx,
+.cr-file-icon--doc  { background: #2b6cb0; }
+
+.cr-file-info {
+  flex: 1;
+  min-width: 0;
+}
+.cr-file-name {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cr-file-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.cr-file-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+  font-family: inherit;
+}
+.cr-file-btn:hover { color: #111827; border-color: #d1d5db; background: #f9fafb; }
+.cr-file-eye:hover  { color: var(--brand-accent); border-color: color-mix(in srgb, var(--brand-accent) 40%, #fff); }
+.cr-file-delete { color: #9ca3af; }
+.cr-file-delete:hover { color: #ef4444; border-color: #fca5a5; background: #fff5f5; }
+
+/* ── File preview modal ── */
+.cr-file-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cr-file-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+.cr-file-modal-box {
+  position: relative;
+  z-index: 1;
+  width: min(92vw, 1100px);
+  height: min(88vh, 800px);
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+}
+.cr-file-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  transition: color 0.12s, background 0.12s;
+}
+.cr-file-modal-close:hover { color: #111827; background: #f3f4f6; }
+.cr-file-modal-frame {
+  flex: 1;
+  width: 100%;
+  border: none;
+  display: block;
 }

@@ -168,6 +168,9 @@
           <button class="cr-tb-custom" data-action="video" title="Insert video">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
           </button>
+          <button class="cr-tb-custom" data-action="file" title="Attach file (PDF, PPTX, XLSX, DOCX)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          </button>
         </span>
         <span class="cr-tb-spacer"></span>
         <span class="cr-save-status" id="cr-save-status">Saved</span>
@@ -216,6 +219,18 @@
 </div>
 
 <div id="cr-modal-slot"></div>
+
+<!-- File preview modal -->
+<div id="cr-file-modal" class="cr-file-modal" style="display:none" role="dialog" aria-modal="true">
+  <div class="cr-file-modal-backdrop" id="cr-file-modal-backdrop"></div>
+  <div class="cr-file-modal-box">
+    <button class="cr-file-modal-close" id="cr-file-modal-close" title="Close">
+      <svg width="14" height="14" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1L1 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <iframe id="cr-file-modal-frame" class="cr-file-modal-frame" src="" allowfullscreen></iframe>
+  </div>
+</div>
+
 {% csrf_token %}
 
 {% if active_chapter %}
@@ -277,19 +292,34 @@
   class EmbedBlot extends BlockEmbed {
     static create(value) {
       var node = super.create();
-      node.setAttribute('data-embed-url',  value.url  || '');
-      node.setAttribute('data-embed-type', value.type || 'link');
+      node.setAttribute('data-embed-url',  value.url   || '');
+      node.setAttribute('data-embed-type', value.type  || 'link');
       node.setAttribute('contenteditable', 'false');
+      if (value.width) { node.setAttribute('data-width', value.width); node.style.width = value.width; }
+      if (value.align) node.setAttribute('data-align', value.align);
       EmbedBlot._renderInto(node, value);
       return node;
     }
     static _renderInto(node, value) {
       if (value.type === 'youtube' || value.type === 'vimeo') {
-        node.innerHTML = '<iframe src="' + value.src + '"' +
+        node.innerHTML =
+          '<div class="cr-embed-click-overlay"></div>' +
+          '<iframe src="' + value.src + '"' +
           ' title="Video player" frameborder="0"' +
           ' allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"' +
           ' referrerpolicy="strict-origin-when-cross-origin" allowfullscreen' +
           ' style="width:100%;aspect-ratio:16/9;border-radius:8px;display:block;"></iframe>';
+      } else if (value.type === 'github-raw') {
+        var mr = value.url.match(/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\/(?:refs\/[^/]+\/[^/]+|[^/]+)\/(.+)/);
+        var rfn = mr ? mr[3].split('/').pop() : value.url.split('/').pop();
+        var rext = rfn.includes('.') ? rfn.split('.').pop().toLowerCase() : '';
+        var repo = mr ? mr[1] + '/' + mr[2] : '';
+        node.innerHTML = EmbedBlot._ghCard(value.url, rfn, repo, rext ? rext.toUpperCase() : 'RAW');
+      } else if (value.type === 'github-gist') {
+        var mg = value.url.match(/gist\.github\.com\/([^/?#]+)(?:\/([a-f0-9]{6,}))?/);
+        var guser = mg ? mg[1] : '';
+        var gsub = mg && mg[2] ? mg[2].substring(0, 8) + '…' : '';
+        node.innerHTML = EmbedBlot._ghCard(value.url, guser ? 'Gist by ' + guser : 'GitHub Gist', gsub, 'GIST');
       } else {
         node.innerHTML =
           '<a href="' + value.url + '" target="_blank" rel="noopener noreferrer" class="cr-embed-card">' +
@@ -298,12 +328,25 @@
           '</a>';
       }
     }
+    static _ghCard(url, title, subtitle, badge) {
+      var SVG_GH = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>';
+      return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="cr-embed-card cr-embed-card--gh">' +
+        SVG_GH +
+        '<div class="cr-embed-gh-info">' +
+          '<div class="cr-embed-gh-title">' + title + '</div>' +
+          (subtitle ? '<div class="cr-embed-gh-sub">' + subtitle + '</div>' : '') +
+        '</div>' +
+        '<span class="cr-embed-gh-badge">' + badge + '</span>' +
+      '</a>';
+    }
     static value(node) {
       var iframeEl = node.querySelector('iframe');
       return {
-        url:  node.getAttribute('data-embed-url')  || '',
-        type: node.getAttribute('data-embed-type') || 'link',
-        src:  iframeEl ? iframeEl.getAttribute('src') : '',
+        url:   node.getAttribute('data-embed-url')  || '',
+        type:  node.getAttribute('data-embed-type') || 'link',
+        src:   iframeEl ? iframeEl.getAttribute('src') : '',
+        width: node.getAttribute('data-width') || node.style.width || '',
+        align: node.getAttribute('data-align') || '',
       };
     }
   }
@@ -312,9 +355,67 @@
   EmbedBlot.className = 'cr-embed-blot';
   Quill.register(EmbedBlot);
 
+  // File attachment blot (PDF, PPTX, XLSX, DOCX, etc.)
+  var BlockEmbedFile = Quill.import('blots/block/embed');
+  class FileBlot extends BlockEmbedFile {
+    static create(value) {
+      var node = super.create();
+      node.setAttribute('data-file-url',  value.url      || '');
+      node.setAttribute('data-file-name', value.filename || '');
+      node.setAttribute('data-file-mime', value.mimetype || '');
+      node.setAttribute('contenteditable', 'false');
+      FileBlot._render(node, value);
+      return node;
+    }
+    static _render(node, value) {
+      var url      = value.url      || '';
+      var filename = value.filename || 'File';
+      var mime     = value.mimetype || '';
+      var ext      = filename.includes('.') ? filename.split('.').pop().toUpperCase() : '?';
+      var previewable = mime === 'application/pdf'
+        || mime.includes('officedocument')
+        || mime === 'application/msword'
+        || mime === 'application/vnd.ms-powerpoint'
+        || mime === 'application/vnd.ms-excel';
+      node.innerHTML =
+        '<div class="cr-file-card">' +
+          '<div class="cr-file-icon cr-file-icon--' + ext.toLowerCase() + '">' + ext + '</div>' +
+          '<div class="cr-file-info"><span class="cr-file-name">' + filename + '</span></div>' +
+          '<div class="cr-file-actions">' +
+            (previewable
+              ? '<button type="button" class="cr-file-btn cr-file-eye" data-url="' + url + '" data-mime="' + mime + '" title="Preview">' +
+                  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+                '</button>'
+              : '') +
+            '<a href="' + url + '" download="' + filename + '" class="cr-file-btn cr-file-dl" title="Download">' +
+              '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+            '</a>' +
+            (CAN_MANAGE
+              ? '<button type="button" class="cr-file-btn cr-file-delete" title="Remove">' +
+                  '<svg width="11" height="11" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1L1 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
+                '</button>'
+              : '') +
+          '</div>' +
+        '</div>';
+    }
+    static value(node) {
+      return {
+        url:      node.getAttribute('data-file-url')  || '',
+        filename: node.getAttribute('data-file-name') || '',
+        mimetype: node.getAttribute('data-file-mime') || '',
+      };
+    }
+  }
+  FileBlot.blotName  = 'file-attachment';
+  FileBlot.tagName   = 'div';
+  FileBlot.className = 'cr-file-blot';
+  Quill.register(FileBlot);
+
   function detectEmbedType(url) {
     if (/youtube\.com\/watch\?.*v=|youtu\.be\//.test(url)) return 'youtube';
     if (/vimeo\.com\/\d+/.test(url)) return 'vimeo';
+    if (/raw\.githubusercontent\.com\//.test(url)) return 'github-raw';
+    if (/gist\.github\.com\//.test(url)) return 'github-gist';
     return 'link';
   }
   function getEmbedSrc(url, type) {
@@ -626,6 +727,8 @@
       if (data.url) {
         if (data.type === 'image') {
           quill.insertEmbed(blotIndex, 'image', data.url, Quill.sources.USER);
+        } else if (data.type === 'file') {
+          quill.insertEmbed(blotIndex, 'file-attachment', { url: data.url, filename: data.filename || '', mimetype: data.mimetype || '' }, Quill.sources.USER);
         } else {
           quill.insertEmbed(blotIndex, 'hn-video', { src: data.url }, Quill.sources.USER);
           setTimeout(initEditorVideos, 0);
@@ -645,15 +748,25 @@
 
   function uploadFile(file) {
     if (!file) return;
-    var allowed = ['image/jpeg','image/png','image/gif','image/webp','video/mp4','video/webm','video/quicktime'];
-    if (!allowed.includes(file.type)) return;
+    var imgVideo = ['image/jpeg','image/png','image/gif','image/webp','video/mp4','video/webm','video/quicktime'];
+    var docs = ['application/pdf','application/vnd.openxmlformats-officedocument.presentationml.presentation','application/vnd.ms-powerpoint','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/msword'];
+    if (!imgVideo.includes(file.type) && !docs.includes(file.type)) {
+      showToast('Unsupported file type'); return;
+    }
     if (file.type.startsWith('video/') && file.size > 30 * 1024 * 1024) {
       showToast('Video must be under 30 MB'); return;
     }
     if (file.type.startsWith('image/') && file.size > 10 * 1024 * 1024) {
       showToast('Image must be under 10 MB'); return;
     }
-    compressImage(file).then(doUpload);
+    if (docs.includes(file.type) && file.size > 50 * 1024 * 1024) {
+      showToast('File must be under 50 MB'); return;
+    }
+    if (file.type.startsWith('image/')) {
+      compressImage(file).then(doUpload);
+    } else {
+      doUpload(file);
+    }
   }
 
   // ── Toolbar custom buttons ────────────────────────────────────────────────
@@ -666,7 +779,7 @@
     bar.className = 'cr-embed-bar';
     bar.innerHTML =
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>' +
-      '<input id="cr-embed-input" type="text" placeholder="Paste a YouTube, Vimeo, or any URL…" autocomplete="off">' +
+      '<input id="cr-embed-input" type="text" placeholder="Paste a YouTube, Vimeo, GitHub, Gist, or any URL…" autocomplete="off">' +
       '<button id="cr-embed-submit">Embed</button>' +
       '<button id="cr-embed-close">✕</button>';
     var toolbar = document.getElementById('cr-toolbar');
@@ -704,8 +817,10 @@
       }
       if (action === 'embed') { showEmbedBar(); return; }
       var input  = document.createElement('input');
-      input.type   = 'file';
-      input.accept = action === 'image' ? 'image/*' : 'video/mp4,video/webm,video/quicktime';
+      input.type = 'file';
+      if (action === 'image')      input.accept = 'image/*';
+      else if (action === 'video') input.accept = 'video/mp4,video/webm,video/quicktime';
+      else if (action === 'file')  input.accept = '.pdf,.pptx,.ppt,.xlsx,.xls,.docx,.doc,application/pdf,application/msword,application/vnd.ms-powerpoint,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
       input.addEventListener('change', function () { uploadFile(input.files[0]); });
       input.click();
     });
@@ -732,7 +847,7 @@
   // Guard Backspace/Delete around embeds
   function isMediaBlot(b) {
     return b && b.statics &&
-      (b.statics.blotName === 'image' || b.statics.blotName === 'hn-video');
+      (b.statics.blotName === 'image' || b.statics.blotName === 'hn-video' || b.statics.blotName === 'embed-block');
   }
   quill.root.addEventListener('keydown', function (e) {
     if (e.key !== 'Backspace' && e.key !== 'Delete') return;
@@ -771,6 +886,10 @@
     }
 
     function removeOverlay() {
+      if (activeMedia) {
+        var co = activeMedia.querySelector && activeMedia.querySelector('.cr-embed-click-overlay');
+        if (co) co.style.display = '';
+      }
       if (mediaOverlay) { mediaOverlay.parentNode && mediaOverlay.parentNode.removeChild(mediaOverlay); mediaOverlay = null; }
       activeMedia = null;
     }
@@ -788,6 +907,11 @@
       removeOverlay();
       activeMedia = el;
       var isVideo = el.classList.contains('hn-video-blot');
+      var isEmbed = el.classList.contains('cr-embed-blot');
+      if (isEmbed) {
+        var co = el.querySelector('.cr-embed-click-overlay');
+        if (co) co.style.display = 'none';
+      }
       var overlay = document.createElement('div');
       overlay.className = 'img-overlay';
       var bar = document.createElement('div');
@@ -813,18 +937,20 @@
 
       var sep = document.createElement('span'); sep.className = 'img-toolbar-sep'; bar.appendChild(sep);
 
-      var wrapBtn = document.createElement('button');
-      wrapBtn.type = 'button'; wrapBtn.title = 'Wrap text'; wrapBtn.className = 'img-wrap-btn'; wrapBtn.innerHTML = SVG_WRAP;
-      if (el.getAttribute('data-wrap') === 'true') wrapBtn.classList.add('active');
-      wrapBtn.addEventListener('mousedown', function (e) {
-        e.preventDefault(); e.stopPropagation();
-        if (el.getAttribute('data-wrap') === 'true') { el.removeAttribute('data-wrap'); wrapBtn.classList.remove('active'); }
-        else { el.setAttribute('data-wrap', 'true'); wrapBtn.classList.add('active'); }
-        scheduleAutosave(); createOverlay(el);
-      });
-      bar.appendChild(wrapBtn);
+      if (!isEmbed) {
+        var wrapBtn = document.createElement('button');
+        wrapBtn.type = 'button'; wrapBtn.title = 'Wrap text'; wrapBtn.className = 'img-wrap-btn'; wrapBtn.innerHTML = SVG_WRAP;
+        if (el.getAttribute('data-wrap') === 'true') wrapBtn.classList.add('active');
+        wrapBtn.addEventListener('mousedown', function (e) {
+          e.preventDefault(); e.stopPropagation();
+          if (el.getAttribute('data-wrap') === 'true') { el.removeAttribute('data-wrap'); wrapBtn.classList.remove('active'); }
+          else { el.setAttribute('data-wrap', 'true'); wrapBtn.classList.add('active'); }
+          scheduleAutosave(); createOverlay(el);
+        });
+        bar.appendChild(wrapBtn);
+      }
 
-      if (!isVideo) {
+      if (!isVideo && !isEmbed) {
         var bwBtn = document.createElement('button');
         bwBtn.type = 'button'; bwBtn.title = 'B&W'; bwBtn.innerHTML = SVG_BW;
         if (el.getAttribute('data-grayscale') === 'true') bwBtn.classList.add('active');
@@ -840,7 +966,8 @@
       var sep2 = document.createElement('span'); sep2.className = 'img-toolbar-sep'; bar.appendChild(sep2);
 
       var delBtn = document.createElement('button');
-      delBtn.type = 'button'; delBtn.title = isVideo ? 'Delete video' : 'Delete image';
+      delBtn.type = 'button';
+      delBtn.title = isEmbed ? 'Delete embed' : (isVideo ? 'Delete video' : 'Delete image');
       delBtn.className = 'img-delete-btn'; delBtn.innerHTML = SVG_DELETE;
       delBtn.addEventListener('mousedown', function (e) { e.preventDefault(); e.stopPropagation(); deleteActiveMedia(); });
       bar.appendChild(delBtn);
@@ -851,10 +978,10 @@
       handle.addEventListener('mousedown', function (e) {
         e.preventDefault(); e.stopPropagation();
         var startX = e.clientX;
-        var startW = el.offsetWidth || (isVideo ? 640 : el.naturalWidth) || 200;
+        var startW = el.offsetWidth || (isVideo || isEmbed ? 640 : el.naturalWidth) || 200;
         var maxW   = quill.root.offsetWidth;
         function onMove(ev) {
-          var newW = Math.max(isVideo ? 200 : 80, Math.min(maxW, startW + (ev.clientX - startX)));
+          var newW = Math.max(isVideo || isEmbed ? 200 : 80, Math.min(maxW, startW + (ev.clientX - startX)));
           el.style.width = newW + 'px'; el.style.height = 'auto'; positionOverlay();
         }
         function onUp() {
@@ -873,7 +1000,8 @@
     quill.root.addEventListener('click', function (e) {
       var img = e.target.closest('img');
       var vid = e.target.closest('div.hn-video-blot');
-      var target = img || vid;
+      var emb = e.target.closest('div.cr-embed-blot');
+      var target = img || vid || emb;
       if (target && quill.root.contains(target)) { createOverlay(target); } else { removeOverlay(); }
     });
     document.addEventListener('keydown', function (e) {
@@ -893,6 +1021,54 @@
   })();
 
   {% endif %}{# end can_manage #}
+
+  // ── File attachment interactions (all users) ──────────────────────────────
+
+  function openFilePreview(url, mime) {
+    var modal = document.getElementById('cr-file-modal');
+    var frame = document.getElementById('cr-file-modal-frame');
+    if (!modal || !frame) return;
+    var src = mime === 'application/pdf'
+      ? url
+      : 'https://view.officeapps.live.com/op/view.aspx?src=' + encodeURIComponent(url);
+    frame.src = src;
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeFilePreview() {
+    var modal = document.getElementById('cr-file-modal');
+    var frame = document.getElementById('cr-file-modal-frame');
+    if (modal) modal.style.display = 'none';
+    if (frame) frame.src = '';
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('click', function (e) {
+    var eye = e.target.closest('.cr-file-eye');
+    if (eye) { e.preventDefault(); openFilePreview(eye.dataset.url, eye.dataset.mime); return; }
+    var del = e.target.closest('.cr-file-delete');
+    if (del) {
+      var blotNode = del.closest('.cr-file-blot');
+      if (blotNode) {
+        var blot = Quill.find(blotNode);
+        if (blot) quill.deleteText(quill.getIndex(blot), 1, Quill.sources.USER);
+        if (typeof scheduleAutosave === 'function') scheduleAutosave();
+      }
+      return;
+    }
+  });
+
+  var modalClose = document.getElementById('cr-file-modal-close');
+  if (modalClose) modalClose.addEventListener('click', closeFilePreview);
+  var modalBackdrop = document.getElementById('cr-file-modal-backdrop');
+  if (modalBackdrop) modalBackdrop.addEventListener('click', closeFilePreview);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      var modal = document.getElementById('cr-file-modal');
+      if (modal && modal.style.display !== 'none') { closeFilePreview(); return; }
+    }
+  });
 
 })();
 </script>
