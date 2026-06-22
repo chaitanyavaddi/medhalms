@@ -159,7 +159,15 @@ class SessionEndView(LoginRequiredMixin, View):
 class SessionResultView(LoginRequiredMixin, View):
     def get(self, request, session_pk):
         session = get_object_or_404(InterviewSession, pk=session_pk, user=request.user)
-        return render(request, 'interviews/result.html', {'session': session})
+        answers_data = list(
+            session.answers.select_related('question').values(
+                'question__order', 'question__text', 'transcript'
+            ).order_by('question__order')
+        )
+        return render(request, 'interviews/result.html', {
+            'session':      session,
+            'answers_data': answers_data,
+        })
 
     def post(self, request, session_pk):
         session = get_object_or_404(InterviewSession, pk=session_pk, user=request.user)

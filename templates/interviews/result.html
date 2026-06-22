@@ -62,11 +62,11 @@
 </div>
 
 {% if not session.feedback %}
-{{ session.answers.all|json_script:"iv-answers-data" }}
+{{ answers_data|json_script:"iv-answers-data" }}
 <script>
 (function () {
   var SESSION_PK = {{ session.pk }};
-  var SAVE_URL   = '/mock/interviews/session/' + SESSION_PK + '/result/';
+  var SAVE_URL   = '{% url "interviews:session_result" session.pk %}';
   var CSRF       = '{{ csrf_token }}';
 
   var rawAnswers = JSON.parse(document.getElementById('iv-answers-data').textContent || '[]');
@@ -75,7 +75,7 @@
     if (!puter.auth.isSignedIn()) { await puter.auth.signIn(); }
 
     var qa = rawAnswers.map(function (a) {
-      return 'Q' + a.fields.question + ': ' + (a.fields.transcript || '(no answer)');
+      return 'Q' + a.question__order + ' – ' + a.question__text + '\nAnswer: ' + (a.transcript || '(no answer)');
     }).join('\n\n');
 
     var prompt = 'You are evaluating a mock interview for "{{ session.interview.title|escapejs }}".\n\n'
