@@ -847,7 +847,7 @@
   // Guard Backspace/Delete around embeds
   function isMediaBlot(b) {
     return b && b.statics &&
-      (b.statics.blotName === 'image' || b.statics.blotName === 'hn-video' || b.statics.blotName === 'embed-block');
+      (b.statics.blotName === 'image' || b.statics.blotName === 'hn-video' || b.statics.blotName === 'embed-block' || b.statics.blotName === 'file-attachment');
   }
   quill.root.addEventListener('keydown', function (e) {
     if (e.key !== 'Backspace' && e.key !== 'Delete') return;
