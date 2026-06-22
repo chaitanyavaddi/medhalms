@@ -539,6 +539,36 @@
     },
   });
 
+  // ── Fix Quill tooltip clipping: use position:fixed + viewport coords ────────
+  // .cr-editor-scroll { overflow-y:auto } forces overflow-x:auto (CSS spec),
+  // which clips the absolutely-positioned .ql-tooltip. Override position() to
+  // place the tooltip in the fixed layer using real getBoundingClientRect coords.
+  (function () {
+    var tt = quill.theme && quill.theme.tooltip;
+    if (!tt || typeof tt.position !== 'function') return;
+    var _origPos = tt.position.bind(tt);
+    tt.position = function (reference) {
+      _origPos(reference); // let Quill set flip class, arrow, etc.
+      var edRect   = quill.root.getBoundingClientRect(); // .ql-editor viewport rect
+      var ttWidth  = this.root.offsetWidth  || 380;
+      var ttHeight = this.root.offsetHeight || 38;
+      var left = edRect.left + reference.left + reference.width  / 2 - ttWidth  / 2;
+      var top  = edRect.top  + reference.bottom + 8;
+      // Flip above if would overflow bottom
+      if (top + ttHeight > window.innerHeight - 8) {
+        top = edRect.top + reference.top - ttHeight - 8;
+      }
+      // Clamp to viewport
+      left = Math.max(8, Math.min(window.innerWidth - ttWidth - 8, left));
+      top  = Math.max(8, top);
+      this.root.style.position  = 'fixed';
+      this.root.style.left      = left + 'px';
+      this.root.style.top       = top  + 'px';
+      this.root.style.marginTop = '0';
+      return 0;
+    };
+  })();
+
   // ── Load existing content ─────────────────────────────────────────────────
 
   var bodyData = document.getElementById('chapter-body-data');

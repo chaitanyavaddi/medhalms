@@ -561,7 +561,7 @@
 /* Remove snow content border */
 .cr-editor .ql-snow.ql-container { border: none; }
 
-/* Snow link/formula tooltip */
+/* Snow link/formula tooltip — position:fixed is set by JS to escape overflow clipping */
 .cr-editor .ql-snow .ql-tooltip {
   border-radius: 8px;
   border: 1px solid #e5e7eb;
@@ -569,7 +569,7 @@
   padding: 7px 12px;
   font-family: inherit;
   font-size: 13px;
-  z-index: 38;
+  z-index: 9000;
   white-space: nowrap;
 }
 .cr-editor .ql-snow .ql-tooltip input[type="text"] {
