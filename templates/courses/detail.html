@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/video.js@8.23.8/dist/video-js.min.css" rel="stylesheet">
+<script src="https://js.puter.com/v2/"></script>
 {% endblock %}
 
 {% block content_class %}dash-content--edge{% endblock %}
@@ -218,6 +219,78 @@
     </div>
     {% endif %}
   </div>
+
+  {% if active_chapter %}
+  <button class="cr-ai-tab" id="cr-ai-toggle" title="Ask AI Tutor">
+    <span>MEDHA AI</span>
+  </button>
+  <div class="cr-ai-panel" id="cr-ai-panel">
+    <div class="cr-ai-header">
+      <div class="cr-ai-header-left">
+        <span class="cr-ai-brand-label">MEDHA AI</span>
+      </div>
+      <div class="cr-ai-header-center">
+        <div class="cr-ai-usage-wrap">
+          <span class="cr-ai-usage-badge" id="cr-ai-usage-badge"></span>
+          <div class="cr-ai-usage-track">
+            <div class="cr-ai-usage-fill" id="cr-ai-usage-bar" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="cr-ai-header-right">
+        <div class="cr-ai-hist-wrap">
+          <button class="cr-ai-hdr-btn" id="cr-ai-hist-btn" title="Chat history">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </button>
+          <div class="cr-ai-hist-dropdown" id="cr-ai-hist-dropdown" hidden></div>
+        </div>
+        <button class="cr-ai-new-btn" id="cr-ai-new-btn" title="New conversation">+ New</button>
+        <button class="cr-ai-hdr-btn" id="cr-ai-close-btn" title="Close AI panel">
+          <svg width="11" height="11" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1L1 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Puter auth gate — shown when user not signed into Puter -->
+    <div class="cr-ai-auth-overlay" id="cr-ai-auth-overlay">
+      <button class="cr-ai-auth-close" id="cr-ai-auth-close" title="Close">
+        <svg width="11" height="11" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1L1 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div class="cr-ai-auth-card">
+        <div class="cr-ai-auth-badge">FREE</div>
+        <h3 class="cr-ai-auth-title">Connect Puter to unlock<br>Medha AI</h3>
+        <p class="cr-ai-auth-desc">
+          Get unlimited access to the latest AI models — <strong>Claude, GPT‑4o, Gemini</strong> — completely free, every month. No credit card. No limits.
+        </p>
+        <ul class="cr-ai-auth-perks">
+          <li>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e67f0f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            25M free AI credits/month per student
+          </li>
+          <li>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e67f0f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Latest frontier models — same ones that cost $20+/month elsewhere
+          </li>
+          <li>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e67f0f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Your data never leaves your browser
+          </li>
+        </ul>
+        <button class="cr-ai-auth-btn" id="cr-ai-signin-btn">
+          Connect Puter to Medha &rarr;
+        </button>
+        <p class="cr-ai-auth-note">Free account · Takes 30 seconds</p>
+      </div>
+    </div>
+
+    <div class="cr-ai-messages" id="cr-ai-messages"></div>
+    <div class="cr-ai-input-area">
+      <textarea class="cr-ai-input" id="cr-ai-input" placeholder="Ask about this chapter… (Enter to send)" rows="1"></textarea>
+      <button class="cr-ai-send-btn" id="cr-ai-send-btn" title="Send">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+  {% endif %}
 
 </div>
 
@@ -1223,4 +1296,457 @@
 
 })();
 </script>
+
+{% if active_chapter %}
+<script>
+(function () {
+  var COURSE_ID     = {{ course.pk }};
+  var CHAPTER_PK    = {{ active_chapter.pk }};
+  var COURSE_NAME   = '{{ course.name|escapejs }}';
+  var MODULE_TITLE  = '{{ active_chapter.module.title|escapejs }}';
+  var CHAPTER_TITLE = '{{ active_chapter.title|escapejs }}';
+  var USER_NAME     = '{% if request.user.first_name %}{{ request.user.first_name|escapejs }}{% if request.user.last_name %} {{ request.user.last_name|escapejs }}{% endif %}{% else %}{{ request.user.email|escapejs }}{% endif %}';
+  var STORAGE_KEY   = 'cr_chat_c' + COURSE_ID + '_ch' + CHAPTER_PK;
+
+  var currentThread = null;
+  var isStreaming   = false;
+
+
+  // ── Monthly usage (real data from Puter API) ─────────────────────────────
+
+  function renderUsageBadge(pct) {
+    var badge = document.getElementById('cr-ai-usage-badge');
+    var bar   = document.getElementById('cr-ai-usage-bar');
+    if (!badge) return;
+    var now      = new Date();
+    var resetDay = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    var months   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var resetStr = months[resetDay.getMonth()] + ' ' + resetDay.getDate();
+    badge.textContent = pct.toFixed(1) + '% used · resets ' + resetStr;
+    if (bar) {
+      bar.style.width = Math.min(pct, 100) + '%';
+      bar.className = 'cr-ai-usage-fill'
+        + (pct >= 80 ? ' cr-ai-usage-fill--warn' : '')
+        + (pct >= 95 ? ' cr-ai-usage-fill--critical' : '');
+    }
+  }
+
+  function fetchAndRenderUsage() {
+    if (typeof puter === 'undefined' || !puter.auth.isSignedIn()) return;
+    puter.auth.getMonthlyUsage().then(function (data) {
+      var info = data && data.allowanceInfo;
+      if (!info) return;
+      var total     = info.monthUsageAllowance || 25000000;
+      var remaining = info.remaining != null ? info.remaining : total;
+      var used      = total - remaining;
+      var pct = (used / total) * 100;
+      renderUsageBadge(pct);
+    }).catch(function () {});
+  }
+
+  function incrementUsage() {
+    // Refresh real usage after each exchange
+    fetchAndRenderUsage();
+  }
+
+  // ── localStorage helpers ──────────────────────────────────────────────────
+
+  function loadAllThreads() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"threads":[]}').threads || []; }
+    catch (e) { return []; }
+  }
+
+  function saveAllThreads(threads) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ threads: threads }));
+  }
+
+  function persistCurrentThread() {
+    if (!currentThread) return;
+    var threads = loadAllThreads();
+    var idx = threads.findIndex(function (t) { return t.id === currentThread.id; });
+    if (idx >= 0) threads[idx] = currentThread; else threads.unshift(currentThread);
+    saveAllThreads(threads);
+  }
+
+  function genId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
+
+  // ── Thread management ─────────────────────────────────────────────────────
+
+  function startNewThread() {
+    currentThread = { id: genId(), title: 'New conversation', created: Date.now(), messages: [] };
+    renderMessages();
+  }
+
+  function loadThread(thread) {
+    currentThread = JSON.parse(JSON.stringify(thread));
+    renderMessages();
+    closeHistoryDropdown();
+  }
+
+  // ── Message rendering ─────────────────────────────────────────────────────
+
+  function escHtml(s) {
+    return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function renderMarkdown(raw) {
+    // Split into lines; handle fenced code blocks first
+    var lines = raw.split('\n');
+    var out = [];
+    var inCode = false, codeLang = '', codeLines = [];
+    var listItems = [], listType = null;
+
+    function flushList() {
+      if (!listItems.length) return;
+      var tag = listType === 'ol' ? 'ol' : 'ul';
+      out.push('<' + tag + '>' + listItems.map(function(li) { return '<li>' + li + '</li>'; }).join('') + '</' + tag + '>');
+      listItems = []; listType = null;
+    }
+
+    function inlineFormat(s) {
+      s = escHtml(s);
+      s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+      s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      return s;
+    }
+
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      if (!inCode && /^```/.test(line)) {
+        flushList();
+        inCode = true; codeLines = []; codeLang = line.slice(3).trim();
+        continue;
+      }
+      if (inCode) {
+        if (/^```/.test(line)) {
+          out.push('<pre><code>' + escHtml(codeLines.join('\n')) + '</code></pre>');
+          inCode = false;
+        } else {
+          codeLines.push(line);
+        }
+        continue;
+      }
+      // headings
+      var hm = line.match(/^(#{1,3})\s+(.+)$/);
+      if (hm) {
+        flushList();
+        var lvl = hm[1].length + 1; // h2-h4
+        out.push('<h' + lvl + '>' + inlineFormat(hm[2]) + '</h' + lvl + '>');
+        continue;
+      }
+      // unordered list
+      var ulm = line.match(/^[-*•]\s+(.+)$/);
+      if (ulm) {
+        if (listType !== 'ul') { flushList(); listType = 'ul'; }
+        listItems.push(inlineFormat(ulm[1]));
+        continue;
+      }
+      // ordered list
+      var olm = line.match(/^\d+\.\s+(.+)$/);
+      if (olm) {
+        if (listType !== 'ol') { flushList(); listType = 'ol'; }
+        listItems.push(inlineFormat(olm[1]));
+        continue;
+      }
+      // blank line — paragraph break
+      if (!line.trim()) {
+        flushList();
+        continue;
+      }
+      // regular paragraph line
+      flushList();
+      out.push('<p>' + inlineFormat(line) + '</p>');
+    }
+    flushList();
+    if (inCode && codeLines.length) out.push('<pre><code>' + escHtml(codeLines.join('\n')) + '</code></pre>');
+    return out.join('');
+  }
+
+  function renderMessages() {
+    var el = document.getElementById('cr-ai-messages');
+    if (!el) return;
+    el.innerHTML = '';
+    if (!currentThread || !currentThread.messages.length) {
+      el.innerHTML = '<div class="cr-ai-welcome"><p>Hi! I\'m your AI tutor for <strong>' + escHtml(CHAPTER_TITLE || COURSE_NAME) + '</strong>. Ask me anything about this chapter!</p></div>';
+      return;
+    }
+    currentThread.messages.forEach(function (m) { appendBubble(m.role, renderMarkdown(m.content), m.ts); });
+    scrollBottom();
+  }
+
+  function fmtTime(ts) {
+    var d = ts ? new Date(ts) : new Date();
+    var h = d.getHours(), m = d.getMinutes();
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return h + ':' + (m < 10 ? '0' : '') + m + ' ' + ampm;
+  }
+
+  function appendBubble(role, html, ts) {
+    var el = document.getElementById('cr-ai-messages');
+    var wrap = document.createElement('div');
+    wrap.className = 'cr-ai-msg cr-ai-msg--' + role;
+    var meta = document.createElement('div');
+    meta.className = 'cr-ai-meta';
+    var senderName = role === 'user' ? escHtml(USER_NAME) : 'Medha AI';
+    meta.innerHTML = '<span class="cr-ai-meta-name">' + senderName + '</span>'
+                   + '<span class="cr-ai-meta-time">' + fmtTime(ts) + '</span>';
+    var bubble = document.createElement('div');
+    bubble.className = 'cr-ai-bubble';
+    bubble.innerHTML = html;
+    wrap.appendChild(meta);
+    wrap.appendChild(bubble);
+    el.appendChild(wrap);
+    scrollBottom();
+    return bubble;
+  }
+
+  function scrollBottom() {
+    var el = document.getElementById('cr-ai-messages');
+    if (el) el.scrollTop = el.scrollHeight;
+  }
+
+  // ── Send message ──────────────────────────────────────────────────────────
+
+  async function sendMessage() {
+    if (isStreaming) return;
+    var inputEl = document.getElementById('cr-ai-input');
+    var text = (inputEl.value || '').trim();
+    if (!text) return;
+
+    if (!currentThread) startNewThread();
+
+    inputEl.value = '';
+    autoResize(inputEl);
+
+    currentThread.messages.push({ role: 'user', content: text, ts: new Date().toISOString() });
+    if (currentThread.messages.length === 1) {
+      currentThread.title = text.length > 52 ? text.slice(0, 49) + '…' : text;
+    }
+    appendBubble('user', '<p>' + escHtml(text) + '</p>');
+
+    // Build Puter messages
+    var msgs = [{
+      role: 'system',
+      content: 'You are Medha AI, an AI tutor on the Medha LMS platform.'
+        + ' The learner is currently studying:'
+        + ' Course: "' + COURSE_NAME + '"'
+        + ' | Module: "' + MODULE_TITLE + '"'
+        + ' | Chapter: "' + CHAPTER_TITLE + '".'
+        + ' Answer questions related to this topic. Be concise and clear. Use markdown for code.',
+    }];
+    currentThread.messages.forEach(function (m) { msgs.push({ role: m.role, content: m.content }); });
+
+    // Streaming bubble
+    var _assistantTs = new Date().toISOString();
+    var bubble = appendBubble('assistant', '', _assistantTs);
+    bubble.innerHTML = '<span class="cr-ai-typing"><span></span><span></span><span></span></span>';
+
+    isStreaming = true;
+    setSendBusy(true);
+    var fullText = '';
+
+    try {
+      if (typeof puter === 'undefined') throw new Error('Puter not loaded');
+      var stream = await puter.ai.chat(msgs, { model: 'gpt-4o-mini', stream: true });
+      bubble.innerHTML = '';
+      for await (var part of stream) {
+        if (part && part.text) {
+          fullText += part.text;
+          bubble.innerHTML = renderMarkdown(fullText);
+          scrollBottom();
+        }
+      }
+    } catch (err) {
+      bubble.innerHTML = '<p style="color:#ef4444">Something went wrong. Please try again.</p>';
+    }
+
+    if (fullText) {
+      currentThread.messages.push({ role: 'assistant', content: fullText, ts: _assistantTs });
+      persistCurrentThread();
+      incrementUsage();
+    }
+    isStreaming = false;
+    setSendBusy(false);
+  }
+
+  function setSendBusy(busy) {
+    var btn = document.getElementById('cr-ai-send-btn');
+    if (!btn) return;
+    btn.disabled = busy;
+    btn.innerHTML = busy
+      ? '<svg class="cr-ai-spin" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg>'
+      : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
+  }
+
+  // ── History dropdown ──────────────────────────────────────────────────────
+
+  function renderHistoryDropdown() {
+    var dd = document.getElementById('cr-ai-hist-dropdown');
+    if (!dd) return;
+    var threads = loadAllThreads();
+    if (!threads.length) {
+      dd.innerHTML = '<div class="cr-ai-hist-empty">No previous conversations</div>';
+      return;
+    }
+    dd.innerHTML = threads.map(function (t) {
+      var d = new Date(t.created);
+      var label = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      var active = currentThread && currentThread.id === t.id ? ' is-active' : '';
+      return '<button class="cr-ai-hist-item' + active + '" data-id="' + t.id + '">' +
+        '<span class="cr-ai-hist-title">' + escHtml(t.title) + '</span>' +
+        '<span class="cr-ai-hist-date">' + label + '</span>' +
+      '</button>';
+    }).join('');
+    dd.querySelectorAll('.cr-ai-hist-item').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var t = loadAllThreads().find(function (x) { return x.id === btn.dataset.id; });
+        if (t) loadThread(t);
+      });
+    });
+  }
+
+  function toggleHistoryDropdown() {
+    var dd = document.getElementById('cr-ai-hist-dropdown');
+    if (!dd) return;
+    if (dd.hidden) { renderHistoryDropdown(); dd.hidden = false; } else { dd.hidden = true; }
+  }
+
+  function closeHistoryDropdown() {
+    var dd = document.getElementById('cr-ai-hist-dropdown');
+    if (dd) dd.hidden = true;
+  }
+
+  // ── Panel open / close ────────────────────────────────────────────────────
+
+  var _aiCollapsedSidebar = false;
+
+  function showAuthOverlay(visible) {
+    var overlay = document.getElementById('cr-ai-auth-overlay');
+    if (!overlay) return;
+    overlay.style.display = visible ? 'flex' : 'none';
+  }
+
+  function openPanel() {
+    var layout = document.querySelector('.cr-layout');
+    if (layout) layout.classList.add('cr-ai-open');
+    // Collapse main app sidebar to free horizontal space
+    if (!document.body.classList.contains('dash-app--collapsed')) {
+      document.body.classList.add('dash-app--collapsed');
+      _aiCollapsedSidebar = true;
+    }
+    var btn = document.getElementById('cr-ai-toggle');
+    if (btn) btn.classList.add('is-active');
+
+    // Check Puter auth
+    if (typeof puter !== 'undefined' && !puter.auth.isSignedIn()) {
+      showAuthOverlay(true);
+      return;
+    }
+    showAuthOverlay(false);
+    fetchAndRenderUsage();
+    if (!currentThread) startNewThread();
+    setTimeout(function () {
+      var inp = document.getElementById('cr-ai-input');
+      if (inp) inp.focus();
+    }, 80);
+  }
+
+  function closePanel() {
+    var layout = document.querySelector('.cr-layout');
+    if (layout) layout.classList.remove('cr-ai-open');
+    // Restore main sidebar only if we collapsed it
+    if (_aiCollapsedSidebar) {
+      document.body.classList.remove('dash-app--collapsed');
+      _aiCollapsedSidebar = false;
+    }
+    var btn = document.getElementById('cr-ai-toggle');
+    if (btn) btn.classList.remove('is-active');
+    closeHistoryDropdown();
+  }
+
+  function togglePanel() {
+    var layout = document.querySelector('.cr-layout');
+    if (layout && layout.classList.contains('cr-ai-open')) closePanel(); else openPanel();
+  }
+
+  // ── Textarea auto-resize ──────────────────────────────────────────────────
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+
+  // ── Watch main sidebar: close AI when sidebar expands ────────────────────
+
+  new MutationObserver(function () {
+    var layout = document.querySelector('.cr-layout');
+    if (!layout || !layout.classList.contains('cr-ai-open')) return;
+    if (!document.body.classList.contains('dash-app--collapsed')) {
+      closePanel();
+    }
+  }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+
+  var toggleBtn = document.getElementById('cr-ai-toggle');
+  if (toggleBtn) toggleBtn.addEventListener('click', togglePanel);
+
+  var authCloseBtn = document.getElementById('cr-ai-auth-close');
+  if (authCloseBtn) authCloseBtn.addEventListener('click', closePanel);
+
+  // Puter sign-in — must be triggered by user gesture
+  var signinBtn = document.getElementById('cr-ai-signin-btn');
+  if (signinBtn) signinBtn.addEventListener('click', async function () {
+    signinBtn.disabled = true;
+    signinBtn.textContent = 'Connecting…';
+    try {
+      await puter.auth.signIn();
+      showAuthOverlay(false);
+      fetchAndRenderUsage();
+      if (!currentThread) startNewThread();
+      setTimeout(function () {
+        var inp = document.getElementById('cr-ai-input');
+        if (inp) inp.focus();
+      }, 80);
+    } catch (e) {
+      signinBtn.disabled = false;
+      signinBtn.innerHTML = 'Sign in with Puter &rarr;';
+    }
+  });
+
+  var closeBtn = document.getElementById('cr-ai-close-btn');
+  if (closeBtn) closeBtn.addEventListener('click', closePanel);
+
+  var newBtn = document.getElementById('cr-ai-new-btn');
+  if (newBtn) newBtn.addEventListener('click', function () { closeHistoryDropdown(); startNewThread(); });
+
+  var histBtn = document.getElementById('cr-ai-hist-btn');
+  if (histBtn) histBtn.addEventListener('click', function (e) { e.stopPropagation(); toggleHistoryDropdown(); });
+
+  var sendBtn = document.getElementById('cr-ai-send-btn');
+  if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+
+  var inputEl = document.getElementById('cr-ai-input');
+  if (inputEl) {
+    inputEl.addEventListener('input', function () { autoResize(inputEl); });
+    inputEl.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+  }
+
+  // Close history dropdown on outside click
+  document.addEventListener('click', function (e) {
+    var dd = document.getElementById('cr-ai-hist-dropdown');
+    var hb = document.getElementById('cr-ai-hist-btn');
+    if (dd && !dd.hidden && hb && !hb.contains(e.target) && !dd.contains(e.target)) closeHistoryDropdown();
+  });
+
+})();
+</script>
+{% endif %}
+
 {% endblock %}
