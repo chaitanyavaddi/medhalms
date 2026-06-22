@@ -108,6 +108,10 @@
   // ── Camera ──────────────────────────────────────────────────────────────
 
   function startCamera() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      document.getElementById('iv-cam-off').style.display = 'flex';
+      return;
+    }
     navigator.mediaDevices.getUserMedia({ video: true, audio: false })
       .then(function (s) {
         stream = s;
