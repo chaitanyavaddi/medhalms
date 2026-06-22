@@ -1,10 +1,13 @@
 import json
 
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 from utils.view_helper import htmx, redirect_to
 
@@ -100,4 +103,60 @@ class LabDeleteView(LoginRequiredMixin, View):
     def post(self, request, lab_id):
         lab = get_object_or_404(Lab, id=lab_id, user=request.user)
         lab.delete()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'ok': True})
         return redirect_to(request, reverse('ide:index'))
+
+
+# ── Course-embed variants ─────────────────────────────────────────────────────
+
+class LabEmbedModalView(LoginRequiredMixin, View):
+    """Modal for inserting a coding lab into a course chapter editor."""
+    login_url = '/login/'
+
+    def get(self, request):
+        return render(request, 'ide/lab_embed_modal.html', {
+            'language_options': LANGUAGE_OPTIONS,
+            'web_options':      WEB_OPTIONS,
+            'database_options': DATABASE_OPTIONS,
+            'data': {},
+        })
+
+
+class LabCreateEmbedView(LoginRequiredMixin, View):
+    """Create an embed lab (is_embed=True) and return JSON for the editor blot."""
+    login_url = '/login/'
+
+    def post(self, request):
+        schema = LabCreateSchema.from_post(request)
+        if not schema.is_valid():
+            return JsonResponse({'error': 'Invalid data — choose a language and enter a name.'}, status=400)
+        lab = LabService.create_lab(request.user, schema, is_embed=True)
+        logo_token = getattr(settings, 'LOGO_DEV_TOKEN', '')
+        logo_url = (
+            f'https://img.logo.dev/{lab.logo_domain}?token={logo_token}&retina=true'
+            if lab.logo_domain else ''
+        )
+        return JsonResponse({
+            'lab_id':     lab.id,
+            'oc_slug':    lab.oc_slug,
+            'lab_name':   lab.name,
+            'logo_url':   logo_url,
+            'embed_path': reverse('ide:lab_embed', args=[lab.id]),
+        })
+
+
+@method_decorator(xframe_options_sameorigin, name='dispatch')
+class LabEmbedView(LoginRequiredMixin, View):
+    """Standalone iframe page for an embedded lab.
+    Author (lab owner) gets autosave; other users get read-only pre-filled code."""
+    login_url = '/login/'
+
+    def get(self, request, lab_id):
+        lab = get_object_or_404(Lab, id=lab_id, is_embed=True)
+        can_save = (request.user == lab.user or request.user.is_superuser)
+        return render(request, 'ide/lab_embed.html', {
+            'lab':      lab,
+            'embed_url': _embed_url(lab),
+            'can_save': can_save,
+        })

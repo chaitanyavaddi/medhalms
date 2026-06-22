@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ lab.name }}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #1a1a2e; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overflow: hidden; }
+
+    .lab-wrap { display: flex; flex-direction: column; height: 100vh; }
+
+    /* ── toolbar ── */
+    .lab-toolbar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 12px; background: #12122a; border-bottom: 1px solid #2d2d4a;
+      flex-shrink: 0; min-height: 40px;
+    }
+    .lab-badge {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600; color: #a0aec0; flex: 1; min-width: 0;
+    }
+    .lab-badge img {
+      width: 18px; height: 18px; object-fit: contain; flex-shrink: 0; border-radius: 3px;
+    }
+    .lab-badge span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lab-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .lab-save-status {
+      font-size: 11px; color: #718096; transition: color .2s;
+    }
+    .lab-save-status.is-saving { color: #a0aec0; }
+    .lab-save-status.is-saved  { color: #68d391; }
+    .lab-run-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 12px; border: none; border-radius: 5px;
+      background: #7c3aed; color: #fff; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: background .15s;
+    }
+    .lab-run-btn:hover { background: #6d28d9; }
+    .lab-run-btn svg { flex-shrink: 0; }
+
+    /* ── iframe area ── */
+    .lab-frame-wrap { position: relative; flex: 1; overflow: hidden; }
+    .lab-frame-loader {
+      position: absolute; inset: 0; z-index: 2;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      background: #1a1a2e; color: #718096; font-size: 13px;
+    }
+    .lab-spinner {
+      animation: spin 1s linear infinite; flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .lab-frame {
+      position: absolute; inset: 0; width: 100%; height: 100%; border: none;
+    }
+  </style>
+</head>
+<body>
+<div class="lab-wrap">
+  <div class="lab-toolbar">
+    <div class="lab-badge">
+      {% if lab.logo_domain %}<img src="https://img.logo.dev/{{ lab.logo_domain }}?token={{ LOGO_DEV_TOKEN }}&retina=true" alt="{{ lab.language }}" onerror="this.style.display='none'">{% endif %}
+      <span>{{ lab.name }}</span>
+    </div>
+    <div class="lab-actions">
+      {% if can_save %}<span class="lab-save-status" id="lab-save-status"></span>{% endif %}
+      <button type="button" class="lab-run-btn" id="lab-run-btn">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Run
+      </button>
+    </div>
+  </div>
+  <div class="lab-frame-wrap">
+    <div class="lab-frame-loader" id="lab-frame-loader">
+      <svg class="lab-spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg>
+      <span>Loading editor…</span>
+    </div>
+    <iframe
+      src="{{ embed_url }}"
+      class="lab-frame"
+      id="lab-frame"
+      allow="clipboard-write"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+    ></iframe>
+  </div>
+</div>
+
+{% if lab.files %}{{ lab.files|json_script:"lab-embed-code-data" }}{% endif %}
+
+<script>
+(function () {
+  var iframe   = document.getElementById('lab-frame');
+  var runBtn   = document.getElementById('lab-run-btn');
+  var loader   = document.getElementById('lab-frame-loader');
+  var CAN_SAVE = {{ can_save|yesno:"true,false" }};
+  var SAVE_URL = '{% url "ide:lab_save" lab.id %}';
+  var OC_SLUG  = '{{ lab.oc_slug }}';
+
+  var codeEl    = document.getElementById('lab-embed-code-data');
+  var savedFiles = codeEl ? JSON.parse(codeEl.textContent) : null;
+
+  function getCookie(name) {
+    var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return m ? m.pop() : '';
+  }
+
+  function setSaveStatus(text, cls) {
+    var el = document.getElementById('lab-save-status');
+    if (!el) return;
+    el.textContent = text;
+    el.className = 'lab-save-status' + (cls ? ' ' + cls : '');
+  }
+
+  var saveTimer = null;
+  function autosave(files) {
+    clearTimeout(saveTimer);
+    setSaveStatus('');
+    saveTimer = setTimeout(function () {
+      setSaveStatus('Saving…', 'is-saving');
+      fetch(SAVE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+        body: JSON.stringify({ files: files }),
+      }).then(function () {
+        setSaveStatus('Saved', 'is-saved');
+      }).catch(function () {
+        setSaveStatus('');
+      });
+    }, 1500);
+  }
+
+  function removeLoader() {
+    if (loader) loader.remove();
+  }
+
+  iframe.addEventListener('load', function () {
+    setTimeout(function () {
+      if (savedFiles && savedFiles.length) {
+        iframe.contentWindow.postMessage({
+          eventType: 'populateCode',
+          language: OC_SLUG,
+          files: savedFiles,
+        }, '*');
+      }
+      setTimeout(removeLoader, 200);
+    }, 200);
+  }, { once: true });
+
+  window.addEventListener('message', function (e) {
+    if (!e.data || !e.data.language) return;
+    var files = e.data.files || [];
+    if (!files.length) return;
+    if (CAN_SAVE) autosave(files);
+  });
+
+  if (runBtn) {
+    runBtn.addEventListener('click', function () {
+      iframe.contentWindow.postMessage({ eventType: 'triggerRun' }, '*');
+    });
+  }
+})();
+</script>
+</body>
+</html>

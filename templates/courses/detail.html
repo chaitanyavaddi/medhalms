@@ -171,6 +171,9 @@
           <button class="cr-tb-custom" data-action="file" title="Attach file (PDF, PPTX, XLSX, DOCX)">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
           </button>
+          <button class="cr-tb-custom" data-action="lab" title="Insert Coding Lab">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><polyline points="8 9 12 13 8 17"/><line x1="14" y1="17" x2="18" y2="17"/></svg>
+          </button>
         </span>
         <span class="cr-tb-spacer"></span>
         <span class="cr-save-status" id="cr-save-status">Saved</span>
@@ -219,6 +222,7 @@
 </div>
 
 <div id="cr-modal-slot"></div>
+<div id="cr-lab-modal-wrap"></div>
 
 <!-- File preview modal -->
 <div id="cr-file-modal" class="cr-file-modal" style="display:none" role="dialog" aria-modal="true">
@@ -424,6 +428,41 @@
   FileBlot.tagName   = 'div';
   FileBlot.className = 'cr-file-blot';
   Quill.register(FileBlot);
+
+  // Coding Lab embed blot
+  var BlockEmbedLab = Quill.import('blots/block/embed');
+  class CodingLabBlot extends BlockEmbedLab {
+    static create(value) {
+      var node = super.create();
+      node.setAttribute('data-lab-id',    value.lab_id    || '');
+      node.setAttribute('data-lab-name',  value.lab_name  || '');
+      node.setAttribute('data-logo-url',  value.logo_url  || '');
+      node.setAttribute('data-embed-path', value.embed_path || '');
+      node.setAttribute('contenteditable', 'false');
+      CodingLabBlot._render(node, value);
+      return node;
+    }
+    static _render(node, value) {
+      var embedPath = value.embed_path || '';
+      node.innerHTML =
+        '<div class="cr-embed-click-overlay"></div>' +
+        '<iframe class="cr-lab-frame" src="' + embedPath + '" frameborder="0"' +
+          ' allow="clipboard-write" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"' +
+          ' loading="lazy"></iframe>';
+    }
+    static value(node) {
+      return {
+        lab_id:     node.getAttribute('data-lab-id')    || '',
+        lab_name:   node.getAttribute('data-lab-name')  || '',
+        logo_url:   node.getAttribute('data-logo-url')  || '',
+        embed_path: node.getAttribute('data-embed-path') || '',
+      };
+    }
+  }
+  CodingLabBlot.blotName  = 'coding-lab';
+  CodingLabBlot.tagName   = 'div';
+  CodingLabBlot.className = 'cr-lab-blot';
+  Quill.register(CodingLabBlot);
 
   function detectEmbedType(url) {
     if (/youtube\.com\/watch\?.*v=|youtu\.be\//.test(url)) return 'youtube';
@@ -860,6 +899,7 @@
         return;
       }
       if (action === 'embed') { showEmbedBar(); return; }
+      if (action === 'lab')  { showLabModal(); return; }
       var input  = document.createElement('input');
       input.type = 'file';
       if (action === 'image')      input.accept = 'image/*';
@@ -891,7 +931,7 @@
   // Guard Backspace/Delete around embeds
   function isMediaBlot(b) {
     return b && b.statics &&
-      (b.statics.blotName === 'image' || b.statics.blotName === 'hn-video' || b.statics.blotName === 'embed-block' || b.statics.blotName === 'file-attachment');
+      (b.statics.blotName === 'image' || b.statics.blotName === 'hn-video' || b.statics.blotName === 'embed-block' || b.statics.blotName === 'file-attachment' || b.statics.blotName === 'coding-lab');
   }
   quill.root.addEventListener('keydown', function (e) {
     if (e.key !== 'Backspace' && e.key !== 'Delete') return;
@@ -941,10 +981,18 @@
     function deleteActiveMedia() {
       if (!activeMedia) return;
       if (activeMedia._vjsPlayer) { try { activeMedia._vjsPlayer.dispose(); } catch (e) {} activeMedia._vjsPlayer = null; }
+      var labId = (activeMedia.classList && activeMedia.classList.contains('cr-lab-blot'))
+        ? activeMedia.getAttribute('data-lab-id') : null;
       var blot = Quill.find(activeMedia);
       if (blot) quill.deleteText(quill.getIndex(blot), 1, Quill.sources.USER);
       removeOverlay();
       scheduleAutosave();
+      if (labId) {
+        fetch('/ide/lab/' + labId + '/delete/', {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrfToken, 'X-Requested-With': 'XMLHttpRequest' },
+        });
+      }
     }
 
     function createOverlay(el) {
@@ -952,7 +1000,8 @@
       activeMedia = el;
       var isVideo = el.classList.contains('hn-video-blot');
       var isEmbed = el.classList.contains('cr-embed-blot');
-      if (isEmbed) {
+      var isLab   = el.classList.contains('cr-lab-blot');
+      if (isEmbed || isLab) {
         var co = el.querySelector('.cr-embed-click-overlay');
         if (co) co.style.display = 'none';
       }
@@ -981,7 +1030,7 @@
 
       var sep = document.createElement('span'); sep.className = 'img-toolbar-sep'; bar.appendChild(sep);
 
-      if (!isEmbed) {
+      if (!isEmbed && !isLab) {
         var wrapBtn = document.createElement('button');
         wrapBtn.type = 'button'; wrapBtn.title = 'Wrap text'; wrapBtn.className = 'img-wrap-btn'; wrapBtn.innerHTML = SVG_WRAP;
         if (el.getAttribute('data-wrap') === 'true') wrapBtn.classList.add('active');
@@ -994,7 +1043,7 @@
         bar.appendChild(wrapBtn);
       }
 
-      if (!isVideo && !isEmbed) {
+      if (!isVideo && !isEmbed && !isLab) {
         var bwBtn = document.createElement('button');
         bwBtn.type = 'button'; bwBtn.title = 'B&W'; bwBtn.innerHTML = SVG_BW;
         if (el.getAttribute('data-grayscale') === 'true') bwBtn.classList.add('active');
@@ -1011,7 +1060,7 @@
 
       var delBtn = document.createElement('button');
       delBtn.type = 'button';
-      delBtn.title = isEmbed ? 'Delete embed' : (isVideo ? 'Delete video' : 'Delete image');
+      delBtn.title = isLab ? 'Delete lab' : isEmbed ? 'Delete embed' : (isVideo ? 'Delete video' : 'Delete image');
       delBtn.className = 'img-delete-btn'; delBtn.innerHTML = SVG_DELETE;
       delBtn.addEventListener('mousedown', function (e) { e.preventDefault(); e.stopPropagation(); deleteActiveMedia(); });
       bar.appendChild(delBtn);
@@ -1022,10 +1071,10 @@
       handle.addEventListener('mousedown', function (e) {
         e.preventDefault(); e.stopPropagation();
         var startX = e.clientX;
-        var startW = el.offsetWidth || (isVideo || isEmbed ? 640 : el.naturalWidth) || 200;
+        var startW = el.offsetWidth || (isVideo || isEmbed || isLab ? 640 : el.naturalWidth) || 200;
         var maxW   = quill.root.offsetWidth;
         function onMove(ev) {
-          var newW = Math.max(isVideo || isEmbed ? 200 : 80, Math.min(maxW, startW + (ev.clientX - startX)));
+          var newW = Math.max(isVideo || isEmbed || isLab ? 200 : 80, Math.min(maxW, startW + (ev.clientX - startX)));
           el.style.width = newW + 'px'; el.style.height = 'auto'; positionOverlay();
         }
         function onUp() {
@@ -1045,7 +1094,8 @@
       var img = e.target.closest('img');
       var vid = e.target.closest('div.hn-video-blot');
       var emb = e.target.closest('div.cr-embed-blot');
-      var target = img || vid || emb;
+      var lab = e.target.closest('div.cr-lab-blot');
+      var target = img || vid || emb || lab;
       if (target && quill.root.contains(target)) { createOverlay(target); } else { removeOverlay(); }
     });
     document.addEventListener('keydown', function (e) {
@@ -1063,6 +1113,39 @@
     window.addEventListener('resize',  positionOverlay);
     quill.on('text-change', function () { requestAnimationFrame(positionOverlay); });
   })();
+
+  // ── Coding Lab modal ─────────────────────────────────────────────────────
+
+  function showLabModal() {
+    var wrap = document.getElementById('cr-lab-modal-wrap');
+    if (!wrap) return;
+    fetch('{% url "ide:lab_embed_modal" %}', {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    })
+    .then(function (r) { return r.text(); })
+    .then(function (html) {
+      wrap.innerHTML = html;
+      var scripts = wrap.querySelectorAll('script');
+      scripts.forEach(function (s) {
+        var ns = document.createElement('script');
+        ns.textContent = s.textContent;
+        document.body.appendChild(ns);
+      });
+    });
+  }
+
+  window.insertCodingLabBlot = function (data) {
+    var range = quill.getSelection(true) || { index: quill.getLength() };
+    quill.insertEmbed(range.index, 'coding-lab', {
+      lab_id:     data.lab_id,
+      lab_name:   data.lab_name,
+      logo_url:   data.logo_url,
+      embed_path: data.embed_path,
+    }, Quill.sources.USER);
+    quill.insertText(range.index + 1, '\n', Quill.sources.USER);
+    quill.setSelection(range.index + 2, 0);
+    scheduleAutosave();
+  };
 
   {% endif %}{# end can_manage #}
 
@@ -1096,9 +1179,19 @@
     if (fileDel) {
       var blotNode = fileDel.closest('.cr-file-blot');
       if (blotNode) {
+        var fileUrl = blotNode.getAttribute('data-file-url') || '';
         var blot = Quill.find(blotNode);
         if (blot) quill.deleteText(quill.getIndex(blot), 1, Quill.sources.USER);
         if (typeof scheduleAutosave === 'function') scheduleAutosave();
+        if (fileUrl) {
+          var fd = new FormData();
+          fd.append('url', fileUrl);
+          fetch('{% url "courses:file_delete" %}', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken },
+            body: fd,
+          });
+        }
       }
       return;
     }
@@ -1114,6 +1207,7 @@
       }
       return;
     }
+
   });
 
   var modalClose = document.getElementById('cr-file-modal-close');

@@ -1120,3 +1120,19 @@
   border: none;
   display: block;
 }
+
+/* ── Coding Lab blot ── */
+.cr-lab-blot {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 8px 0;
+  background: #1a1a2e;
+}
+.cr-lab-frame {
+  width: 100%;
+  height: 420px;
+  border: none;
+  display: block;
+  background: #1a1a2e;
+}

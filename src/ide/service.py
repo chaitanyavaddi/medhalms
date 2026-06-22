@@ -5,10 +5,10 @@ from .models import Lab
 class LabService:
     @staticmethod
     def get_user_labs(user):
-        return Lab.objects.filter(user=user)
+        return Lab.objects.filter(user=user, is_embed=False)
 
     @staticmethod
-    def create_lab(user, schema) -> Lab:
+    def create_lab(user, schema, is_embed=False) -> Lab:
         option = ALL_OPTIONS[schema.oc_slug]
         return Lab.objects.create(
             user        = user,
@@ -17,6 +17,7 @@ class LabService:
             oc_slug     = schema.oc_slug,
             category    = schema.category,
             logo_domain = option['logo_domain'],
+            is_embed    = is_embed,
         )
 
     @staticmethod

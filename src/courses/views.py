@@ -165,6 +165,23 @@ class CourseUploadView(LoginRequiredMixin, View):
         return JsonResponse({'url': url, 'type': file_type, 'filename': f.name, 'mimetype': ct})
 
 
+class CourseFileDeleteView(LoginRequiredMixin, View):
+    """Delete a previously uploaded course file from Bunny CDN."""
+    login_url = '/login/'
+
+    def post(self, request):
+        from django.conf import settings
+        from core.bunny import delete_file
+        url = request.POST.get('url', '').strip()
+        if not url:
+            return JsonResponse({'error': 'No URL provided'}, status=400)
+        cdn_base = getattr(settings, 'BUNNY_CDN_BASE', '').rstrip('/')
+        if cdn_base and url.startswith(cdn_base + '/'):
+            object_path = url[len(cdn_base) + 1:]
+            delete_file(object_path)
+        return JsonResponse({'ok': True})
+
+
 # ── Modules ──────────────────────────────────────────────────────────────────
 
 class ModuleCreateView(LoginRequiredMixin, View):

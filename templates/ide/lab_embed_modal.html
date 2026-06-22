@@ -1,0 +1,337 @@
+{% load static %}
+<style>
+.ide-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ide-modal {
+  background: #13172a;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  width: 680px;
+  max-width: calc(100vw - 32px);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+}
+.ide-modal form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.ide-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 28px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  flex-shrink: 0;
+}
+.ide-modal-header h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: -0.01em;
+}
+.ide-modal-close {
+  background: rgba(255,255,255,0.05);
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+.ide-modal-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.ide-modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 24px 28px 16px;
+}
+.ide-modal-errors {
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+}
+.ide-modal-error-msg { margin: 0; font-size: 12px; color: #fca5a5; }
+.ide-modal-field { margin-bottom: 22px; }
+.ide-modal-field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.ide-modal-field input {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+.ide-modal-field input:focus {
+  border-color: rgba(99,102,241,0.5);
+  background: rgba(255,255,255,0.07);
+}
+.ide-modal-field input::placeholder { color: #374151; }
+.ide-modal-field--type {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 16px 18px 18px;
+  margin-bottom: 0;
+}
+.ide-modal-field--type label { margin-bottom: 14px; }
+.ide-modal-tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(0,0,0,0.25);
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 16px;
+}
+.ide-tab-btn {
+  flex: 1;
+  padding: 7px 4px;
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+}
+.ide-tab-btn.is-active { background: rgba(255,255,255,0.1); color: #e2e8f0; }
+.ide-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.08);
+  color: #6b7280;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 1px 6px;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+.ide-tab-btn.is-active .ide-tab-count { background: rgba(255,255,255,0.15); color: #c7d2fe; }
+.ide-tab-panel { display: block; }
+.ide-tab-panel[hidden] { display: none; }
+.ide-lang-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.ide-lang-opt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 6px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1.5px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: inherit;
+}
+.ide-lang-opt:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.12);
+  color: #e2e8f0;
+}
+.ide-lang-opt.is-selected {
+  border-color: #7c3aed;
+  background: rgba(124,58,237,0.12);
+  color: #a78bfa;
+}
+.ide-lang-opt img {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  object-fit: contain;
+}
+.ide-modal-footer {
+  padding: 16px 28px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.ide-modal-cancel {
+  padding: 9px 18px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #9ca3af;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.ide-modal-cancel:hover { color: #fff; border-color: rgba(255,255,255,0.25); }
+.ide-modal-submit {
+  padding: 9px 22px;
+  background: #7c3aed;
+  border: none;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.15s;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+}
+.ide-modal-submit:hover { filter: brightness(0.88); }
+.ide-modal-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+</style>
+
+<div class="ide-modal-backdrop" id="cr-lab-modal-backdrop" onclick="if(event.target===this)closeCrLabModal()">
+  <div class="ide-modal" onclick="event.stopPropagation()">
+    <div class="ide-modal-header">
+      <h3>Insert Coding Lab</h3>
+      <button type="button" class="ide-modal-close" onclick="closeCrLabModal()">&times;</button>
+    </div>
+    <form id="cr-lab-embed-form">
+      {% csrf_token %}
+      <div class="ide-modal-body">
+        <div id="cr-lab-embed-error" class="ide-modal-errors" style="display:none"></div>
+
+        <div class="ide-modal-field">
+          <label for="cr-lab-name">Lab Name</label>
+          <input type="text" id="cr-lab-name" name="name" placeholder="e.g. Python Loops Exercise" autocomplete="off">
+        </div>
+
+        <div class="ide-modal-field ide-modal-field--type">
+          <label>Language / Technology</label>
+          <div class="ide-modal-tabs">
+            <button type="button" class="ide-tab-btn is-active" data-tab="language" onclick="crLabTabSwitch(this)">Languages <span class="ide-tab-count">{{ language_options|length }}</span></button>
+            <button type="button" class="ide-tab-btn" data-tab="web" onclick="crLabTabSwitch(this)">Web Tech <span class="ide-tab-count">{{ web_options|length }}</span></button>
+            <button type="button" class="ide-tab-btn" data-tab="database" onclick="crLabTabSwitch(this)">Databases <span class="ide-tab-count">{{ database_options|length }}</span></button>
+          </div>
+          <div class="ide-tab-panel" data-panel="language">
+            <div class="ide-lang-grid">
+              {% for opt in language_options %}<button type="button" class="ide-lang-opt" data-slug="{{ opt.oc_slug }}" data-category="language" onclick="crLabPickLang(this)"><img src="https://img.logo.dev/{{ opt.logo_domain }}?token={{ LOGO_DEV_TOKEN }}&retina=true" alt="{{ opt.name }}" onerror="this.style.display='none'"><span>{{ opt.name }}</span></button>{% endfor %}
+            </div>
+          </div>
+          <div class="ide-tab-panel" data-panel="web" hidden>
+            <div class="ide-lang-grid">
+              {% for opt in web_options %}<button type="button" class="ide-lang-opt" data-slug="{{ opt.oc_slug }}" data-category="web" onclick="crLabPickLang(this)"><img src="https://img.logo.dev/{{ opt.logo_domain }}?token={{ LOGO_DEV_TOKEN }}&retina=true" alt="{{ opt.name }}" onerror="this.style.display='none'"><span>{{ opt.name }}</span></button>{% endfor %}
+            </div>
+          </div>
+          <div class="ide-tab-panel" data-panel="database" hidden>
+            <div class="ide-lang-grid">
+              {% for opt in database_options %}<button type="button" class="ide-lang-opt" data-slug="{{ opt.oc_slug }}" data-category="database" onclick="crLabPickLang(this)"><img src="https://img.logo.dev/{{ opt.logo_domain }}?token={{ LOGO_DEV_TOKEN }}&retina=true" alt="{{ opt.name }}" onerror="this.style.display='none'"><span>{{ opt.name }}</span></button>{% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" name="oc_slug"  id="cr-lab-oc-slug"  value="">
+        <input type="hidden" name="category" id="cr-lab-category" value="">
+      </div>
+      <div class="ide-modal-footer">
+        <button type="button" class="ide-modal-cancel" onclick="closeCrLabModal()">Cancel</button>
+        <button type="submit" class="ide-modal-submit" id="cr-lab-submit-btn">Create &amp; Embed</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+function closeCrLabModal() {
+  var wrap = document.getElementById('cr-lab-modal-wrap');
+  if (wrap) wrap.innerHTML = '';
+}
+function crLabTabSwitch(btn) {
+  var modal = btn.closest('.ide-modal');
+  modal.querySelectorAll('.ide-tab-btn').forEach(function (b) { b.classList.remove('is-active'); });
+  modal.querySelectorAll('.ide-tab-panel').forEach(function (p) { p.hidden = true; });
+  btn.classList.add('is-active');
+  var panel = modal.querySelector('[data-panel="' + btn.dataset.tab + '"]');
+  if (panel) panel.hidden = false;
+}
+function crLabPickLang(btn) {
+  var modal = btn.closest('.ide-modal');
+  modal.querySelectorAll('.ide-lang-opt').forEach(function (b) { b.classList.remove('is-selected'); });
+  btn.classList.add('is-selected');
+  document.getElementById('cr-lab-oc-slug').value  = btn.dataset.slug;
+  document.getElementById('cr-lab-category').value = btn.dataset.category;
+}
+(function () {
+  var form      = document.getElementById('cr-lab-embed-form');
+  var errBox    = document.getElementById('cr-lab-embed-error');
+  var submitBtn = document.getElementById('cr-lab-submit-btn');
+
+  function getCookie(name) {
+    var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return m ? m.pop() : '';
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    errBox.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creating…';
+
+    var fd = new FormData(form);
+    fetch('{% url "ide:lab_create_embed" %}', {
+      method: 'POST',
+      headers: { 'X-CSRFToken': getCookie('csrftoken') },
+      body: fd,
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (data.error) {
+        errBox.innerHTML = '<p class="ide-modal-error-msg">' + data.error + '</p>';
+        errBox.style.display = '';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create & Embed';
+        return;
+      }
+      closeCrLabModal();
+      if (typeof insertCodingLabBlot === 'function') insertCodingLabBlot(data);
+    })
+    .catch(function () {
+      errBox.innerHTML = '<p class="ide-modal-error-msg">Something went wrong. Please try again.</p>';
+      errBox.style.display = '';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Create & Embed';
+    });
+  });
+})();
+</script>
