@@ -4,6 +4,7 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/courses.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/video.js@8.23.8/dist/video-js.min.css" rel="stylesheet">
 {% endblock %}
@@ -132,42 +133,52 @@
 
     {% if can_manage %}
     <div id="cr-toolbar" class="cr-toolbar">
-      <span class="cr-tb-group">
-        <button class="ql-header" value="1" title="Heading 1">H1</button>
-        <button class="ql-header" value="2" title="Heading 2">H2</button>
-        <button class="ql-header" value="3" title="Heading 3">H3</button>
-      </span>
-      <span class="cr-tb-sep"></span>
-      <span class="cr-tb-group">
-        <button class="ql-bold"      title="Bold"></button>
-        <button class="ql-italic"    title="Italic"></button>
-        <button class="ql-underline" title="Underline"></button>
-      </span>
-      <span class="cr-tb-sep"></span>
-      <span class="cr-tb-group">
-        <button class="ql-blockquote"             title="Blockquote"></button>
-        <button class="ql-list" value="ordered"   title="Numbered list"></button>
-        <button class="ql-list" value="bullet"    title="Bullet list"></button>
-      </span>
-      <span class="cr-tb-sep"></span>
-      <span class="cr-tb-group">
-        <button class="ql-link" title="Link"></button>
-      </span>
-      <span class="cr-tb-sep"></span>
-      <span class="cr-tb-group">
-        <button class="cr-tb-custom" data-action="image" title="Insert image">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        </button>
-        <button class="cr-tb-custom" data-action="video" title="Insert video">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-        </button>
-      </span>
-      <span class="cr-tb-spacer"></span>
-      <span class="cr-save-status" id="cr-save-status">Saved</span>
+      <div class="cr-toolbar-inner">
+        <span class="cr-tb-group">
+          <button class="cr-tb-custom" data-action="para" title="Normal paragraph" style="font-size:13px;font-weight:600;color:#6b7280;">P</button>
+          <button class="ql-header" value="1" title="Heading 1">H1</button>
+          <button class="ql-header" value="2" title="Heading 2">H2</button>
+          <button class="ql-header" value="3" title="Heading 3">H3</button>
+        </span>
+        <span class="cr-tb-sep"></span>
+        <span class="cr-tb-group">
+          <button class="ql-bold"      title="Bold"></button>
+          <button class="ql-italic"    title="Italic"></button>
+          <button class="ql-underline" title="Underline"></button>
+        </span>
+        <span class="cr-tb-sep"></span>
+        <span class="cr-tb-group">
+          <button class="ql-blockquote"           title="Blockquote"></button>
+          <button class="ql-list" value="ordered" title="Numbered list"></button>
+          <button class="ql-list" value="bullet"  title="Bullet list"></button>
+        </span>
+        <span class="cr-tb-sep"></span>
+        <span class="cr-tb-group">
+          <button class="ql-link"    title="Hyperlink"></button>
+          <button class="ql-formula" title="Math / formula">∑</button>
+        </span>
+        <span class="cr-tb-sep"></span>
+        <span class="cr-tb-group">
+          <button class="cr-tb-custom" data-action="embed" title="Embed URL">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </button>
+          <button class="cr-tb-custom" data-action="image" title="Insert image">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </button>
+          <button class="cr-tb-custom" data-action="video" title="Insert video">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          </button>
+        </span>
+        <span class="cr-tb-spacer"></span>
+        <span class="cr-save-status" id="cr-save-status">Saved</span>
+      </div>
     </div>
     {% else %}
     <div class="cr-toolbar cr-toolbar--view">
-      <span class="cr-save-status" id="cr-save-status"></span>
+      <div class="cr-toolbar-inner">
+        <span class="cr-tb-spacer"></span>
+        <span class="cr-save-status" id="cr-save-status"></span>
+      </div>
     </div>
     {% endif %}
 
@@ -211,6 +222,7 @@
 {{ active_chapter.content|json_script:"chapter-body-data" }}
 {% endif %}
 
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/video.js@8.23.8/dist/video.min.js"></script>
 
@@ -238,6 +250,82 @@
   var saveAbort     = null;
 
   // ── Quill custom blots ────────────────────────────────────────────────────
+
+  // Safe link: auto-prefix https://, always open in new tab
+  var Link = Quill.import('formats/link');
+  class SafeLink extends Link {
+    static create(value) {
+      var url  = SafeLink.sanitize(value);
+      var node = super.create(url);
+      node.setAttribute('target', '_blank');
+      node.setAttribute('rel', 'noopener noreferrer');
+      return node;
+    }
+    static sanitize(url) {
+      url = (url || '').trim();
+      if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+      return url;
+    }
+    static formats(node) { return node.getAttribute('href'); }
+  }
+  SafeLink.blotName = 'link';
+  SafeLink.tagName  = 'A';
+  Quill.register(SafeLink, true);
+
+  // Embed blot (YouTube / Vimeo iframe, or generic link card)
+  var BlockEmbed = Quill.import('blots/block/embed');
+  class EmbedBlot extends BlockEmbed {
+    static create(value) {
+      var node = super.create();
+      node.setAttribute('data-embed-url',  value.url  || '');
+      node.setAttribute('data-embed-type', value.type || 'link');
+      node.setAttribute('contenteditable', 'false');
+      EmbedBlot._renderInto(node, value);
+      return node;
+    }
+    static _renderInto(node, value) {
+      if (value.type === 'youtube' || value.type === 'vimeo') {
+        node.innerHTML = '<iframe src="' + value.src +
+          '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen' +
+          ' style="width:100%;aspect-ratio:16/9;border-radius:8px;display:block;"></iframe>';
+      } else {
+        node.innerHTML =
+          '<a href="' + value.url + '" target="_blank" rel="noopener noreferrer" class="cr-embed-card">' +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>' +
+            '<span>' + value.url + '</span>' +
+          '</a>';
+      }
+    }
+    static value(node) {
+      var iframeEl = node.querySelector('iframe');
+      return {
+        url:  node.getAttribute('data-embed-url')  || '',
+        type: node.getAttribute('data-embed-type') || 'link',
+        src:  iframeEl ? iframeEl.getAttribute('src') : '',
+      };
+    }
+  }
+  EmbedBlot.blotName  = 'embed-block';
+  EmbedBlot.tagName   = 'div';
+  EmbedBlot.className = 'cr-embed-blot';
+  Quill.register(EmbedBlot);
+
+  function detectEmbedType(url) {
+    if (/youtube\.com\/watch\?.*v=|youtu\.be\//.test(url)) return 'youtube';
+    if (/vimeo\.com\/\d+/.test(url)) return 'vimeo';
+    return 'link';
+  }
+  function getEmbedSrc(url, type) {
+    if (type === 'youtube') {
+      var m = url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+      if (m) return 'https://www.youtube.com/embed/' + m[1] + '?rel=0';
+    }
+    if (type === 'vimeo') {
+      var m2 = url.match(/vimeo\.com\/(\d+)/);
+      if (m2) return 'https://player.vimeo.com/video/' + m2[1];
+    }
+    return url;
+  }
 
   var ImageBlot = Quill.import('formats/image');
   class HnImageBlot extends ImageBlot {
@@ -561,11 +649,53 @@
     compressImage(file).then(doUpload);
   }
 
-  // ── Toolbar custom buttons (image / video) ───────────────────────────────
+  // ── Toolbar custom buttons ────────────────────────────────────────────────
+
+  function showEmbedBar() {
+    var existing = document.getElementById('cr-embed-bar');
+    if (existing) { existing.remove(); return; }
+    var bar = document.createElement('div');
+    bar.id = 'cr-embed-bar';
+    bar.className = 'cr-embed-bar';
+    bar.innerHTML =
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>' +
+      '<input id="cr-embed-input" type="text" placeholder="Paste a YouTube, Vimeo, or any URL…" autocomplete="off">' +
+      '<button id="cr-embed-submit">Embed</button>' +
+      '<button id="cr-embed-close">✕</button>';
+    var toolbar = document.getElementById('cr-toolbar');
+    toolbar.parentNode.insertBefore(bar, toolbar.nextSibling);
+    var inp = document.getElementById('cr-embed-input');
+    inp.focus();
+    function doEmbed() {
+      var url = inp.value.trim();
+      if (!url) { bar.remove(); return; }
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      var type = detectEmbedType(url);
+      var src  = getEmbedSrc(url, type);
+      var range = quill.getSelection(true) || { index: quill.getLength() };
+      quill.insertEmbed(range.index, 'embed-block', { url: url, type: type, src: src }, Quill.sources.USER);
+      quill.insertText(range.index + 1, '\n', Quill.sources.USER);
+      quill.setSelection(range.index + 2, 0);
+      scheduleAutosave();
+      bar.remove();
+    }
+    document.getElementById('cr-embed-submit').addEventListener('click', doEmbed);
+    document.getElementById('cr-embed-close').addEventListener('click', function () { bar.remove(); });
+    inp.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); doEmbed(); }
+      if (e.key === 'Escape') bar.remove();
+    });
+  }
 
   document.querySelectorAll('#cr-toolbar .cr-tb-custom[data-action]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var action = btn.dataset.action;
+      if (action === 'para') {
+        quill.focus();
+        quill.format('header', false, Quill.sources.USER);
+        return;
+      }
+      if (action === 'embed') { showEmbedBar(); return; }
       var input  = document.createElement('input');
       input.type   = 'file';
       input.accept = action === 'image' ? 'image/*' : 'video/mp4,video/webm,video/quicktime';
