@@ -1943,5 +1943,6 @@
   color: #fff;
 }
 .cr-thumb-preview.has-image:hover .cr-thumb-overlay { opacity: 1; }
+.cr-thumb-preview.has-image:hover .cc-thumb-clear { opacity: 1; }
 
 .cr-modal--wide { width: min(560px, 94vw); }
