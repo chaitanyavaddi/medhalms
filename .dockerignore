@@ -12,4 +12,3 @@ staticfiles/
 *.md
 setup.txt
 traefik.yml
-data.json
