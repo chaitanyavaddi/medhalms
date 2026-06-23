@@ -1946,3 +1946,44 @@
 .cr-thumb-preview.has-image:hover .cc-thumb-clear { opacity: 1; }
 
 .cr-modal--wide { width: min(560px, 94vw); }
+
+/* Course delete buttons */
+.cr-thread-del-btn {
+  height: 28px;
+  width: 28px;
+  border: 1px solid #fee2e2;
+  border-radius: 7px;
+  background: transparent;
+  color: #fca5a5;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+.cr-thread-del-btn:hover { border-color: #ef4444; color: #ef4444; background: #fff1f2; }
+
+.cl-card {
+  position: relative;
+}
+.cl-card-del-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.45);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+  z-index: 2;
+}
+.cl-card:hover .cl-card-del-btn { opacity: 1; }
+.cl-card-del-btn:hover { background: #ef4444; }

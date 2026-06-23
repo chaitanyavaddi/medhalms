@@ -130,6 +130,29 @@ class CourseUpdateView(LoginRequiredMixin, View):
         return resp
 
 
+class CourseDeleteView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        course = get_object_or_404(Course, pk=pk)
+        if not request.user.is_superuser:
+            return HttpResponseForbidden()
+        return render(request, 'courses/partials/delete_modal.html', {
+            'title':      'Delete Course',
+            'message':    f'Delete "{course.name}" and all its modules and chapters? This cannot be undone.',
+            'delete_url': request.path,
+        })
+
+    def post(self, request, pk):
+        course = get_object_or_404(Course, pk=pk)
+        if not request.user.is_superuser:
+            return HttpResponseForbidden()
+        if course.thumbnail:
+            _delete_cdn_url(course.thumbnail)
+        course.delete()
+        resp = HttpResponse()
+        resp['HX-Redirect'] = reverse('courses:list')
+        return resp
+
+
 # ── Course detail / chapter editor ──────────────────────────────────────────
 
 class CourseDetailView(LoginRequiredMixin, View):

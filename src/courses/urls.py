@@ -10,8 +10,9 @@ urlpatterns = [
     path('upload/',      views.CourseUploadView.as_view(),     name='upload'),
     path('file-delete/', views.CourseFileDeleteView.as_view(), name='file_delete'),
 
-    path('<int:pk>/',       views.CourseDetailView.as_view(), name='detail'),
-    path('<int:pk>/edit/',  views.CourseUpdateView.as_view(), name='edit'),
+    path('<int:pk>/',        views.CourseDetailView.as_view(), name='detail'),
+    path('<int:pk>/edit/',   views.CourseUpdateView.as_view(), name='edit'),
+    path('<int:pk>/delete/', views.CourseDeleteView.as_view(), name='delete'),
 
     path('<int:pk>/c/<int:chapter_pk>/',
          views.ChapterDetailView.as_view(), name='chapter'),
