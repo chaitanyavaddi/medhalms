@@ -10,12 +10,7 @@
   <div class="cl-hd">
     <h1 class="cl-hd-title">All Courses</h1>
     {% if request.user.is_superuser %}
-    <button class="cl-new-btn"
-            hx-get="{% url 'courses:create' %}"
-            hx-target="#cr-modal-slot"
-            hx-swap="innerHTML">
-      + New Course
-    </button>
+    <a href="{% url 'courses:create' %}" class="cl-new-btn">+ New Course</a>
     {% endif %}
   </div>
 
@@ -26,12 +21,8 @@
       {% if course.thumbnail %}
       <div class="cl-card-thumb" style="background-image:url({{ course.thumbnail }})"></div>
       {% else %}
-      <div class="cl-card-thumb cl-card-thumb--empty">
-        <svg class="cl-empty-icon" width="40" height="40" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-        </svg>
+      <div class="cl-card-thumb cl-card-thumb--brand" style="background:{{ course.thumb_color }}">
+        <span class="cl-thumb-initials">{{ course.initials }}</span>
       </div>
       {% endif %}
       <div class="cl-card-body">
@@ -59,12 +50,7 @@
     </svg>
     <p>No courses yet.</p>
     {% if request.user.is_superuser %}
-    <button class="cl-new-btn"
-            hx-get="{% url 'courses:create' %}"
-            hx-target="#cr-modal-slot"
-            hx-swap="innerHTML">
-      Create your first course
-    </button>
+    <a href="{% url 'courses:create' %}" class="cl-new-btn">Create your first course</a>
     {% endif %}
   </div>
   {% endif %}

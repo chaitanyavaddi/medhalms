@@ -1,0 +1,187 @@
+{% extends "dashboard/base.html" %}
+{% load static partials %}
+{% block title %}New Course{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/courses.css' %}">{% endblock %}
+{% block topbar_title %}<h2 class="dash-page-title">New Course</h2>{% endblock %}
+
+{% block content %}
+<div class="cc-page">
+
+  <a href="{% url 'courses:list' %}" class="cc-back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Back to Courses
+  </a>
+
+  <div class="cc-card">
+    <h2 class="cc-title">Create a new course</h2>
+
+    {% partialdef course-form inline %}
+    <form id="course-form"
+          method="POST"
+          action="{% url 'courses:create' %}"
+          hx-post="{% url 'courses:create' %}"
+          hx-target="#course-form"
+          hx-swap="outerHTML">
+      {% csrf_token %}
+
+      {% if messages %}
+      <ul class="form-messages">
+        {% for m in messages %}
+        <li class="form-message form-message--{{ m.tags }}">{{ m }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      <!-- Thumbnail upload -->
+      <div class="cc-thumb-field">
+        <label class="cc-field-label">Thumbnail</label>
+        <div class="cc-thumb-upload" id="cc-thumb-upload">
+          <div class="cc-thumb-preview" id="cc-thumb-preview"
+               {% if fdata.thumbnail %}style="background-image:url({{ fdata.thumbnail }})"{% endif %}>
+            <div class="cc-thumb-overlay" id="cc-thumb-overlay">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <span id="cc-thumb-label">Click to upload thumbnail</span>
+            </div>
+            <input type="file" id="cc-thumb-file" accept="image/*" class="cc-thumb-file-input">
+            <button type="button" class="cc-thumb-clear" id="cc-thumb-clear" title="Remove thumbnail">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2.5" stroke-linecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+          <input type="hidden" name="thumbnail" id="cc-thumb-url" value="{{ fdata.thumbnail|default:'' }}">
+          <p class="cc-thumb-hint">Recommended: 16:9, JPG or PNG, max 5 MB</p>
+        </div>
+      </div>
+
+      <!-- Name -->
+      <div class="cc-field">
+        <label class="cc-field-label" for="cc-name">Course name <span class="cc-required">*</span></label>
+        <input type="text" id="cc-name" name="name"
+               value="{{ fdata.name|default:'' }}"
+               placeholder="e.g. Python Full Stack with AI"
+               class="cc-input" autofocus>
+      </div>
+
+      <!-- Description -->
+      <div class="cc-field">
+        <label class="cc-field-label" for="cc-desc">Description</label>
+        <textarea id="cc-desc" name="description" rows="3"
+                  placeholder="What will students learn?" class="cc-input cc-textarea">{{ fdata.description|default:'' }}</textarea>
+      </div>
+
+      <!-- Status + Trainers row -->
+      <div class="cc-row">
+        <div class="cc-field">
+          <label class="cc-field-label" for="cc-status">Status</label>
+          <select id="cc-status" name="status" class="cc-input cc-select">
+            <option value="draft"     {% if not fdata.status or fdata.status == 'draft'     %}selected{% endif %}>Draft</option>
+            <option value="published" {% if fdata.status == 'published' %}selected{% endif %}>Published</option>
+          </select>
+        </div>
+
+        {% if trainers %}
+        <div class="cc-field">
+          <label class="cc-field-label" for="cc-trainers">
+            Trainers
+            <span class="cc-field-hint">Hold ⌘/Ctrl for multiple</span>
+          </label>
+          <select id="cc-trainers" name="trainers" multiple class="cc-input cc-select cc-select--multi">
+            {% for t in trainers %}
+            <option value="{{ t.pk }}"
+              {% if t.pk|stringformat:'s' in fdata.trainers %}selected{% endif %}>
+              {{ t.get_full_name|default:t.email }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="cc-actions">
+        <a href="{% url 'courses:list' %}" class="cc-btn-secondary">Cancel</a>
+        <button type="submit" class="cc-btn-primary" id="cc-submit-btn">
+          <span class="btn-label">Create course</span>
+          <span class="btn-spinner"></span>
+        </button>
+      </div>
+    </form>
+    {% endpartialdef %}
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var fileInput  = document.getElementById('cc-thumb-file');
+  var preview    = document.getElementById('cc-thumb-preview');
+  var urlInput   = document.getElementById('cc-thumb-url');
+  var label      = document.getElementById('cc-thumb-label');
+  var clearBtn   = document.getElementById('cc-thumb-clear');
+  var overlay    = document.getElementById('cc-thumb-overlay');
+
+  function getCsrf() {
+    var m = document.cookie.match(/csrftoken=([^;]+)/);
+    return m ? m[1] : '';
+  }
+
+  function setPreview(url) {
+    preview.style.backgroundImage = 'url(' + url + ')';
+    preview.classList.add('has-image');
+    label.textContent = 'Click to replace';
+    urlInput.value = url;
+  }
+
+  function clearPreview() {
+    preview.style.backgroundImage = '';
+    preview.classList.remove('has-image');
+    label.textContent = 'Click to upload thumbnail';
+    urlInput.value = '';
+  }
+
+  // Restore if coming back after HTMX re-render
+  if (urlInput.value) setPreview(urlInput.value);
+
+  overlay.addEventListener('click', function () { fileInput.click(); });
+
+  fileInput.addEventListener('change', async function () {
+    var file = this.files[0];
+    if (!file) return;
+    overlay.style.opacity = '0.5';
+    label.textContent = 'Uploading…';
+    var fd = new FormData();
+    fd.append('file', file);
+    fd.append('course_id', 'new');
+    try {
+      var resp = await fetch('{% url "courses:upload" %}', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCsrf() },
+        body: fd,
+      });
+      var data = await resp.json();
+      if (data.url) setPreview(data.url);
+      else label.textContent = 'Upload failed — try again';
+    } catch (e) {
+      label.textContent = 'Upload failed — try again';
+    } finally {
+      overlay.style.opacity = '';
+    }
+  });
+
+  clearBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    clearPreview();
+    fileInput.value = '';
+  });
+})();
+</script>
+{% endblock %}

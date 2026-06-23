@@ -1,7 +1,7 @@
 <div class="cr-modal-backdrop">
-  <div class="cr-modal">
+  <div class="cr-modal cr-modal--wide">
     <div class="cr-modal-header">
-      <h3 class="cr-modal-title">{% if course %}Edit Course{% else %}New Course{% endif %}</h3>
+      <h3 class="cr-modal-title">Edit Course</h3>
       <button type="button" class="cr-modal-close"
               onclick="document.getElementById('cr-modal-slot').innerHTML=''">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -13,10 +13,39 @@
 
     {% if error %}<div class="cr-form-error">{{ error }}</div>{% endif %}
 
-    <form hx-post="{% if course %}{% url 'courses:edit' course.pk %}{% else %}{% url 'courses:create' %}{% endif %}"
+    <form hx-post="{% url 'courses:edit' course.pk %}"
           hx-target="#cr-modal-slot"
           hx-swap="innerHTML">
       {% csrf_token %}
+
+      <!-- Thumbnail -->
+      <div class="cr-form-field">
+        <label>Thumbnail</label>
+        <div class="cr-thumb-edit" id="cr-thumb-edit">
+          <div class="cr-thumb-preview" id="cr-thumb-preview"
+               {% if course.thumbnail %}style="background-image:url({{ course.thumbnail }})"{% endif %}>
+            <div class="cr-thumb-overlay" id="cr-thumb-overlay">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <span id="cr-thumb-label">{% if course.thumbnail %}Click to replace{% else %}Click to upload{% endif %}</span>
+            </div>
+            <input type="file" id="cr-thumb-file" accept="image/*" class="cc-thumb-file-input">
+            {% if course.thumbnail %}
+            <button type="button" class="cc-thumb-clear" id="cr-thumb-clear" title="Remove thumbnail">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2.5" stroke-linecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+            {% endif %}
+          </div>
+          <input type="hidden" name="thumbnail" id="cr-thumb-url" value="{{ course.thumbnail|default:'' }}">
+        </div>
+      </div>
 
       <div class="cr-form-field">
         <label>Course name <span style="color:#ef4444">*</span></label>
@@ -54,10 +83,72 @@
       <div class="cr-form-actions">
         <button type="button" class="cr-btn-secondary"
                 onclick="document.getElementById('cr-modal-slot').innerHTML=''">Cancel</button>
-        <button type="submit" class="cr-btn-primary">
-          {% if course %}Save changes{% else %}Create course{% endif %}
-        </button>
+        <button type="submit" class="cr-btn-primary">Save changes</button>
       </div>
     </form>
   </div>
 </div>
+
+<script>
+(function () {
+  var fileInput = document.getElementById('cr-thumb-file');
+  var preview   = document.getElementById('cr-thumb-preview');
+  var urlInput  = document.getElementById('cr-thumb-url');
+  var label     = document.getElementById('cr-thumb-label');
+  var clearBtn  = document.getElementById('cr-thumb-clear');
+  var overlay   = document.getElementById('cr-thumb-overlay');
+
+  function getCsrf() {
+    var m = document.cookie.match(/csrftoken=([^;]+)/);
+    return m ? m[1] : '';
+  }
+
+  function setPreview(url) {
+    preview.style.backgroundImage = 'url(' + url + ')';
+    preview.classList.add('has-image');
+    label.textContent = 'Click to replace';
+    urlInput.value = url;
+  }
+
+  function clearPreview() {
+    preview.style.backgroundImage = '';
+    preview.classList.remove('has-image');
+    label.textContent = 'Click to upload';
+    urlInput.value = '';
+  }
+
+  overlay.addEventListener('click', function () { fileInput.click(); });
+
+  fileInput.addEventListener('change', async function () {
+    var file = this.files[0];
+    if (!file) return;
+    overlay.style.opacity = '0.5';
+    label.textContent = 'Uploading…';
+    var fd = new FormData();
+    fd.append('file', file);
+    fd.append('course_id', 'edit');
+    try {
+      var resp = await fetch('/courses/upload/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCsrf() },
+        body: fd,
+      });
+      var data = await resp.json();
+      if (data.url) setPreview(data.url);
+      else label.textContent = 'Upload failed — try again';
+    } catch (e) {
+      label.textContent = 'Upload failed — try again';
+    } finally {
+      overlay.style.opacity = '';
+    }
+  });
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      clearPreview();
+      fileInput.value = '';
+    });
+  }
+})();
+</script>

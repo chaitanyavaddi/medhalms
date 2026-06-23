@@ -1,12 +1,13 @@
 import json
 
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import View
 
-from utils.view_helper import redirect_to
+from utils.view_helper import htmx, redirect_to
 
 from users.models import User
 from .models import Chapter, Course, Module
@@ -37,40 +38,49 @@ class CourseListView(LoginRequiredMixin, View):
 
 
 class CourseCreateView(LoginRequiredMixin, View):
-    def _trainers(self):
-        return User.objects.filter(role='trainer').order_by('first_name', 'last_name')
+    TEMPLATE = 'courses/create.html'
+
+    def _ctx(self, fdata=None):
+        return {
+            'trainers': User.objects.filter(role='trainer').order_by('first_name', 'last_name'),
+            'fdata': fdata or {},
+        }
 
     def get(self, request):
         if not request.user.is_superuser:
             return HttpResponseForbidden()
-        return render(request, 'courses/partials/course_form_modal.html', {
-            'course': None, 'trainers': self._trainers(),
-        })
+        return render(request, self.TEMPLATE, self._ctx())
 
     def post(self, request):
         if not request.user.is_superuser:
             return HttpResponseForbidden()
-        name = request.POST.get('name', '').strip()
-        if not name:
-            return render(request, 'courses/partials/course_form_modal.html', {
-                'course': None, 'trainers': self._trainers(),
-                'error': 'Course name is required.',
-            })
+        hx       = htmx(request)
+        template = f'{self.TEMPLATE}#course-form' if hx else self.TEMPLATE
+        fdata = {
+            'name':        request.POST.get('name', '').strip(),
+            'description': request.POST.get('description', '').strip(),
+            'status':      request.POST.get('status', Course.Status.DRAFT),
+            'thumbnail':   request.POST.get('thumbnail', '').strip(),
+            'trainers':    request.POST.getlist('trainers'),
+        }
+        if not fdata['name']:
+            messages.error(request, 'Course name is required.')
+            return render(request, template, self._ctx(fdata))
         course = Course.objects.create(
-            name=name,
-            description=request.POST.get('description', '').strip(),
-            status=request.POST.get('status', Course.Status.DRAFT),
+            name=fdata['name'],
+            description=fdata['description'],
+            thumbnail=fdata['thumbnail'],
+            status=fdata['status'],
             created_by=request.user,
         )
-        trainer_ids = request.POST.getlist('trainers')
-        if trainer_ids:
-            course.trainers.set(trainer_ids)
-        resp = HttpResponse()
-        resp['HX-Redirect'] = f'/courses/{course.pk}/'
-        return resp
+        if fdata['trainers']:
+            course.trainers.set(fdata['trainers'])
+        return redirect_to(request, reverse('courses:detail', kwargs={'pk': course.pk}))
 
 
 class CourseUpdateView(LoginRequiredMixin, View):
+    TEMPLATE = 'courses/partials/course_form_modal.html'
+
     def _trainers(self):
         return User.objects.filter(role='trainer').order_by('first_name', 'last_name')
 
@@ -78,7 +88,7 @@ class CourseUpdateView(LoginRequiredMixin, View):
         course = get_object_or_404(Course, pk=pk)
         if not request.user.is_superuser:
             return HttpResponseForbidden()
-        return render(request, 'courses/partials/course_form_modal.html', {
+        return render(request, self.TEMPLATE, {
             'course': course, 'trainers': self._trainers(),
         })
 
@@ -88,16 +98,18 @@ class CourseUpdateView(LoginRequiredMixin, View):
             return HttpResponseForbidden()
         name = request.POST.get('name', '').strip()
         if not name:
-            return render(request, 'courses/partials/course_form_modal.html', {
+            return render(request, self.TEMPLATE, {
                 'course': course, 'trainers': self._trainers(),
                 'error': 'Course name is required.',
             })
         course.name        = name
         course.description = request.POST.get('description', '').strip()
         course.status      = request.POST.get('status', Course.Status.DRAFT)
-        course.save(update_fields=['name', 'description', 'status', 'updated_at'])
-        trainer_ids = request.POST.getlist('trainers')
-        course.trainers.set(trainer_ids)
+        thumbnail          = request.POST.get('thumbnail', '').strip()
+        if thumbnail:
+            course.thumbnail = thumbnail
+        course.save(update_fields=['name', 'description', 'status', 'thumbnail', 'updated_at'])
+        course.trainers.set(request.POST.getlist('trainers'))
         resp = HttpResponse()
         resp['HX-Trigger'] = 'closeModal'
         return resp

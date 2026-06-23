@@ -29,6 +29,18 @@ class Course(models.Model):
         return self.name
 
     @property
+    def initials(self):
+        words = self.name.split()
+        if len(words) >= 2:
+            return (words[0][0] + words[1][0]).upper()
+        return self.name[:2].upper()
+
+    @property
+    def thumb_color(self):
+        palette = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#0ea5e9', '#ef4444', '#14b8a6']
+        return palette[self.pk % len(palette)]
+
+    @property
     def total_chapters(self):
         return Chapter.objects.filter(module__course=self).count()
 
