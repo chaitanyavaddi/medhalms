@@ -355,13 +355,32 @@ body.dash-app--collapsed .dash-collapse-chevron {
 }
 
 .dash-topbar-start { flex-shrink: 0; display: flex; align-items: center; gap: 12px; }
-.dash-page-title {
+
+.dash-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.dash-bc-item {
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #9ca3af;
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
   white-space: nowrap;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+a.dash-bc-item:hover { color: #ffffff; }
+.dash-bc-current {
+  font-weight: 600;
+  color: #ffffff;
+}
+.dash-bc-sep {
+  font-size: 12px;
+  color: rgba(255,255,255,0.28);
+  user-select: none;
 }
 
 .dash-topbar-center {
@@ -632,17 +651,31 @@ body.dash-app--collapsed .dash-collapse-chevron {
 
 /* ── Flash messages ── */
 .dash-flash-wrap {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 12px 20px 0;
+  gap: 8px;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+@keyframes toast-slide-in {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 .dash-flash {
-  font-size: 13.5px;
-  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 16px;
   border-radius: 8px;
   border: 1px solid transparent;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  animation: toast-slide-in 0.25s ease forwards;
+  max-width: 340px;
 }
 
 .dash-flash--error,

@@ -46,6 +46,7 @@ class LoginView(View):
             messages.error(request, 'Invalid email or password')
             return render(request, template, ctx)
         login(request, user, backend=backend)
+        messages.success(request, f'Welcome back, {user.first_name or user.email}!')
         return redirect_to(request, 'dashboard:index')
 
 
@@ -72,6 +73,7 @@ class SignupView(View):
         )
         send_welcome_email.enqueue(user.email)
         login(request, user, backend=backend)
+        messages.success(request, f'Welcome to {settings.SITE_NAME}, {user.first_name or user.email}!')
         return redirect_to(request, 'dashboard:index')
 
 
@@ -147,6 +149,7 @@ class ResetPasswordConfirmView(View):
         user.set_password(password)
         user.save()
         login(request, user, backend=backend)
+        messages.success(request, 'Password reset successfully. You are now logged in.')
         return redirect_to(request, 'dashboard:index')
 
 

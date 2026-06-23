@@ -375,11 +375,23 @@
     </header>
 
     {% if messages %}
-    <div class="dash-flash-wrap">
+    <div class="dash-flash-wrap" id="dash-flash-wrap">
       {% for m in messages %}
         <div class="dash-flash dash-flash--{{ m.tags }}">{{ m }}</div>
       {% endfor %}
     </div>
+    <script>
+      (function () {
+        var wrap = document.getElementById('dash-flash-wrap');
+        if (!wrap) return;
+        setTimeout(function () {
+          wrap.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+          wrap.style.opacity = '0';
+          wrap.style.transform = 'translateY(-8px)';
+          setTimeout(function () { wrap.remove(); }, 420);
+        }, 3500);
+      })();
+    </script>
     {% endif %}
 
     <main class="dash-content {% block content_class %}{% endblock %}">

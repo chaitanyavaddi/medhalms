@@ -1,5 +1,6 @@
 import json
 
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, render
@@ -53,6 +54,7 @@ class InterviewCreateView(LoginRequiredMixin, View):
         )
         iv.courses.set(schema.courses)
         _save_questions(iv, schema.questions)
+        messages.success(request, f'Interview "{iv.title}" created.')
         return redirect_to(request, reverse('interviews:detail', args=[iv.pk]))
 
 
@@ -94,6 +96,7 @@ class InterviewUpdateView(LoginRequiredMixin, View):
         iv.courses.set(schema.courses)
         iv.questions.all().delete()
         _save_questions(iv, schema.questions)
+        messages.success(request, f'Interview "{iv.title}" updated.')
         return redirect_to(request, reverse('interviews:detail', args=[iv.pk]))
 
 
@@ -101,7 +104,10 @@ class InterviewDeleteView(LoginRequiredMixin, View):
     def post(self, request, pk):
         if not request.user.is_superuser:
             return HttpResponseForbidden()
-        get_object_or_404(Interview, pk=pk).delete()
+        iv = get_object_or_404(Interview, pk=pk)
+        title = iv.title
+        iv.delete()
+        messages.success(request, f'Interview "{title}" deleted.')
         return redirect_to(request, reverse('interviews:list'))
 
 

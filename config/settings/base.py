@@ -116,7 +116,7 @@ BRAND_DARK    = "#07111f"   # sidebar gradient top (darkest navy)
 BRAND_NAVY    = "#0c2258"   # sidebar gradient mid
 BRAND_BLUE    = "#1550be"   # primary blue — buttons, links, active states
 BRAND_ACCENT  = "#e67f0f"   # orange accent — CTAs, highlights, active icons
-BRAND_SURFACE = "#f5f2ee"   # warm cream — content area background
+BRAND_SURFACE = "#f9fafb"   # light grey — content area background
 
 # Typography — IBM Plex Sans is loaded unconditionally in base.html.
 # Override BRAND_FONT_FAMILY here if you swap fonts.

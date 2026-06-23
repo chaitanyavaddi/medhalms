@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.utils import timezone
 from django.views import View
 
 from utils.view_helper import htmx, redirect_to
@@ -47,7 +48,7 @@ def _renumber_chapters(module):
 
 class CourseListView(LoginRequiredMixin, View):
     def get(self, request):
-        courses = Course.objects.prefetch_related('trainers').all()
+        courses = Course.objects.prefetch_related('trainers').filter(is_deleted=False)
         return render(request, 'courses/list.html', {'courses': courses})
 
 
@@ -89,6 +90,7 @@ class CourseCreateView(LoginRequiredMixin, View):
         )
         if fdata['trainers']:
             course.trainers.set(fdata['trainers'])
+        messages.success(request, f'Course "{course.name}" created.')
         return redirect_to(request, reverse('courses:detail', kwargs={'pk': course.pk}))
 
 
@@ -99,7 +101,7 @@ class CourseUpdateView(LoginRequiredMixin, View):
         return User.objects.filter(role='trainer').order_by('first_name', 'last_name')
 
     def get(self, request, pk):
-        course = get_object_or_404(Course, pk=pk)
+        course = get_object_or_404(Course, pk=pk, is_deleted=False)
         if not request.user.is_superuser:
             return HttpResponseForbidden()
         return render(request, self.TEMPLATE, {
@@ -107,7 +109,7 @@ class CourseUpdateView(LoginRequiredMixin, View):
         })
 
     def post(self, request, pk):
-        course = get_object_or_404(Course, pk=pk)
+        course = get_object_or_404(Course, pk=pk, is_deleted=False)
         if not request.user.is_superuser:
             return HttpResponseForbidden()
         name = request.POST.get('name', '').strip()
@@ -125,6 +127,7 @@ class CourseUpdateView(LoginRequiredMixin, View):
         course.thumbnail = new_thumbnail
         course.save(update_fields=['name', 'description', 'status', 'thumbnail', 'updated_at'])
         course.trainers.set(request.POST.getlist('trainers'))
+        messages.success(request, f'Course "{course.name}" updated.')
         resp = HttpResponse()
         resp['HX-Trigger'] = 'closeModal'
         return resp
@@ -132,7 +135,7 @@ class CourseUpdateView(LoginRequiredMixin, View):
 
 class CourseDeleteView(LoginRequiredMixin, View):
     def get(self, request, pk):
-        course = get_object_or_404(Course, pk=pk)
+        course = get_object_or_404(Course, pk=pk, is_deleted=False)
         if not request.user.is_superuser:
             return HttpResponseForbidden()
         return render(request, 'courses/partials/delete_modal.html', {
@@ -142,12 +145,14 @@ class CourseDeleteView(LoginRequiredMixin, View):
         })
 
     def post(self, request, pk):
-        course = get_object_or_404(Course, pk=pk)
+        course = get_object_or_404(Course, pk=pk, is_deleted=False)
         if not request.user.is_superuser:
             return HttpResponseForbidden()
-        if course.thumbnail:
-            _delete_cdn_url(course.thumbnail)
-        course.delete()
+        name = course.name
+        course.is_deleted = True
+        course.deleted_at = timezone.now()
+        course.save(update_fields=['is_deleted', 'deleted_at'])
+        messages.success(request, f'Course "{name}" deleted.')
         resp = HttpResponse()
         resp['HX-Redirect'] = reverse('courses:list')
         return resp
@@ -157,7 +162,7 @@ class CourseDeleteView(LoginRequiredMixin, View):
 
 class CourseDetailView(LoginRequiredMixin, View):
     def get(self, request, pk):
-        course = get_object_or_404(Course, pk=pk)
+        course = get_object_or_404(Course, pk=pk, is_deleted=False)
         first  = course.first_chapter
         if first:
             return redirect_to(request, reverse('courses:chapter', kwargs={'pk': course.pk, 'chapter_pk': first.pk}))
@@ -170,7 +175,7 @@ class CourseDetailView(LoginRequiredMixin, View):
 
 class ChapterDetailView(LoginRequiredMixin, View):
     def get(self, request, pk, chapter_pk):
-        course  = get_object_or_404(Course, pk=pk)
+        course  = get_object_or_404(Course, pk=pk, is_deleted=False)
         chapter = get_object_or_404(Chapter, pk=chapter_pk, module__course=course)
         return render(request, 'courses/detail.html', {
             'course':         course,
@@ -181,7 +186,7 @@ class ChapterDetailView(LoginRequiredMixin, View):
 
 class ChapterSaveView(LoginRequiredMixin, View):
     def post(self, request, pk, chapter_pk):
-        course  = get_object_or_404(Course, pk=pk)
+        course  = get_object_or_404(Course, pk=pk, is_deleted=False)
         if not _can_manage(request.user, course):
             return JsonResponse({'error': 'Permission denied'}, status=403)
         chapter = get_object_or_404(Chapter, pk=chapter_pk, module__course=course)
@@ -253,7 +258,7 @@ class CourseFileDeleteView(LoginRequiredMixin, View):
 
 class ModuleCreateView(LoginRequiredMixin, View):
     def get(self, request, pk):
-        course = get_object_or_404(Course, pk=pk)
+        course = get_object_or_404(Course, pk=pk, is_deleted=False)
         if not _can_manage(request.user, course):
             return HttpResponseForbidden()
         return render(request, 'courses/partials/module_form_modal.html', {
@@ -261,7 +266,7 @@ class ModuleCreateView(LoginRequiredMixin, View):
         })
 
     def post(self, request, pk):
-        course = get_object_or_404(Course, pk=pk)
+        course = get_object_or_404(Course, pk=pk, is_deleted=False)
         if not _can_manage(request.user, course):
             return HttpResponseForbidden()
         title = request.POST.get('title', '').strip()
@@ -271,6 +276,7 @@ class ModuleCreateView(LoginRequiredMixin, View):
             })
         order = Module.objects.filter(course=course).count()
         Module.objects.create(course=course, title=title, order=order)
+        messages.success(request, f'Module "{title}" added.')
         resp = HttpResponse()
         resp['HX-Trigger'] = 'closeModal'
         return resp
@@ -278,7 +284,7 @@ class ModuleCreateView(LoginRequiredMixin, View):
 
 class ModuleUpdateView(LoginRequiredMixin, View):
     def get(self, request, pk, module_pk):
-        course     = get_object_or_404(Course, pk=pk)
+        course     = get_object_or_404(Course, pk=pk, is_deleted=False)
         module_obj = get_object_or_404(Module, pk=module_pk, course=course)
         if not _can_manage(request.user, course):
             return HttpResponseForbidden()
@@ -287,7 +293,7 @@ class ModuleUpdateView(LoginRequiredMixin, View):
         })
 
     def post(self, request, pk, module_pk):
-        course     = get_object_or_404(Course, pk=pk)
+        course     = get_object_or_404(Course, pk=pk, is_deleted=False)
         module_obj = get_object_or_404(Module, pk=module_pk, course=course)
         if not _can_manage(request.user, course):
             return HttpResponseForbidden()
@@ -298,6 +304,7 @@ class ModuleUpdateView(LoginRequiredMixin, View):
             })
         module_obj.title = title
         module_obj.save(update_fields=['title'])
+        messages.success(request, f'Module "{title}" updated.')
         resp = HttpResponse()
         resp['HX-Trigger'] = 'closeModal'
         return resp
@@ -305,7 +312,7 @@ class ModuleUpdateView(LoginRequiredMixin, View):
 
 class ModuleDeleteView(LoginRequiredMixin, View):
     def get(self, request, pk, module_pk):
-        course     = get_object_or_404(Course, pk=pk)
+        course     = get_object_or_404(Course, pk=pk, is_deleted=False)
         module_obj = get_object_or_404(Module, pk=module_pk, course=course)
         if not _can_manage(request.user, course):
             return HttpResponseForbidden()
@@ -316,12 +323,14 @@ class ModuleDeleteView(LoginRequiredMixin, View):
         })
 
     def post(self, request, pk, module_pk):
-        course     = get_object_or_404(Course, pk=pk)
+        course     = get_object_or_404(Course, pk=pk, is_deleted=False)
         module_obj = get_object_or_404(Module, pk=module_pk, course=course)
         if not _can_manage(request.user, course):
             return HttpResponseForbidden()
+        title = module_obj.title
         module_obj.delete()
         _renumber_modules(course)
+        messages.success(request, f'Module "{title}" deleted.')
         resp = HttpResponse()
         resp['HX-Trigger'] = 'closeModal'
         return resp
@@ -331,7 +340,7 @@ class ModuleDeleteView(LoginRequiredMixin, View):
 
 class ChapterCreateView(LoginRequiredMixin, View):
     def get(self, request, pk, module_pk):
-        course     = get_object_or_404(Course, pk=pk)
+        course     = get_object_or_404(Course, pk=pk, is_deleted=False)
         module_obj = get_object_or_404(Module, pk=module_pk, course=course)
         if not _can_manage(request.user, course):
             return HttpResponseForbidden()
@@ -340,7 +349,7 @@ class ChapterCreateView(LoginRequiredMixin, View):
         })
 
     def post(self, request, pk, module_pk):
-        course     = get_object_or_404(Course, pk=pk)
+        course     = get_object_or_404(Course, pk=pk, is_deleted=False)
         module_obj = get_object_or_404(Module, pk=module_pk, course=course)
         if not _can_manage(request.user, course):
             return HttpResponseForbidden()
@@ -352,6 +361,7 @@ class ChapterCreateView(LoginRequiredMixin, View):
             })
         order   = Chapter.objects.filter(module=module_obj).count()
         chapter = Chapter.objects.create(module=module_obj, title=title, order=order)
+        messages.success(request, f'Chapter "{title}" created.')
         resp    = HttpResponse()
         resp['HX-Redirect'] = f'/courses/{pk}/c/{chapter.pk}/'
         return resp
@@ -359,7 +369,7 @@ class ChapterCreateView(LoginRequiredMixin, View):
 
 class ChapterUpdateView(LoginRequiredMixin, View):
     def get(self, request, pk, module_pk, chapter_pk):
-        course      = get_object_or_404(Course, pk=pk)
+        course      = get_object_or_404(Course, pk=pk, is_deleted=False)
         module_obj  = get_object_or_404(Module, pk=module_pk, course=course)
         chapter_obj = get_object_or_404(Chapter, pk=chapter_pk, module=module_obj)
         if not _can_manage(request.user, course):
@@ -369,7 +379,7 @@ class ChapterUpdateView(LoginRequiredMixin, View):
         })
 
     def post(self, request, pk, module_pk, chapter_pk):
-        course      = get_object_or_404(Course, pk=pk)
+        course      = get_object_or_404(Course, pk=pk, is_deleted=False)
         module_obj  = get_object_or_404(Module, pk=module_pk, course=course)
         chapter_obj = get_object_or_404(Chapter, pk=chapter_pk, module=module_obj)
         if not _can_manage(request.user, course):
@@ -382,6 +392,7 @@ class ChapterUpdateView(LoginRequiredMixin, View):
             })
         chapter_obj.title = title
         chapter_obj.save(update_fields=['title'])
+        messages.success(request, f'Chapter "{title}" updated.')
         resp = HttpResponse()
         resp['HX-Trigger'] = 'closeModal'
         return resp
@@ -389,7 +400,7 @@ class ChapterUpdateView(LoginRequiredMixin, View):
 
 class ChapterDeleteView(LoginRequiredMixin, View):
     def get(self, request, pk, module_pk, chapter_pk):
-        course      = get_object_or_404(Course, pk=pk)
+        course      = get_object_or_404(Course, pk=pk, is_deleted=False)
         module_obj  = get_object_or_404(Module, pk=module_pk, course=course)
         chapter_obj = get_object_or_404(Chapter, pk=chapter_pk, module=module_obj)
         if not _can_manage(request.user, course):
@@ -401,13 +412,15 @@ class ChapterDeleteView(LoginRequiredMixin, View):
         })
 
     def post(self, request, pk, module_pk, chapter_pk):
-        course      = get_object_or_404(Course, pk=pk)
+        course      = get_object_or_404(Course, pk=pk, is_deleted=False)
         module_obj  = get_object_or_404(Module, pk=module_pk, course=course)
         chapter_obj = get_object_or_404(Chapter, pk=chapter_pk, module=module_obj)
         if not _can_manage(request.user, course):
             return HttpResponseForbidden()
+        title = chapter_obj.title
         chapter_obj.delete()
         _renumber_chapters(module_obj)
+        messages.success(request, f'Chapter "{title}" deleted.')
         resp = HttpResponse()
         resp['HX-Redirect'] = f'/courses/{pk}/'
         return resp
@@ -417,7 +430,7 @@ class ChapterDeleteView(LoginRequiredMixin, View):
 
 class ModuleReorderView(LoginRequiredMixin, View):
     def post(self, request, pk):
-        course = get_object_or_404(Course, pk=pk)
+        course = get_object_or_404(Course, pk=pk, is_deleted=False)
         if not _can_manage(request.user, course):
             return HttpResponseForbidden()
         order = json.loads(request.body).get('order', [])
@@ -428,7 +441,7 @@ class ModuleReorderView(LoginRequiredMixin, View):
 
 class ChapterReorderView(LoginRequiredMixin, View):
     def post(self, request, pk):
-        course = get_object_or_404(Course, pk=pk)
+        course = get_object_or_404(Course, pk=pk, is_deleted=False)
         if not _can_manage(request.user, course):
             return HttpResponseForbidden()
         data           = json.loads(request.body)

@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -87,6 +88,8 @@ class UserCreateView(SuperuserRequiredMixin, View):
             first_name=first_name, last_name=last_name,
             role=role, status=status,
         )
+        name = f'{first_name} {last_name}'.strip() or email
+        messages.success(request, f'User "{name}" created.')
         resp = HttpResponse()
         resp['HX-Trigger'] = 'closeModal'
         return resp
@@ -114,6 +117,8 @@ class UserUpdateView(SuperuserRequiredMixin, View):
         if new_password:
             user_obj.set_password(new_password)
         user_obj.save()
+        name = user_obj.get_full_name() or user_obj.email
+        messages.success(request, f'User "{name}" updated.')
         resp = HttpResponse()
         resp['HX-Trigger'] = 'closeModal'
         return resp
@@ -128,7 +133,9 @@ class UserDeleteView(SuperuserRequiredMixin, View):
 
     def post(self, request, pk):
         user_obj = get_object_or_404(User, pk=pk)
+        name = user_obj.get_full_name() or user_obj.email
         user_obj.delete()
+        messages.success(request, f'User "{name}" deleted.')
         resp = HttpResponse()
         resp['HX-Trigger'] = 'closeModal'
         return resp
