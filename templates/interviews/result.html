@@ -1,7 +1,7 @@
 {% extends "dashboard/base.html" %}
 {% load static %}
 {% block title %}Interview Result{% endblock %}
-{% block topbar_title %}<h2 class="dash-page-title">Interview Result</h2>{% endblock %}
+{% block topbar_title %}<nav class="dash-breadcrumb"><a href="{% url 'interviews:list' %}" class="dash-bc-item">AI Interviews</a><span class="dash-bc-sep">›</span><span class="dash-bc-item">{{ session.interview.title }}</span><span class="dash-bc-sep">›</span><span class="dash-bc-item dash-bc-current">Result</span></nav>{% endblock %}
 
 {% block extra_head %}
 <script src="https://js.puter.com/v2/"></script>

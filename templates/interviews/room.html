@@ -1,7 +1,7 @@
 {% extends "dashboard/base.html" %}
 {% load static %}
 {% block title %}{{ session.interview.title }} — Interview{% endblock %}
-{% block topbar_title %}<h2 class="dash-page-title">{{ session.interview.title }}</h2>{% endblock %}
+{% block topbar_title %}<nav class="dash-breadcrumb"><a href="{% url 'interviews:list' %}" class="dash-bc-item">AI Interviews</a><span class="dash-bc-sep">›</span><span class="dash-bc-item dash-bc-current">{{ session.interview.title }}</span></nav>{% endblock %}
 {% block content_class %}dash-content--edge{% endblock %}
 
 {% block extra_head %}

@@ -2,7 +2,7 @@
 {% load static partials %}
 {% block title %}New Course{% endblock %}
 {% block extra_head %}<link rel="stylesheet" href="{% static 'css/courses.css' %}">{% endblock %}
-{% block topbar_title %}<h2 class="dash-page-title">New Course</h2>{% endblock %}
+{% block topbar_title %}<nav class="dash-breadcrumb"><a href="{% url 'courses:list' %}" class="dash-bc-item">Courses</a><span class="dash-bc-sep">›</span><span class="dash-bc-item dash-bc-current">New Course</span></nav>{% endblock %}
 
 {% block content %}
 <div class="cc-page">

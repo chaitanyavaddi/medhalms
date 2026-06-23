@@ -1,7 +1,7 @@
 {% extends "dashboard/base.html" %}
 {% load static partials %}
 {% block title %}{% if interview %}Edit{% else %}Create{% endif %} Interview{% endblock %}
-{% block topbar_title %}<h2 class="dash-page-title">{% if interview %}Edit{% else %}New{% endif %} Interview</h2>{% endblock %}
+{% block topbar_title %}<nav class="dash-breadcrumb"><a href="{% url 'interviews:list' %}" class="dash-bc-item">AI Interviews</a><span class="dash-bc-sep">›</span><span class="dash-bc-item dash-bc-current">{% if interview %}Edit Interview{% else %}New Interview{% endif %}</span></nav>{% endblock %}
 {% block extra_head %}<link rel="stylesheet" href="{% static 'css/interviews.css' %}">{% endblock %}
 
 {% block content %}
