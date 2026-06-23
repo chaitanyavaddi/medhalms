@@ -1,0 +1,15 @@
+.git
+.github
+.env
+.env.*
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+staticfiles/
+*.md
+setup.txt
+traefik.yml
+data.json
