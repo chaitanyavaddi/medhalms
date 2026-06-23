@@ -318,11 +318,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.cr-chapter-link:hover { background: #f5f6f8; color: #111827; }
+.cr-chapter-item:hover { background: #f5f6f8; }
+.cr-chapter-link:hover { color: #111827; }
 
 .cr-chapter-item.is-active {
   background: color-mix(in srgb, var(--brand-accent) 10%, #fff);
 }
+.cr-chapter-item.is-active:hover { background: color-mix(in srgb, var(--brand-accent) 14%, #fff); }
 .cr-chapter-item.is-active .cr-chapter-link {
   background: transparent;
   color: var(--brand-accent);
