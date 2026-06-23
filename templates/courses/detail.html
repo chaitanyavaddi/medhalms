@@ -1650,7 +1650,7 @@
     showAuthOverlay(false);
     fetchAndRenderUsage();
     if (!currentThread) {
-      var existing = loadThreads();
+      var existing = loadAllThreads();
       if (existing.length) loadThread(existing[0]); else startNewThread();
     }
     setTimeout(function () {
