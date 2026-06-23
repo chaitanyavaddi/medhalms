@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -9,6 +11,18 @@ from .models import Chapter, Course, Module
 
 def _can_manage(user, course):
     return user.is_superuser or course.trainers.filter(pk=user.pk).exists()
+
+
+def _renumber_modules(course):
+    for i, m in enumerate(Module.objects.filter(course=course).order_by('order', 'created_at')):
+        if m.order != i:
+            Module.objects.filter(pk=m.pk).update(order=i)
+
+
+def _renumber_chapters(module):
+    for i, c in enumerate(Chapter.objects.filter(module=module).order_by('order', 'created_at')):
+        if c.order != i:
+            Chapter.objects.filter(pk=c.pk).update(order=i)
 
 
 # ── Course list / create ─────────────────────────────────────────────────────
@@ -254,6 +268,7 @@ class ModuleDeleteView(LoginRequiredMixin, View):
         if not _can_manage(request.user, course):
             return HttpResponseForbidden()
         module_obj.delete()
+        _renumber_modules(course)
         resp = HttpResponse()
         resp['HX-Trigger'] = 'closeModal'
         return resp
@@ -339,6 +354,50 @@ class ChapterDeleteView(LoginRequiredMixin, View):
         if not _can_manage(request.user, course):
             return HttpResponseForbidden()
         chapter_obj.delete()
+        _renumber_chapters(module_obj)
         resp = HttpResponse()
         resp['HX-Redirect'] = f'/courses/{pk}/'
         return resp
+
+
+# ── Reorder ───────────────────────────────────────────────────────────────────
+
+class ModuleReorderView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        course = get_object_or_404(Course, pk=pk)
+        if not _can_manage(request.user, course):
+            return HttpResponseForbidden()
+        order = json.loads(request.body).get('order', [])
+        for i, module_id in enumerate(order):
+            Module.objects.filter(pk=module_id, course=course).update(order=i)
+        return JsonResponse({'ok': True})
+
+
+class ChapterReorderView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        course = get_object_or_404(Course, pk=pk)
+        if not _can_manage(request.user, course):
+            return HttpResponseForbidden()
+        data           = json.loads(request.body)
+        chapter_id     = data.get('chapter_id')
+        to_module_id   = data.get('to_module_id')
+        from_module_id = data.get('from_module_id')
+        to_chapters    = data.get('chapters', [])
+        from_chapters  = data.get('from_chapters', [])
+
+        to_module = get_object_or_404(Module, pk=to_module_id, course=course)
+        chapter   = get_object_or_404(Chapter, pk=chapter_id)
+
+        if chapter.module_id != to_module.pk:
+            chapter.module = to_module
+            chapter.save(update_fields=['module'])
+
+        for i, cid in enumerate(to_chapters):
+            Chapter.objects.filter(pk=cid, module=to_module).update(order=i)
+
+        if from_module_id and str(from_module_id) != str(to_module_id):
+            from_module = get_object_or_404(Module, pk=from_module_id, course=course)
+            for i, cid in enumerate(from_chapters):
+                Chapter.objects.filter(pk=cid, module=from_module).update(order=i)
+
+        return JsonResponse({'ok': True})

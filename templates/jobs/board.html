@@ -1,0 +1,88 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Live Board — Job 360{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/jobs.css' %}">{% endblock %}
+{% block topbar_title %}<h2 class="dash-page-title">Live Board</h2>{% endblock %}
+{% block content %}
+<div class="jb-wrap">
+
+  <div class="jb-filter-card">
+    <h1 class="jb-filter-title">Find your next role</h1>
+    <p class="jb-filter-sub">Search jobs across India — filter by role, city, company, and experience.</p>
+
+    <form id="jb-filter-form" class="jb-filter-form" hx-get="{% url 'jobs:list' %}" hx-target="#job-cards" hx-swap="innerHTML" hx-trigger="submit" hx-indicator="#jb-search-btn">
+      <div class="jb-filter-row">
+        <div class="jb-filter-field">
+          <label>Keyword</label>
+          <input type="text" name="keyword" placeholder="e.g. data analyst, Python, fresher">
+        </div>
+        <div class="jb-filter-field">
+          <label>Company</label>
+          <input type="text" name="company" placeholder="e.g. Wipro, Google, TCS">
+        </div>
+        <div class="jb-filter-field">
+          <label>Role category</label>
+          <select name="role">
+            <option value="">All roles</option>
+            {% for r in roles %}<option value="{{ r.slug }}">{{ r.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="jb-filter-field">
+          <label>City</label>
+          <select name="location">
+            <option value="">All cities</option>
+            {% for loc in locations %}<option value="{{ loc.city }}">{{ loc.display_name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="jb-filter-field">
+          <label>Experience</label>
+          <select name="experience">
+            <option value="">All levels</option>
+            {% for exp in experience_bands %}<option value="{{ exp.slug }}">{{ exp.label }}</option>{% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="jb-filter-row jb-filter-row--slim">
+        <div class="jb-filter-field">
+          <label>Source</label>
+          <select name="site">
+            <option value="">All sources</option>
+            {% for s in sites %}<option value="{{ s.slug }}">{{ s.label }} ({{ s.active_count }})</option>{% endfor %}
+          </select>
+        </div>
+        <label class="jb-remote-check">
+          <input type="checkbox" name="is_remote" value="true"> Remote only
+        </label>
+      </div>
+      <div class="jb-filter-actions">
+        <button type="submit" class="jb-search-btn" id="jb-search-btn">
+          <span class="btn-label">Search jobs</span>
+          <span class="btn-spinner"></span>
+        </button>
+        <button type="button" class="jb-clear-btn" onclick="jobBoardClear()">Clear filters</button>
+      </div>
+    </form>
+  </div>
+
+  <div id="job-cards" class="jb-cards-wrap">
+    <div class="jb-empty jb-empty--initial">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      <p>Use the filters above to search jobs.</p>
+    </div>
+  </div>
+
+</div>
+<div id="jb-modal-slot"></div>
+
+<script>
+(function () {
+  function jobBoardClear() {
+    var form = document.getElementById('jb-filter-form');
+    if (!form) return;
+    form.querySelectorAll('input[type=text], select').forEach(function (el) { el.value = ''; });
+    form.querySelectorAll('input[type=checkbox]').forEach(function (el) { el.checked = false; });
+  }
+  window.jobBoardClear = jobBoardClear;
+})();
+</script>
+{% endblock %}

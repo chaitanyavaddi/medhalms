@@ -162,28 +162,60 @@
 }
 
 .cr-thread-hd {
-  padding: 20px 18px 14px;
+  padding: 16px 18px 12px;
   border-bottom: 1px solid #ebebeb;
   flex-shrink: 0;
   background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .cr-course-name {
   font-size: 14.5px;
   font-weight: 700;
   color: #111827;
-  margin: 0 0 14px;
+  margin: 0;
   letter-spacing: -0.01em;
   line-height: 1.35;
-}
-
-.cr-thread-actions {
-  display: flex;
-  gap: 7px;
-}
-
-.cr-add-btn {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cr-thread-edit-btn {
+  height: 28px;
+  width: 28px;
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.12s, color 0.12s;
+}
+.cr-thread-edit-btn:hover { border-color: #9ca3af; color: #374151; }
+
+.cr-thread-scroll {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* + Module at the bottom */
+.cr-add-module-wrap {
+  padding: 12px 12px 16px;
+  margin-top: auto;
+}
+.cr-add-btn {
+  display: block;
+  width: 100%;
   height: 32px;
   font-size: 12px;
   font-weight: 600;
@@ -201,27 +233,45 @@
   background: color-mix(in srgb, var(--brand-accent) 5%, transparent);
 }
 
-.cr-thread-edit-btn {
-  height: 32px;
-  width: 32px;
-  border: 1px solid #e5e7eb;
-  border-radius: 7px;
-  background: transparent;
-  color: #9ca3af;
-  cursor: pointer;
-  display: flex;
+/* Drag handles */
+.cr-drag-handle {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  color: #d1d5db;
+  cursor: grab;
   flex-shrink: 0;
-  transition: border-color 0.12s, color 0.12s;
+  border-radius: 3px;
+  transition: color 0.12s;
 }
-.cr-thread-edit-btn:hover { border-color: #9ca3af; color: #374151; }
+.cr-drag-handle:hover { color: #9ca3af; }
+.cr-drag-handle:active { cursor: grabbing; }
 
-.cr-thread-scroll {
-  flex: 1;
-  overflow-y: auto;
-  padding-bottom: 24px;
+.cr-module-drag {
+  width: 16px;
+  height: 16px;
+  /* margin-right: 2px; */
+  opacity: 0;
+  transition: opacity 0.12s, color 0.12s;
 }
+.cr-module > summary:hover .cr-module-drag { opacity: 1; }
+
+.cr-chapter-drag {
+  width: 14px;
+  /* height: 14px; */
+  margin-left: 4px;
+  opacity: 0;
+  transition: opacity 0.12s, color 0.12s;
+}
+.cr-chapter-item:hover .cr-chapter-drag { opacity: 1; }
+
+/* Sortable ghost/drag state */
+.cr-sortable-ghost {
+  opacity: 0.4;
+  background: color-mix(in srgb, var(--brand-accent) 10%, #fff);
+  border-radius: 6px;
+}
+.cr-module-list .cr-module.sortable-drag { opacity: 0.9; }
 
 /* Module group (uses details/summary) */
 .cr-module {
@@ -234,8 +284,8 @@
   list-style: none;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 13px 16px 13px 14px;
+  gap: 5px;
+  padding: 13px 16px 13px 5px;
   cursor: pointer;
   user-select: none;
   background: #eef0f4;
@@ -248,6 +298,8 @@
   flex-shrink: 0;
   color: #9ca3af;
   transition: transform 0.2s;
+  margin-left: 4px;
+  margin-right: 4px;
 }
 .cr-module[open] > summary .cr-module-chevron { transform: rotate(90deg); }
 
@@ -289,22 +341,23 @@
 
 /* Chapter items */
 .cr-chapter-list {
-  padding: 4px 0 6px 0;
+  padding: 4px 0 2px 0;
   background: #fff;
 }
 
 .cr-chapter-item {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   position: relative;
   margin: 0;
+  padding-left: 20px;
 }
 
 .cr-chapter-link {
   flex: 1;
   display: flex;
   align-items: center;
-  padding: 10px 14px 10px 32px;
+  padding: 10px 14px 10px 6px;
   font-size: 13.5px;
   font-weight: 440;
   color: #4b5563;
@@ -363,7 +416,7 @@
   display: block;
   width: 100%;
   text-align: left;
-  padding: 8px 14px 8px 32px;
+  padding: 8px 14px 8px 42px;
   font-size: 12.5px;
   color: #9ca3af;
   background: none;
@@ -499,10 +552,10 @@
 
 /* Inner wrapper aligns buttons with editor content */
 .cr-toolbar-inner {
-  max-width: calc(720px + 6rem);
+  /* max-width: calc(720px + 6rem); */
   width: 100%;
   margin: 0 auto;
-  /* padding: 0 3rem; */
+  padding: 0 1rem;
   height: 46px;
   display: flex;
   align-items: center;

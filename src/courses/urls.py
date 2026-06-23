@@ -31,4 +31,7 @@ urlpatterns = [
          views.ChapterUpdateView.as_view(), name='chapter_edit'),
     path('<int:pk>/modules/<int:module_pk>/chapters/<int:chapter_pk>/delete/',
          views.ChapterDeleteView.as_view(), name='chapter_delete'),
+
+    path('<int:pk>/modules/reorder/',  views.ModuleReorderView.as_view(),  name='module_reorder'),
+    path('<int:pk>/chapters/reorder/', views.ChapterReorderView.as_view(), name='chapter_reorder'),
 ]

@@ -1,0 +1,61 @@
+{% load static %}
+<div class="jb-modal-backdrop" id="jb-modal-backdrop" onclick="if(event.target===this)document.getElementById('jb-modal-slot').innerHTML=''">
+  <div class="jb-modal" onclick="event.stopPropagation()">
+    <button type="button" class="jb-modal-close" onclick="document.getElementById('jb-modal-slot').innerHTML=''">&times;</button>
+
+    <div class="jb-modal-body">
+      <div class="jb-modal-badges">
+        <span class="jb-badge jb-badge--{{ job.site }}">{{ job.site|upper }}</span>
+        {% if job.is_remote %}<span class="jb-badge jb-badge--remote">Remote</span>{% endif %}
+        {% if job.job_type %}<span class="jb-badge jb-badge--type">{{ job.job_type|capfirst }}</span>{% endif %}
+      </div>
+
+      <h2 class="jb-modal-title">{{ job.title }}</h2>
+      <p class="jb-modal-company">{{ job.company_name|default:"Company not listed" }}</p>
+      <p class="jb-modal-location">{{ job.location_display }}</p>
+
+      <div class="jb-modal-meta-row">
+        {% if job.job_type %}
+        <div class="jb-modal-meta-cell">
+          <span class="jb-modal-meta-label">TYPE</span>
+          <span class="jb-modal-meta-value">{{ job.job_type }}</span>
+        </div>
+        {% endif %}
+        {% if job.date_posted %}
+        <div class="jb-modal-meta-cell">
+          <span class="jb-modal-meta-label">POSTED</span>
+          <span class="jb-modal-meta-value">{{ job.date_posted }}</span>
+        </div>
+        {% endif %}
+        {% if job.min_amount %}
+        <div class="jb-modal-meta-cell">
+          <span class="jb-modal-meta-label">SALARY</span>
+          <span class="jb-modal-meta-value">{{ job.min_amount }}{% if job.max_amount %} – {{ job.max_amount }}{% endif %} {{ job.currency }}</span>
+        </div>
+        {% endif %}
+      </div>
+
+      {% if job.skills_list %}
+      <div class="jb-modal-section">
+        <h4 class="jb-modal-section-title">KEY SKILLS</h4>
+        <div class="jb-skills">
+          {% for skill in job.skills_list %}<span class="jb-skill-chip">{{ skill }}</span>{% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if job.description %}
+      <div class="jb-modal-section">
+        <h4 class="jb-modal-section-title">JOB DESCRIPTION</h4>
+        <div class="jb-modal-description">{{ job.description }}</div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="jb-modal-footer">
+      <a href="{{ job.job_url }}" target="_blank" rel="noopener" class="jb-apply-btn">Apply on {{ job.site|capfirst }}</a>
+      {% include "jobs/partials/save_btn.html" with job_id=job.id is_saved=job.is_saved title=job.title company=job.company_name %}
+      {% if job.company_url %}<a href="{{ job.company_url }}" target="_blank" rel="noopener" class="jb-company-btn">View company</a>{% endif %}
+    </div>
+  </div>
+</div>

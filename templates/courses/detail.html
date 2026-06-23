@@ -8,6 +8,7 @@
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/video.js@8.23.8/dist/video-js.min.css" rel="stylesheet">
 <script src="https://js.puter.com/v2/"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.3/Sortable.min.js"></script>
 {% endblock %}
 
 {% block content_class %}dash-content--edge{% endblock %}
@@ -20,36 +21,36 @@
   <aside class="cr-thread">
     <div class="cr-thread-hd">
       <h3 class="cr-course-name">{{ course.name }}</h3>
-      <div class="cr-thread-actions">
-        {% if can_manage %}
-        <button class="cr-add-btn"
-                hx-get="{% url 'courses:module_create' course.pk %}"
-                hx-target="#cr-modal-slot"
-                hx-swap="innerHTML">
-          + Module
-        </button>
-        <button class="cr-thread-edit-btn" title="Edit course"
-                hx-get="{% url 'courses:edit' course.pk %}"
-                hx-target="#cr-modal-slot"
-                hx-swap="innerHTML">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-          </svg>
-        </button>
-        {% endif %}
-      </div>
+      {% if can_manage %}
+      <button class="cr-thread-edit-btn" title="Edit course"
+              hx-get="{% url 'courses:edit' course.pk %}"
+              hx-target="#cr-modal-slot"
+              hx-swap="innerHTML">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+      </button>
+      {% endif %}
     </div>
 
     <div class="cr-thread-scroll">
+      <div class="cr-module-list" id="cr-module-list">
       {% for module in course.modules.all %}
-      <details class="cr-module" {% if active_chapter and active_chapter.module.pk == module.pk %}open{% elif forloop.first %}open{% endif %}>
+      <details class="cr-module" data-module-id="{{ module.pk }}"
+               {% if active_chapter and active_chapter.module.pk == module.pk %}open{% elif forloop.first %}open{% endif %}>
         <summary>
-          <svg class="cr-module-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 18l6-6-6-6"/>
-          </svg>
+          {% if can_manage %}
+          <span class="cr-drag-handle cr-module-drag" title="Drag to reorder"
+                onclick="event.preventDefault(); event.stopPropagation();">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
+              <circle cx="3" cy="2" r="1"/><circle cx="7" cy="2" r="1"/>
+              <circle cx="3" cy="5" r="1"/><circle cx="7" cy="5" r="1"/>
+              <circle cx="3" cy="8" r="1"/><circle cx="7" cy="8" r="1"/>
+            </svg>
+          </span>
+          {% endif %}
           <span class="cr-module-title">{{ module.title }}</span>
           {% if can_manage %}
           <span class="cr-module-actions">
@@ -77,11 +78,25 @@
             </button>
           </span>
           {% endif %}
+          <svg class="cr-module-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
         </summary>
 
-        <div class="cr-chapter-list">
+        <div class="cr-chapter-list" data-module-id="{{ module.pk }}">
           {% for chapter in module.chapters.all %}
-          <div class="cr-chapter-item {% if active_chapter and active_chapter.pk == chapter.pk %}is-active{% endif %}">
+          <div class="cr-chapter-item {% if active_chapter and active_chapter.pk == chapter.pk %}is-active{% endif %}"
+               data-chapter-id="{{ chapter.pk }}">
+            {% if can_manage %}
+            <span class="cr-drag-handle cr-chapter-drag" title="Drag to reorder">
+              <svg width="8" height="10" viewBox="0 0 8 10" fill="currentColor">
+                <circle cx="2" cy="2" r="1"/><circle cx="6" cy="2" r="1"/>
+                <circle cx="2" cy="5" r="1"/><circle cx="6" cy="5" r="1"/>
+                <circle cx="2" cy="8" r="1"/><circle cx="6" cy="8" r="1"/>
+              </svg>
+            </span>
+            {% endif %}
             <a class="cr-chapter-link"
                href="{% url 'courses:chapter' course.pk chapter.pk %}"
                title="{{ chapter.title }}"><span>{{ chapter.title }}</span></a>
@@ -110,21 +125,33 @@
           </div>
           {% endfor %}
 
-          {% if can_manage %}
-          <button class="cr-add-chapter-btn"
-                  hx-get="{% url 'courses:chapter_create' course.pk module.pk %}"
-                  hx-target="#cr-modal-slot"
-                  hx-swap="innerHTML">
-            + Add chapter
-          </button>
-          {% endif %}
         </div>
+        {% if can_manage %}
+        <button class="cr-add-chapter-btn"
+                hx-get="{% url 'courses:chapter_create' course.pk module.pk %}"
+                hx-target="#cr-modal-slot"
+                hx-swap="innerHTML">
+          + Add chapter
+        </button>
+        {% endif %}
       </details>
       {% empty %}
       <div class="cr-editor-empty" style="padding:32px 16px; font-size:13px; color:#9ca3af; text-align:center;">
-        No modules yet.{% if can_manage %} Click&nbsp;<strong>+ Module</strong>&nbsp;above.{% endif %}
+        No modules yet.
       </div>
       {% endfor %}
+      </div><!-- /#cr-module-list -->
+
+      {% if can_manage %}
+      <div class="cr-add-module-wrap">
+        <button class="cr-add-btn"
+                hx-get="{% url 'courses:module_create' course.pk %}"
+                hx-target="#cr-modal-slot"
+                hx-swap="innerHTML">
+          + Module
+        </button>
+      </div>
+      {% endif %}
     </div>
   </aside>
 
@@ -1758,6 +1785,71 @@
     openPanel();
   }
 
+})();
+</script>
+{% endif %}
+
+{% if can_manage %}
+<script>
+(function () {
+  var COURSE_PK = {{ course.pk }};
+  var CSRF = document.cookie.match(/csrftoken=([^;]+)/);
+  CSRF = CSRF ? CSRF[1] : '';
+
+  function post(url, data) {
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+      body: JSON.stringify(data)
+    });
+  }
+
+  // Module-level reorder
+  var moduleList = document.getElementById('cr-module-list');
+  if (moduleList && typeof Sortable !== 'undefined') {
+    Sortable.create(moduleList, {
+      handle: '.cr-module-drag',
+      animation: 150,
+      ghostClass: 'cr-sortable-ghost',
+      onEnd: function () {
+        var order = Array.from(moduleList.querySelectorAll(':scope > .cr-module'))
+          .map(function (el) { return parseInt(el.dataset.moduleId, 10); });
+        post('/courses/' + COURSE_PK + '/modules/reorder/', { order: order });
+      }
+    });
+
+    // Chapter-level reorder (cross-module)
+    document.querySelectorAll('.cr-chapter-list').forEach(function (list) {
+      Sortable.create(list, {
+        group: 'chapters',
+        handle: '.cr-chapter-drag',
+        animation: 150,
+        ghostClass: 'cr-sortable-ghost',
+        filter: '.cr-add-chapter-btn',
+        preventOnFilter: true,
+        onEnd: function (evt) {
+          var toList = evt.to;
+          var fromList = evt.from;
+          var chapterId = parseInt(evt.item.dataset.chapterId, 10);
+          var toModuleId = parseInt(toList.dataset.moduleId, 10);
+          var fromModuleId = parseInt(fromList.dataset.moduleId, 10);
+
+          var toChapters = Array.from(toList.querySelectorAll(':scope > .cr-chapter-item'))
+            .map(function (el) { return parseInt(el.dataset.chapterId, 10); });
+          var fromChapters = Array.from(fromList.querySelectorAll(':scope > .cr-chapter-item'))
+            .map(function (el) { return parseInt(el.dataset.chapterId, 10); });
+
+          post('/courses/' + COURSE_PK + '/chapters/reorder/', {
+            chapter_id: chapterId,
+            to_module_id: toModuleId,
+            from_module_id: fromModuleId,
+            chapters: toChapters,
+            from_chapters: fromChapters
+          });
+        }
+      });
+    });
+  }
 })();
 </script>
 {% endif %}

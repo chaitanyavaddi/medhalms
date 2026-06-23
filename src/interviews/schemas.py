@@ -14,6 +14,7 @@ class InterviewSchema:
     courses:        list
     questions:      list
 
+
     @classmethod
     def from_post(cls, request) -> "InterviewSchema":
         p = request.POST
