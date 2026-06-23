@@ -13,6 +13,20 @@ from users.models import User
 from .models import Chapter, Course, Module
 
 
+def _delete_cdn_url(url):
+    """Delete a Bunny CDN object by its full URL. Silently no-ops if not a CDN URL."""
+    if not url:
+        return
+    try:
+        from django.conf import settings
+        from core.bunny import delete_file
+        cdn_base = getattr(settings, 'BUNNY_CDN_BASE', '').rstrip('/')
+        if cdn_base and url.startswith(cdn_base + '/'):
+            delete_file(url[len(cdn_base) + 1:])
+    except Exception:
+        pass
+
+
 def _can_manage(user, course):
     return user.is_superuser or course.trainers.filter(pk=user.pk).exists()
 
@@ -105,7 +119,10 @@ class CourseUpdateView(LoginRequiredMixin, View):
         course.name        = name
         course.description = request.POST.get('description', '').strip()
         course.status      = request.POST.get('status', Course.Status.DRAFT)
-        course.thumbnail = request.POST.get('thumbnail', '').strip()
+        new_thumbnail = request.POST.get('thumbnail', '').strip()
+        if course.thumbnail and course.thumbnail != new_thumbnail:
+            _delete_cdn_url(course.thumbnail)
+        course.thumbnail = new_thumbnail
         course.save(update_fields=['name', 'description', 'status', 'thumbnail', 'updated_at'])
         course.trainers.set(request.POST.getlist('trainers'))
         resp = HttpResponse()
