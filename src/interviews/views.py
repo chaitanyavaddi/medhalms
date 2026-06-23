@@ -185,12 +185,12 @@ class InterviewResultsView(LoginRequiredMixin, View):
         if request.user.is_superuser or request.user.is_staff:
             sessions = (InterviewSession.objects
                         .select_related('interview', 'user')
-                        .order_by('-ended_at', '-created_at'))
+                        .order_by('-ended_at', '-started_at'))
         else:
             sessions = (InterviewSession.objects
                         .filter(user=request.user)
                         .select_related('interview')
-                        .order_by('-ended_at', '-created_at'))
+                        .order_by('-ended_at', '-started_at'))
         return render(request, 'interviews/results.html', {
             'sessions': sessions,
             'is_admin': request.user.is_superuser or request.user.is_staff,

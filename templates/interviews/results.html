@@ -75,7 +75,7 @@
               {% endif %}
             </td>
             <td style="color:#6b7280;font-size:12px;white-space:nowrap">
-              {{ s.ended_at|date:"M j, Y"|default:s.created_at|date:"M j, Y" }}
+              {{ s.ended_at|date:"M j, Y"|default:s.started_at|date:"M j, Y" }}
             </td>
             <td>
               {% if s.status == 'completed' %}
