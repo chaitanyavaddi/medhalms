@@ -14,7 +14,7 @@
   <script src="https://unpkg.com/htmx.org@1.9.10/dist/htmx.min.js" defer></script>
   {% block extra_head %}{% endblock %}
 </head>
-<body class="dash-app">
+<body class="dash-app"><script>if(sessionStorage.getItem('cr_ai_panel_open'))document.body.classList.add('dash-app--collapsed');</script>
 
   <div class="dash-overlay" id="dash-overlay"></div>
 
