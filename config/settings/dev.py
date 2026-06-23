@@ -16,9 +16,11 @@ TASKS = {
 ALLOWED_HOSTS = ["*"]
 
 MAIN_DOMAIN = "myapp.lvh.me:8000"
-SESSION_COOKIE_DOMAIN = ".lvh.me"
-CSRF_COOKIE_DOMAIN = ".lvh.me"
+SESSION_COOKIE_DOMAIN = None       # None = host-only, works for both lvh.me and localhost
+CSRF_COOKIE_DOMAIN    = None
 CSRF_TRUSTED_ORIGINS = [
     "http://*.lvh.me:8000",
     "http://lvh.me:8000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
