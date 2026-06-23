@@ -525,10 +525,13 @@
     });
 
     // Auto-collapse when entering Coding Labs, auto-expand when leaving
+    // Don't touch sidebar if a panel (e.g. AI chat) has reserved the collapsed state
     {% if 'ide' in request.path %}
     document.body.classList.add('dash-app--collapsed');
     {% else %}
-    document.body.classList.remove('dash-app--collapsed');
+    if (!sessionStorage.getItem('cr_ai_panel_open')) {
+      document.body.classList.remove('dash-app--collapsed');
+    }
     {% endif %}
     document.querySelectorAll('a.dash-nav-item[data-auto-collapse]').forEach(function (a) {
       a.addEventListener('click', function () {
