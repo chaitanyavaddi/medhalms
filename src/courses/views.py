@@ -105,9 +105,7 @@ class CourseUpdateView(LoginRequiredMixin, View):
         course.name        = name
         course.description = request.POST.get('description', '').strip()
         course.status      = request.POST.get('status', Course.Status.DRAFT)
-        thumbnail          = request.POST.get('thumbnail', '').strip()
-        if thumbnail:
-            course.thumbnail = thumbnail
+        course.thumbnail = request.POST.get('thumbnail', '').strip()
         course.save(update_fields=['name', 'description', 'status', 'thumbnail', 'updated_at'])
         course.trainers.set(request.POST.getlist('trainers'))
         resp = HttpResponse()

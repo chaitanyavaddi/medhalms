@@ -34,14 +34,12 @@
               <span id="cr-thumb-label">{% if course.thumbnail %}Click to replace{% else %}Click to upload{% endif %}</span>
             </div>
             <input type="file" id="cr-thumb-file" accept="image/*" class="cc-thumb-file-input">
-            {% if course.thumbnail %}
             <button type="button" class="cc-thumb-clear" id="cr-thumb-clear" title="Remove thumbnail">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                    stroke-width="2.5" stroke-linecap="round">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </button>
-            {% endif %}
           </div>
           <input type="hidden" name="thumbnail" id="cr-thumb-url" value="{{ course.thumbnail|default:'' }}">
         </div>
@@ -116,6 +114,9 @@
     label.textContent = 'Click to upload';
     urlInput.value = '';
   }
+
+  // Init has-image class if thumbnail already set on server render
+  if (urlInput.value) setPreview(urlInput.value);
 
   overlay.addEventListener('click', function () { fileInput.click(); });
 
