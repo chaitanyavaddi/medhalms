@@ -1,0 +1,99 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}My Results{% endblock %}
+{% block topbar_title %}<h2 class="dash-page-title">My Results</h2>{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/interviews.css' %}">{% endblock %}
+{% block content_class %}dash-content--edge{% endblock %}
+
+{% block content %}
+<div class="ivr-layout">
+
+  <!-- Left thread nav -->
+  <aside class="ivr-thread">
+    <span class="ivr-thread-label">Category</span>
+    <a href="{% url 'mock_results:interviews' %}" class="ivr-thread-item is-active">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+        <line x1="12" y1="19" x2="12" y2="23"/>
+        <line x1="8" y1="23" x2="16" y2="23"/>
+      </svg>
+      Interviews
+    </a>
+    <a class="ivr-thread-item is-disabled">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+      </svg>
+      Tests
+      <span style="font-size:10px;margin-left:auto;color:#d1d5db">soon</span>
+    </a>
+  </aside>
+
+  <!-- Right main -->
+  <div class="ivr-main">
+    <div class="ivr-main-hd">
+      <h2 class="ivr-main-title">
+        {% if is_admin %}All Interview Sessions{% else %}Your Interview Sessions{% endif %}
+      </h2>
+    </div>
+
+    <div class="ivr-table-wrap">
+      {% if sessions %}
+      <table class="ivr-table">
+        <thead>
+          <tr>
+            <th>Interview</th>
+            {% if is_admin %}<th>Student</th>{% endif %}
+            <th>Status</th>
+            <th>Score</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in sessions %}
+          <tr>
+            <td>
+              <strong>{{ s.interview.title }}</strong>
+              <br><span style="font-size:11px;color:#9ca3af">{{ s.interview.get_difficulty_display }}</span>
+            </td>
+            {% if is_admin %}
+            <td>{{ s.user.get_full_name|default:s.user.username }}</td>
+            {% endif %}
+            <td>
+              {% if s.status == 'completed' %}
+              <span class="ivr-status-done">Completed</span>
+              {% else %}
+              <span class="ivr-status-prog">In Progress</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if s.feedback.overall_score %}
+              <span class="ivr-score">{{ s.feedback.overall_score }}<span style="font-size:11px;font-weight:400;color:#9ca3af">/10</span></span>
+              {% else %}
+              <span class="ivr-score-na">—</span>
+              {% endif %}
+            </td>
+            <td style="color:#6b7280;font-size:12px;white-space:nowrap">
+              {{ s.ended_at|date:"M j, Y"|default:s.created_at|date:"M j, Y" }}
+            </td>
+            <td>
+              {% if s.status == 'completed' %}
+              <a href="{% url 'interviews:session_result' s.pk %}" class="ivr-link">View →</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="ivr-empty">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        <p>No sessions yet. <a href="{% url 'interviews:list' %}" style="color:#1550be">Start an interview →</a></p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

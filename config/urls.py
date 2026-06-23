@@ -15,4 +15,5 @@ urlpatterns = [
     path("users/",      include("users.urls")),
     path("courses/",    include("courses.urls")),
     path("mock/interviews/", include("interviews.urls")),
+    path("mock/results/",    include("interviews.results_urls")),
 ]

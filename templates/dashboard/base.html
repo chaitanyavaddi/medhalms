@@ -272,7 +272,7 @@
           <span class="dash-nav-label">AI Interviews</span>
         </a>
 
-        <a href="#" class="dash-nav-item">
+        <a href="{% url 'mock_results:interviews' %}" class="dash-nav-item {% if request.resolver_match.app_name == 'mock_results' %}is-active{% endif %}">
           <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="20" x2="18" y2="10"/>

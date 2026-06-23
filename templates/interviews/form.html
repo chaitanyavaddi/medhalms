@@ -7,6 +7,12 @@
 {% block content %}
 <div class="iv-form-page">
 
+  <a href="{% if interview %}{% url 'interviews:detail' interview.pk %}{% else %}{% url 'interviews:list' %}{% endif %}"
+     class="iv-form-back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Back
+  </a>
+
 {% partialdef interview-form inline %}
 <form id="interview-form"
       method="post"
@@ -33,19 +39,20 @@
              value="{{ data.title|default:'' }}" placeholder="e.g. Python Backend Engineer" required>
     </div>
 
-    <div class="iv-form-row">
-      <label>Difficulty</label>
-      <select name="difficulty" class="iv-form-input">
-        {% for val, label in difficulties %}
-        <option value="{{ val }}" {% if val == data.difficulty %}selected{% endif %}>{{ label }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div class="iv-form-row">
-      <label>Max Duration (minutes)</label>
-      <input type="number" name="max_duration" class="iv-form-input iv-form-input--sm"
-             value="{{ data.max_duration|default:30 }}" min="5" max="120">
+    <div class="iv-form-row-split">
+      <div class="iv-form-row">
+        <label>Difficulty</label>
+        <select name="difficulty" class="iv-form-input">
+          {% for val, label in difficulties %}
+          <option value="{{ val }}" {% if val == data.difficulty %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="iv-form-row">
+        <label>Max Duration (minutes)</label>
+        <input type="number" name="max_duration" class="iv-form-input"
+               value="{{ data.max_duration|default:30 }}" min="5" max="120">
+      </div>
     </div>
 
     <div class="iv-form-row">
@@ -96,8 +103,6 @@
   </div>
 
   <div class="iv-form-actions">
-    <a href="{% if interview %}{% url 'interviews:detail' interview.pk %}{% else %}{% url 'interviews:list' %}{% endif %}"
-       class="iv-form-cancel">Cancel</a>
     <button type="submit" class="iv-form-submit" id="iv-form-submit-btn">
       <span class="btn-label">{% if interview %}Save Changes{% else %}Create Interview{% endif %}</span>
       <span class="btn-spinner"></span>
