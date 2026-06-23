@@ -11,7 +11,6 @@ urlpatterns = [
     path("",            include("authentication.urls")),
     path("dashboard/",  include("dashboard.urls")),
     path("ide/",        include("ide.urls")),
-    path("jobs/",       include("jobs.urls")),
     path("users/",      include("users.urls")),
     path("courses/",    include("courses.urls")),
     path("mock/interviews/", include("interviews.urls")),

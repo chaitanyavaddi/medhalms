@@ -2,8 +2,11 @@ import json
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 from django.views import View
+
+from utils.view_helper import redirect_to
 
 from users.models import User
 from .models import Chapter, Course, Module
@@ -107,7 +110,7 @@ class CourseDetailView(LoginRequiredMixin, View):
         course = get_object_or_404(Course, pk=pk)
         first  = course.first_chapter
         if first:
-            return redirect('courses:chapter', pk=course.pk, chapter_pk=first.pk)
+            return redirect_to(request, reverse('courses:chapter', kwargs={'pk': course.pk, 'chapter_pk': first.pk}))
         return render(request, 'courses/detail.html', {
             'course':         course,
             'active_chapter': None,

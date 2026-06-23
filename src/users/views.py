@@ -1,8 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 from django.views import View
 
+from utils.view_helper import redirect_to
 from .models import User
 
 
@@ -23,14 +24,14 @@ _ROLE_CONFIG = {
 
 class UserManageView(SuperuserRequiredMixin, View):
     def get(self, request):
-        return redirect('users:students')
+        return redirect_to(request, 'users:students')
 
 
 class UserRoleView(SuperuserRequiredMixin, View):
     def get(self, request, role_slug):
         config = _ROLE_CONFIG.get(role_slug)
         if not config:
-            return redirect('users:students')
+            return redirect_to(request, 'users:students')
         users = User.objects.filter(role=config['value']).order_by('-created_at')
         ctx = {
             'users':        users,

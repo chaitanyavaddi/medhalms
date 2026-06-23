@@ -18,7 +18,6 @@ INSTALLED_APPS = [
     "authentication",
     "dashboard",
     "ide",
-    "jobs",
     "courses",
     "interviews",
 ]
@@ -126,7 +125,6 @@ BRAND_FONT_FAMILY = "'IBM Plex Sans', 'Inter', system-ui, sans-serif"
 
 # ── Third-party integrations ──────────────────────────────────────────
 LOGO_DEV_TOKEN   = os.environ.get("LOGO_DEV_TOKEN", "")
-JOBSPY_API_URL   = os.environ.get("JOBSPY_API_URL", "https://jobspy-production-76c6.up.railway.app")
 
 # ── Email ─────────────────────────────────────────────────────────────
 RESEND_API_KEY     = os.environ.get("RESEND_API_KEY", "")
