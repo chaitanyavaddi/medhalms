@@ -1640,6 +1640,7 @@
     }
     var btn = document.getElementById('cr-ai-toggle');
     if (btn) btn.classList.add('is-active');
+    sessionStorage.setItem('cr_ai_panel_open', '1');
 
     // Check Puter auth
     if (typeof puter !== 'undefined' && !puter.auth.isSignedIn()) {
@@ -1648,7 +1649,10 @@
     }
     showAuthOverlay(false);
     fetchAndRenderUsage();
-    if (!currentThread) startNewThread();
+    if (!currentThread) {
+      var existing = loadThreads();
+      if (existing.length) loadThread(existing[0]); else startNewThread();
+    }
     setTimeout(function () {
       var inp = document.getElementById('cr-ai-input');
       if (inp) inp.focus();
@@ -1665,6 +1669,7 @@
     }
     var btn = document.getElementById('cr-ai-toggle');
     if (btn) btn.classList.remove('is-active');
+    sessionStorage.removeItem('cr_ai_panel_open');
     closeHistoryDropdown();
   }
 
@@ -1707,7 +1712,10 @@
       await puter.auth.signIn();
       showAuthOverlay(false);
       fetchAndRenderUsage();
-      if (!currentThread) startNewThread();
+      if (!currentThread) {
+        var existing = loadThreads();
+        if (existing.length) loadThread(existing[0]); else startNewThread();
+      }
       setTimeout(function () {
         var inp = document.getElementById('cr-ai-input');
         if (inp) inp.focus();
@@ -1744,6 +1752,11 @@
     var hb = document.getElementById('cr-ai-hist-btn');
     if (dd && !dd.hidden && hb && !hb.contains(e.target) && !dd.contains(e.target)) closeHistoryDropdown();
   });
+
+  // Restore AI panel state across chapter navigation
+  if (sessionStorage.getItem('cr_ai_panel_open')) {
+    openPanel();
+  }
 
 })();
 </script>
