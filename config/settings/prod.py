@@ -21,6 +21,9 @@ SECURE_HSTS_SECONDS           = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD           = True
 
+# Allow Puter auth popup to communicate back via window.opener
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
