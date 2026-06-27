@@ -1748,7 +1748,7 @@
     signinBtn.disabled = true;
     signinBtn.textContent = 'Connecting…';
     try {
-      await puter.auth.signIn();
+      await puter.auth.signIn({ attempt_temp_user_creation: true });
       showAuthOverlay(false);
       fetchAndRenderUsage();
       if (!currentThread) {
@@ -1761,7 +1761,11 @@
       }, 80);
     } catch (e) {
       signinBtn.disabled = false;
-      signinBtn.innerHTML = 'Sign in with Puter &rarr;';
+      if (e && e.code === 'popup_blocked') {
+        signinBtn.textContent = 'Popup blocked — allow popups and retry';
+      } else {
+        signinBtn.innerHTML = 'Sign in with Puter &rarr;';
+      }
     }
   });
 

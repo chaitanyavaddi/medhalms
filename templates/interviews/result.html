@@ -72,7 +72,7 @@
   var rawAnswers = JSON.parse(document.getElementById('iv-answers-data').textContent || '[]');
 
   async function generateFeedback() {
-    if (!puter.auth.isSignedIn()) { await puter.auth.signIn(); }
+    if (!puter.auth.isSignedIn()) { await puter.auth.signIn({ attempt_temp_user_creation: true }); }
 
     var qa = rawAnswers.map(function (a) {
       return 'Q' + a.question__order + ' – ' + a.question__text + '\nAnswer: ' + (a.transcript || '(no answer)');
