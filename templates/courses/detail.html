@@ -1748,7 +1748,7 @@
     signinBtn.disabled = true;
     signinBtn.textContent = 'Connecting…';
     try {
-      await puter.auth.signIn({ attempt_temp_user_creation: true });
+      await puter.auth.signIn();
       showAuthOverlay(false);
       fetchAndRenderUsage();
       if (!currentThread) {
