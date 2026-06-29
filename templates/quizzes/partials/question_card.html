@@ -1,0 +1,142 @@
+<div class="qz-q-item {% if mode == 'edit' %}is-editing{% endif %}"
+     id="{% if question %}qz-q-item-{{ question.pk }}{% else %}qz-q-new{% endif %}"
+     {% if question %}data-qid="{{ question.pk }}"{% endif %}>
+
+  {% if question %}
+  <div class="qz-q-drag" title="Drag to reorder">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="9" cy="5" r="1.2"/><circle cx="15" cy="5" r="1.2"/>
+      <circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/>
+      <circle cx="9" cy="19" r="1.2"/><circle cx="15" cy="19" r="1.2"/>
+    </svg>
+  </div>
+  {% endif %}
+
+  <form class="qz-q-inline-form"
+        id="qz-form-{% if question %}{{ question.pk }}{% else %}new{% endif %}"
+        hx-post="{% if question %}{% url 'quizzes:question_edit' quiz.pk question.pk %}{% else %}{% url 'quizzes:question_add' quiz.pk %}{% endif %}"
+        hx-target="closest .qz-q-item"
+        hx-swap="outerHTML"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <input type="hidden" name="question_type" value="{{ q_type }}">
+
+    {% if error %}<div class="qz-form-error">{{ error }}</div>{% endif %}
+
+    <div class="qz-q-inline-meta">
+      <span class="qz-badge qz-badge--type">{% if q_type == 'single' %}Single MCQ{% elif q_type == 'multiple' %}Multi MCQ{% elif q_type == 'tf' %}True / False{% elif q_type == 'open' %}Open Text{% elif q_type == 'coding' %}Coding Lab{% endif %}</span>
+      <span class="qz-q-pts-wrap">
+        <input type="number" name="points" class="qz-q-pts-input" value="{{ question.points|default:1 }}" min="1" {% if mode != 'edit' %}disabled{% endif %}>
+        <span class="qz-q-pts-label">pts</span>
+      </span>
+    </div>
+
+    <textarea name="text" class="qz-q-inline-text" rows="2" placeholder="Enter question text…" {% if mode != 'edit' %}disabled{% endif %}>{{ question.text|default:'' }}</textarea>
+
+    {% if q_type == 'single' or q_type == 'multiple' or q_type == 'tf' %}
+    <div class="qz-q-choices-inline" id="qz-choices-{% if question %}{{ question.pk }}{% else %}new{% endif %}">
+      {% if q_type == 'tf' %}
+        <div class="qz-choice-inline-row">
+          <input type="checkbox" name="choice_correct" value="0" {% if question %}{% for c in question.choices.all %}{% if forloop.counter0 == 0 and c.is_correct %}checked{% endif %}{% endfor %}{% endif %} {% if mode != 'edit' %}disabled{% endif %}>
+          <input type="text" name="choice_text" class="qz-input" value="True" readonly>
+          {% if mode != 'edit' and question %}{% for c in question.choices.all %}{% if forloop.counter0 == 0 and c.is_correct %}<span class="qz-choice-correct-mark">✓</span>{% endif %}{% endfor %}{% endif %}
+        </div>
+        <div class="qz-choice-inline-row">
+          <input type="checkbox" name="choice_correct" value="1" {% if question %}{% for c in question.choices.all %}{% if forloop.counter0 == 1 and c.is_correct %}checked{% endif %}{% endfor %}{% endif %} {% if mode != 'edit' %}disabled{% endif %}>
+          <input type="text" name="choice_text" class="qz-input" value="False" readonly>
+          {% if mode != 'edit' and question %}{% for c in question.choices.all %}{% if forloop.counter0 == 1 and c.is_correct %}<span class="qz-choice-correct-mark">✓</span>{% endif %}{% endfor %}{% endif %}
+        </div>
+      {% else %}
+        {% if question and question.choices.exists %}
+          {% for c in question.choices.all %}
+          <div class="qz-choice-inline-row">
+            <input type="checkbox" name="choice_correct" value="{{ forloop.counter0 }}" {% if c.is_correct %}checked{% endif %} {% if mode != 'edit' %}disabled{% endif %}>
+            <input type="text" name="choice_text" class="qz-input" value="{{ c.text }}" placeholder="Choice text" {% if mode != 'edit' %}disabled{% endif %}>
+            {% if mode == 'edit' %}<button type="button" class="qz-choice-del" onclick="this.closest('.qz-choice-inline-row').remove()">✕</button>
+            {% elif c.is_correct %}<span class="qz-choice-correct-mark">✓</span>{% endif %}
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="qz-choice-inline-row">
+            <input type="checkbox" name="choice_correct" value="0">
+            <input type="text" name="choice_text" class="qz-input" placeholder="Choice A">
+            <button type="button" class="qz-choice-del" onclick="this.closest('.qz-choice-inline-row').remove()">✕</button>
+          </div>
+          <div class="qz-choice-inline-row">
+            <input type="checkbox" name="choice_correct" value="1">
+            <input type="text" name="choice_text" class="qz-input" placeholder="Choice B">
+            <button type="button" class="qz-choice-del" onclick="this.closest('.qz-choice-inline-row').remove()">✕</button>
+          </div>
+        {% endif %}
+        {% if mode == 'edit' %}<button type="button" class="qz-add-choice-btn" onclick="qzAddChoice(this)">+ Add choice</button>{% endif %}
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {% if q_type == 'open' %}<p class="qz-hint qz-hint--block">Students type a free-form answer. Graded manually.</p>{% endif %}
+
+    {% if q_type == 'coding' %}
+    <div class="qz-q-coding-info">
+      <input type="hidden" name="lab_id" value="{{ question.lab.pk|default:'' }}">
+      {% if question and question.lab %}<span class="qz-badge qz-badge--lab">{{ question.lab.name }} ({{ question.lab.language }})</span>
+      {% else %}<span class="qz-hint">No coding lab linked.</span>{% endif %}
+    </div>
+    {% endif %}
+  </form>
+
+  <div class="qz-q-actions">
+    <button type="button" class="qz-q-act qz-q-pencil {% if mode == 'edit' %}is-hidden{% endif %}" title="Edit" onclick="qzEditOn(this)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </button>
+    <button type="submit"
+            form="qz-form-{% if question %}{{ question.pk }}{% else %}new{% endif %}"
+            class="qz-q-act qz-q-tick {% if mode != 'edit' %}is-hidden{% endif %}" title="Save">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </button>
+    {% if question %}
+    <button type="button" class="qz-q-act qz-q-cancel {% if mode != 'edit' %}is-hidden{% endif %}" title="Cancel"
+            hx-get="{% url 'quizzes:question_edit' quiz.pk question.pk %}?view=1"
+            hx-target="closest .qz-q-item" hx-swap="outerHTML">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <button type="button" class="qz-q-act qz-q-del {% if mode == 'edit' %}is-hidden{% endif %}" title="Delete"
+            hx-post="{% url 'quizzes:question_delete' quiz.pk question.pk %}"
+            hx-target="closest .qz-q-item" hx-swap="delete"
+            hx-confirm="Delete this question?"
+            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+    </button>
+    {% else %}
+    <button type="button" class="qz-q-act qz-q-cancel" title="Discard" onclick="this.closest('.qz-q-item').remove()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+(function(){
+  window.qzEditOn = window.qzEditOn || function(btn) {
+    var card = btn.closest('.qz-q-item');
+    card.classList.add('is-editing');
+    card.querySelectorAll('form textarea, form input[type=text], form input[type=number], form input[type=checkbox]').forEach(function(f){
+      if (!f.hasAttribute('readonly')) f.disabled = false;
+    });
+    card.querySelector('.qz-q-pencil').classList.add('is-hidden');
+    var tick = card.querySelector('.qz-q-tick'); if(tick) tick.classList.remove('is-hidden');
+    var cancel = card.querySelector('.qz-q-cancel'); if(cancel) cancel.classList.remove('is-hidden');
+    var del = card.querySelector('.qz-q-del'); if(del) del.classList.add('is-hidden');
+    card.querySelectorAll('.qz-choice-del, .qz-add-choice-btn').forEach(function(el){ el.style.display = ''; });
+  };
+  window.qzAddChoice = window.qzAddChoice || function(btn) {
+    var container = btn.closest('.qz-q-choices-inline');
+    var count = container.querySelectorAll('.qz-choice-inline-row').length;
+    var row = document.createElement('div');
+    row.className = 'qz-choice-inline-row';
+    row.innerHTML = '<input type="checkbox" name="choice_correct" value="'+count+'">'
+      + '<input type="text" name="choice_text" class="qz-input" placeholder="Choice text">'
+      + '<button type="button" class="qz-choice-del" onclick="this.closest(\'.qz-choice-inline-row\').remove()">✕</button>';
+    container.insertBefore(row, btn);
+    container.querySelectorAll('.qz-choice-inline-row input[type=checkbox]').forEach(function(cb,i){ cb.value = i; });
+  };
+})();
+</script>

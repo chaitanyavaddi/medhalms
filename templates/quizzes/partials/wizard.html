@@ -1,0 +1,99 @@
+<div class="qw-backdrop" id="qw-backdrop" onclick="if(event.target===this)this.remove()">
+  <div class="qw-modal">
+    <button type="button" class="qw-close" onclick="document.getElementById('qw-backdrop').remove()" title="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    {% if step == 1 %}
+    <div class="qw-hd">
+      <h2 class="qw-title">New Quiz</h2>
+      <p class="qw-sub">Choose the type of quiz you want to create</p>
+      <div class="qw-steps"><span class="qw-step is-active">1 — Type</span><span class="qw-step-sep">›</span><span class="qw-step">2 — Details</span></div>
+    </div>
+    {% if error %}<div class="qw-error">{{ error }}</div>{% endif %}
+    <form hx-post="{% url 'quizzes:wizard' %}" hx-target="#qw-backdrop" hx-swap="outerHTML">
+      {% csrf_token %}
+      <input type="hidden" name="step" value="1">
+      <div class="qw-type-grid">
+        <label class="qw-type-card">
+          <input type="radio" name="quiz_type" value="mcq" class="qw-type-radio" required>
+          <div class="qw-type-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+          <div class="qw-type-name">MCQ Only</div>
+          <div class="qw-type-desc">Multiple choice with single or multi-correct answers</div>
+        </label>
+        <label class="qw-type-card">
+          <input type="radio" name="quiz_type" value="coding" class="qw-type-radio" required>
+          <div class="qw-type-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+          <div class="qw-type-name">Coding Only</div>
+          <div class="qw-type-desc">Programming challenges with coding lab environments</div>
+        </label>
+        <label class="qw-type-card">
+          <input type="radio" name="quiz_type" value="mixed" class="qw-type-radio" required>
+          <div class="qw-type-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg></div>
+          <div class="qw-type-name">MCQ + Coding</div>
+          <div class="qw-type-desc">Mix of multiple choice and programming questions</div>
+        </label>
+      </div>
+      <div class="qw-footer">
+        <button type="button" class="qw-cancel-btn" onclick="document.getElementById('qw-backdrop').remove()">Cancel</button>
+        <button type="submit" class="qw-next-btn">Next →</button>
+      </div>
+    </form>
+    <script>
+    (function(){
+      document.querySelectorAll('.qw-type-radio').forEach(function(r){
+        r.addEventListener('change',function(){
+          document.querySelectorAll('.qw-type-card').forEach(function(c){c.classList.remove('is-selected');});
+          r.closest('.qw-type-card').classList.add('is-selected');
+        });
+      });
+    })();
+    </script>
+
+    {% elif step == 2 %}
+    <div class="qw-hd">
+      <h2 class="qw-title">Quiz Details</h2>
+      <p class="qw-sub"><span class="qw-type-badge qw-type-badge--{{ quiz_type }}">{{ quiz_type_label }}</span></p>
+      <div class="qw-steps"><span class="qw-step">1 — Type</span><span class="qw-step-sep">›</span><span class="qw-step is-active">2 — Details</span></div>
+    </div>
+    {% if error %}<div class="qw-error">{{ error }}</div>{% endif %}
+    <form hx-post="{% url 'quizzes:wizard' %}" hx-target="#qw-backdrop" hx-swap="outerHTML">
+      {% csrf_token %}
+      <input type="hidden" name="step" value="2">
+      <input type="hidden" name="quiz_type" value="{{ quiz_type }}">
+      <div class="qw-fields">
+        <div class="qw-field qw-field--full">
+          <label class="qw-label">Title <span class="qw-required">*</span></label>
+          <input type="text" name="title" class="qw-input" value="{{ fdata.title }}" placeholder="e.g. Python Basics Assessment" autofocus>
+        </div>
+        <div class="qw-field qw-field--full">
+          <label class="qw-label">Description <span class="qw-opt">(optional)</span></label>
+          <textarea name="description" class="qw-input qw-textarea" rows="2" placeholder="What is this quiz about?">{{ fdata.description }}</textarea>
+        </div>
+        <div class="qw-field">
+          <label class="qw-label">Difficulty</label>
+          <select name="difficulty" class="qw-input">
+            {% for val, label in difficulties %}<option value="{{ val }}" {% if fdata.difficulty == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="qw-field">
+          <label class="qw-label">Time Limit <span class="qw-opt">(minutes)</span></label>
+          <input type="number" name="time_limit" class="qw-input" value="{{ fdata.time_limit }}" min="1" placeholder="No limit">
+        </div>
+        <div class="qw-field">
+          <label class="qw-label">Passing Score <span class="qw-opt">(%)</span></label>
+          <input type="number" name="passing_score" class="qw-input" value="{{ fdata.passing_score|default:'70' }}" min="0" max="100">
+        </div>
+        <div class="qw-field">
+          <label class="qw-label">Max Retries <span class="qw-opt">(blank = unlimited)</span></label>
+          <input type="number" name="max_retries" class="qw-input" value="{{ fdata.max_retries }}" min="1" placeholder="Unlimited">
+        </div>
+      </div>
+      <div class="qw-footer">
+        <button type="button" class="qw-cancel-btn" onclick="document.getElementById('qw-backdrop').remove()">Cancel</button>
+        <button type="submit" class="qw-next-btn">Create Quiz →</button>
+      </div>
+    </form>
+    {% endif %}
+  </div>
+</div>

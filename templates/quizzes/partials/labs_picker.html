@@ -1,0 +1,19 @@
+<div class="qz-labs-picker">
+  <p class="qz-label">Select a Coding Lab:</p>
+  {% if labs %}
+  <div class="qz-labs-grid">
+    {% for lab in labs %}
+    <button type="button" class="qz-lab-card"
+            onclick="selectLab('{{ lab.pk }}', '{{ lab.name|escapejs }}', '{{ lab.language|escapejs }}')">
+      {% if lab.logo_domain %}
+      <img src="https://img.logo.dev/{{ lab.logo_domain }}?token={{ LOGO_DEV_TOKEN }}&size=32" alt="" class="qz-lab-logo" onerror="this.style.display='none'">
+      {% endif %}
+      <span class="qz-lab-card-name">{{ lab.name }}</span>
+      <span class="qz-lab-card-lang">{{ lab.language }}</span>
+    </button>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="qz-hint">No embeddable labs found. Create labs in Coding Labs first and mark them as embeddable.</p>
+  {% endif %}
+</div>

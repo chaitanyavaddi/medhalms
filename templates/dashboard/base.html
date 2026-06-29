@@ -96,35 +96,25 @@
           <span class="dash-nav-label">Coding Labs</span>
         </a>
 
-        <!-- Mojo Hub — drill-down -->
-        <button type="button" class="dash-nav-item dash-nav-drill"
-                data-target="nav-mojo" data-label="Mojo Hub">
+        <!-- Mojo Hub -->
+        <a href="#" class="dash-nav-item">
           <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="16 18 22 12 16 6"/>
             <polyline points="8 6 2 12 8 18"/>
           </svg>
           <span class="dash-nav-label">Mojo Hub</span>
-          <svg class="dash-nav-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
-        </button>
+        </a>
 
-        <!-- Mock Hub — drill-down -->
-        <button type="button" class="dash-nav-item dash-nav-drill"
-                data-target="nav-mock" data-label="Mock Hub">
+        <!-- Mock Hub -->
+        <a href="{% url 'quizzes:list' %}" class="dash-nav-item {% if request.resolver_match.app_name == 'quizzes' or request.resolver_match.app_name == 'interviews' or request.resolver_match.app_name == 'mock_results' %}is-active{% endif %}">
           <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 11l3 3L22 4"/>
             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
           </svg>
           <span class="dash-nav-label">Mock Hub</span>
-          <svg class="dash-nav-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
-        </button>
+        </a>
 
         <a href="#" class="dash-nav-item">
           <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -173,102 +163,6 @@
 
       </div><!-- /.dash-nav-root -->
 
-      <!-- ── Mojo Hub sub-panel ── -->
-      <div class="dash-nav-panel" id="nav-mojo" data-label="Mojo Hub">
-
-        <a href="#" class="dash-nav-item">
-          <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-          </svg>
-          <span class="dash-nav-label">Course Mojo</span>
-        </a>
-
-        <a href="#" class="dash-nav-item">
-          <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="16 18 22 12 16 6"/>
-            <polyline points="8 6 2 12 8 18"/>
-          </svg>
-          <span class="dash-nav-label">Code Mojo</span>
-        </a>
-
-        <a href="#" class="dash-nav-item">
-          <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-          <span class="dash-nav-label">MCQ Mojo</span>
-        </a>
-
-        <a href="#" class="dash-nav-item">
-          <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <ellipse cx="12" cy="5" rx="9" ry="3"/>
-            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
-            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
-          </svg>
-          <span class="dash-nav-label">SQL Mojo</span>
-        </a>
-
-        <a href="#" class="dash-nav-item">
-          <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-          </svg>
-          <span class="dash-nav-label">HTML Mojo</span>
-        </a>
-
-      </div><!-- /.dash-nav-panel#nav-mojo -->
-
-      <!-- ── Mock Hub sub-panel ── -->
-      <div class="dash-nav-panel" id="nav-mock" data-label="Mock Hub">
-
-        <a href="#" class="dash-nav-item">
-          <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-            <line x1="8" y1="21" x2="16" y2="21"/>
-            <line x1="12" y1="17" x2="12" y2="21"/>
-          </svg>
-          <span class="dash-nav-label">Aptitude Mocks</span>
-        </a>
-
-        <a href="#" class="dash-nav-item">
-          <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
-            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-          </svg>
-          <span class="dash-nav-label">Company Mocks</span>
-        </a>
-
-        <a href="{% url 'interviews:list' %}" class="dash-nav-item {% if request.resolver_match.app_name == 'interviews' %}is-active{% endif %}">
-          <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-            <line x1="12" y1="19" x2="12" y2="23"/>
-            <line x1="8" y1="23" x2="16" y2="23"/>
-          </svg>
-          <span class="dash-nav-label">AI Interviews</span>
-        </a>
-
-        <a href="{% url 'mock_results:interviews' %}" class="dash-nav-item {% if request.resolver_match.app_name == 'mock_results' %}is-active{% endif %}">
-          <svg class="dash-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="20" x2="18" y2="10"/>
-            <line x1="12" y1="20" x2="12" y2="4"/>
-            <line x1="6" y1="20" x2="6" y2="14"/>
-          </svg>
-          <span class="dash-nav-label">My Results</span>
-        </a>
-
-      </div><!-- /.dash-nav-panel#nav-mock -->
 
 
     </nav>
@@ -394,12 +288,54 @@
     </script>
     {% endif %}
 
-    <main class="dash-content {% block content_class %}{% endblock %}">
-      {% block content %}{% endblock %}
-    </main>
+    <div class="dash-shell-body">
+      <aside class="dash-inner-sidebar" id="dash-inner-sidebar">
+        {% block inner_sidebar %}
+        {% if request.resolver_match.app_name == 'quizzes' or request.resolver_match.app_name == 'interviews' or request.resolver_match.app_name == 'mock_results' %}
+        <nav class="tn-nav">
+          <div class="tn-group">
+            <span class="tn-group-label">Mock Hub</span>
+            <a href="#" class="tn-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Aptitude Mocks
+            </a>
+            <a href="#" class="tn-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              Company Mocks
+            </a>
+            <a href="{% url 'quizzes:list' %}" class="tn-item {% if request.resolver_match.app_name == 'quizzes' %}is-active{% endif %}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Mock Tests
+            </a>
+            <a href="{% url 'interviews:list' %}" class="tn-item {% if request.resolver_match.app_name == 'interviews' %}is-active{% endif %}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              AI Interviews
+            </a>
+            <a href="{% url 'mock_results:interviews' %}" class="tn-item {% if request.resolver_match.app_name == 'mock_results' %}is-active{% endif %}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              My Results
+            </a>
+          </div>
+        </nav>
+        {% endif %}
+        {% endblock %}
+      </aside>
+      <main class="dash-content {% block content_class %}{% endblock %}">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
 
   </div>
 
+  <script>
+  (function () {
+    // Hide inner sidebar slot when template block is empty
+    var innerSidebar = document.getElementById('dash-inner-sidebar');
+    if (innerSidebar && !innerSidebar.firstElementChild) {
+      innerSidebar.style.display = 'none';
+    }
+  })();
+  </script>
   <script>
   (function () {
     var backBtn    = document.getElementById('dash-back-btn');
@@ -422,8 +358,6 @@
 
     // Auto-open the correct sub-panel based on current URL
     var urlPanelMap = [
-      { prefix: '/mock/',  panelId: 'nav-mock',   label: 'Mock Hub' },
-      { prefix: '/mojo/',  panelId: 'nav-mojo',   label: 'Mojo Hub' },
       { prefix: '/job360/', panelId: 'nav-job360', label: 'Job 360' },
     ];
     var currentPath = window.location.pathname;

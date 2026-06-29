@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     "ide",
     "courses",
     "interviews",
+    "quizzes",
 ]
 
 MIDDLEWARE = [

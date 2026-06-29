@@ -19,20 +19,18 @@
 </script>
 {% endblock %}
 
-{% block content %}
-<div class="cp-layout">
-
-  <aside class="cp-thread">
-    <div class="cp-tab-bar">
-      <a href="{% url 'dashboard:career_paths' %}" class="cp-tab{% if tab == 'roles' %} is-active{% endif %}">Career Roles</a>
-      <a href="{% url 'dashboard:career_paths_skills' %}" class="cp-tab{% if tab == 'skills' %} is-active{% endif %}">Skills & Tech</a>
-    </div>
-    {% include "components/thread_nav.html" with tn_groups=thread_groups tn_active_id=active_role.id tn_base_url="/dashboard/career-paths/" tn_target="#cp-detail" %}
-  </aside>
-
-  <div class="cp-detail" id="cp-detail">
-    {% include "dashboard/career_path_detail.html" with role=active_role %}
+{% block inner_sidebar %}
+<div class="cp-thread">
+  <div class="cp-tab-bar">
+    <a href="{% url 'dashboard:career_paths' %}" class="cp-tab{% if tab == 'roles' %} is-active{% endif %}">Career Roles</a>
+    <a href="{% url 'dashboard:career_paths_skills' %}" class="cp-tab{% if tab == 'skills' %} is-active{% endif %}">Skills & Tech</a>
   </div>
+  {% include "components/thread_nav.html" with tn_groups=thread_groups tn_active_id=active_role.id tn_base_url="/dashboard/career-paths/" tn_target="#cp-detail" %}
+</div>
+{% endblock %}
 
+{% block content %}
+<div class="cp-detail" id="cp-detail">
+  {% include "dashboard/career_path_detail.html" with role=active_role %}
 </div>
 {% endblock %}

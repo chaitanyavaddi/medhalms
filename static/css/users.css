@@ -1,30 +1,19 @@
 /* ── Users Management ─────────────────────────── */
 
-/* Two-column layout (mirrors cp-layout) */
-.um-layout {
-  display: grid;
-  grid-template-columns: 200px 1fr;
+/* ── Main panel — fills dash-content--edge ── */
+.um-main {
   flex: 1;
   min-height: 0;
   overflow: hidden;
-}
-
-/* ── Left thread panel ── */
-.um-thread {
-  border-right: 1px solid rgba(0,0,0,0.08);
-  background: #fff;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  padding-top: 0.5rem;
-}
-
-/* ── Right main panel ── */
-.um-main {
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   background: #f9fafb;
+}
+
+.um-main-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .um-main-hd {

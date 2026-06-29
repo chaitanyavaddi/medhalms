@@ -1,0 +1,187 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}{{ quiz.title }}{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/quizzes.css' %}">{% endblock %}
+{% block content_class %}dash-content--edge{% endblock %}
+{% block topbar_title %}
+<nav class="dash-breadcrumb">
+  <a href="{% url 'quizzes:list' %}" class="dash-bc-item">Mock Tests</a>
+  <span class="dash-bc-sep">›</span>
+  <span class="dash-bc-item dash-bc-current">{{ quiz.title }}</span>
+</nav>
+{% endblock %}
+
+{% block inner_sidebar %}{% endblock %}
+
+{% block content %}
+<div class="qt-shell">
+
+  <!-- Sidebar: question map -->
+  <aside class="qt-sidebar">
+    <div class="qt-sidebar-hd">
+      <span class="qt-sidebar-title">{{ quiz.title }}</span>
+      {% if quiz.time_limit %}
+      <div class="qt-timer" id="qt-timer">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span id="qt-timer-display">{{ quiz.time_limit }}:00</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="qt-map-wrap">
+      <p class="qt-map-label">Question Map</p>
+      <div class="qt-map-grid" id="qt-map-grid">
+        {% for item in q_data %}
+        <button type="button" class="qt-map-btn" id="qt-map-{{ forloop.counter0 }}"
+                data-idx="{{ forloop.counter0 }}" onclick="qtGoTo({{ forloop.counter0 }})">{{ forloop.counter }}</button>
+        {% endfor %}
+      </div>
+      <div class="qt-map-legend">
+        <span class="qt-legend-item"><span class="qt-legend-dot qt-legend-dot--attempted"></span>Attempted</span>
+        <span class="qt-legend-item"><span class="qt-legend-dot"></span>Not answered</span>
+      </div>
+    </div>
+
+    <div class="qt-sidebar-footer">
+      <button type="button" class="qt-submit-btn" onclick="qtConfirmSubmit()">Submit Quiz</button>
+    </div>
+  </aside>
+
+  <!-- Main: question area -->
+  <div class="qt-main">
+    <div class="qt-main-hd">
+      <span class="qt-progress-label" id="qt-progress">Question 1 of {{ q_data|length }}</span>
+      <div class="qt-progress-bar"><div class="qt-progress-fill" id="qt-progress-fill"></div></div>
+    </div>
+
+    <form method="post" action="{% url 'quizzes:submit' quiz.pk %}" id="qt-form" class="qt-form">
+      {% csrf_token %}
+      {% for item in q_data %}{% with q=item.q answer=item.answer %}
+      <div class="qt-question" id="qt-question-{{ forloop.counter0 }}" {% if not forloop.first %}hidden{% endif %}>
+        <div class="qt-q-hd">
+          <span class="qt-q-num">Q{{ forloop.counter }}</span>
+          <span class="qt-q-type">{{ q.get_question_type_display }}</span>
+          <span class="qt-q-pts">{{ q.points }} pt{{ q.points|pluralize }}</span>
+        </div>
+        <div class="qt-q-text">{{ q.text }}</div>
+
+        {% if q.question_type == 'single' or q.question_type == 'tf' %}
+        <div class="qt-choices">
+          {% for choice in q.choices.all %}
+          <label class="qt-choice">
+            <input type="radio" name="q_{{ q.pk }}" value="{{ choice.pk }}"
+                   {% if answer %}{% for sc in answer.selected_choices.all %}{% if sc.pk == choice.pk %}checked{% endif %}{% endfor %}{% endif %}
+                   onchange="qtMarkAttempted({{ forloop.parentloop.counter0 }})">
+            <span class="qt-choice-text">{{ choice.text }}</span>
+          </label>
+          {% endfor %}
+        </div>
+
+        {% elif q.question_type == 'multiple' %}
+        <div class="qt-choices">
+          {% for choice in q.choices.all %}
+          <label class="qt-choice">
+            <input type="checkbox" name="q_{{ q.pk }}" value="{{ choice.pk }}"
+                   {% if answer %}{% for sc in answer.selected_choices.all %}{% if sc.pk == choice.pk %}checked{% endif %}{% endfor %}{% endif %}
+                   onchange="qtMarkAttempted({{ forloop.parentloop.counter0 }})">
+            <span class="qt-choice-text">{{ choice.text }}</span>
+          </label>
+          {% endfor %}
+        </div>
+        <p class="qt-hint">Select all that apply.</p>
+
+        {% elif q.question_type == 'open' %}
+        <textarea name="q_{{ q.pk }}" class="qt-textarea" rows="6" placeholder="Type your answer here…"
+                  oninput="qtMarkAttempted({{ forloop.counter0 }})">{{ answer.text_answer|default:'' }}</textarea>
+
+        {% elif q.question_type == 'coding' %}
+        {% if item.embed_url %}
+        <div class="qt-coding-wrap">
+          <iframe id="qt-ide-{{ q.pk }}" src="{{ item.embed_url }}" class="qt-ide-frame" frameborder="0" allowfullscreen></iframe>
+          <input type="hidden" name="q_{{ q.pk }}" id="qt-code-{{ q.pk }}" value="{{ answer.code_answer|default:'' }}">
+        </div>
+        {% else %}<p class="qt-hint">No coding lab linked.</p>{% endif %}
+        {% endif %}
+      </div>
+      {% endwith %}{% endfor %}
+    </form>
+
+    <div class="qt-nav">
+      <button type="button" class="qt-nav-btn" id="qt-prev" onclick="qtPrev()" disabled>← Previous</button>
+      <button type="button" class="qt-nav-btn qt-nav-btn--primary" id="qt-next" onclick="qtNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var total = {{ q_data|length }};
+  var current = 0;
+  var attempted = new Array(total).fill(false);
+
+  {% for item in q_data %}{% with q=item.q answer=item.answer %}
+  {% if answer %}{% if q.question_type == 'single' or q.question_type == 'tf' or q.question_type == 'multiple' %}{% if answer.selected_choices.exists %}attempted[{{ forloop.counter0 }}] = true;{% endif %}
+  {% elif q.question_type == 'open' %}{% if answer.text_answer %}attempted[{{ forloop.counter0 }}] = true;{% endif %}
+  {% elif q.question_type == 'coding' %}{% if answer.code_answer %}attempted[{{ forloop.counter0 }}] = true;{% endif %}{% endif %}{% endif %}
+  {% endwith %}{% endfor %}
+
+  function render() {
+    document.querySelectorAll('.qt-question').forEach(function(el, i){ el.hidden = (i !== current); });
+    document.querySelectorAll('.qt-map-btn').forEach(function(btn, i){
+      btn.classList.toggle('is-current', i === current);
+      btn.classList.toggle('is-attempted', attempted[i]);
+    });
+    document.getElementById('qt-progress').textContent = 'Question ' + (current+1) + ' of ' + total;
+    var fill = document.getElementById('qt-progress-fill');
+    if (fill) fill.style.width = Math.round(((current+1)/total)*100) + '%';
+    document.getElementById('qt-prev').disabled = (current === 0);
+    document.getElementById('qt-next').textContent = (current === total-1) ? 'Finish ✓' : 'Next →';
+  }
+
+  window.qtGoTo = function(idx){ current = idx; render(); };
+  window.qtPrev = function(){ if(current > 0){ current--; render(); } };
+  window.qtNext = function(){ if(current < total-1){ current++; render(); } else qtConfirmSubmit(); };
+  window.qtMarkAttempted = function(idx){
+    attempted[idx] = true;
+    document.querySelectorAll('.qt-map-btn').forEach(function(btn,i){ btn.classList.toggle('is-attempted', attempted[i]); });
+  };
+  window.qtConfirmSubmit = function(){
+    var count = attempted.filter(Boolean).length;
+    if(confirm('You have answered ' + count + ' of ' + total + ' questions. Submit now?'))
+      document.getElementById('qt-form').submit();
+  };
+
+  render();
+
+  {% if quiz.time_limit %}
+  var secs = {{ quiz.time_limit }} * 60;
+  var timerEl = document.getElementById('qt-timer-display');
+  var timerWrap = document.getElementById('qt-timer');
+  var iv = setInterval(function(){
+    secs--;
+    if(secs <= 0){ clearInterval(iv); document.getElementById('qt-form').submit(); return; }
+    var m = Math.floor(secs/60), s = secs%60;
+    timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    if(secs <= 300) timerWrap.classList.add('qt-timer--warning');
+    if(secs <= 60)  timerWrap.classList.add('qt-timer--danger');
+  }, 1000);
+  {% endif %}
+
+  window.addEventListener('message', function(event){
+    if(event.origin.indexOf('onecompiler.com') === -1) return;
+    var d = event.data;
+    if(d && d.type === 'codeChangeEvent'){
+      document.querySelectorAll('.qt-ide-frame').forEach(function(frame){
+        if(frame.contentWindow === event.source){
+          var qid = frame.id.replace('qt-ide-','');
+          var h = document.getElementById('qt-code-'+qid);
+          if(h && d.files){ h.value = JSON.stringify(d.files); }
+          var idx = parseInt(frame.closest('.qt-question').id.replace('qt-question-',''));
+          window.qtMarkAttempted(idx);
+        }
+      });
+    }
+  });
+})();
+</script>
+{% endblock %}

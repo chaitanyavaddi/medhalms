@@ -10,8 +10,9 @@ html { font-size: 16px; scrollbar-gutter: stable; }
 /* ── Design tokens ────────────────────────────── */
 :root {
   /* App shell dimensions — generous, student-friendly */
-  --sidebar-w:           280px;
-  --sidebar-collapsed-w: 68px;
+  --sidebar-w:           220px;
+  --sidebar-collapsed-w: 64px;
+  --inner-sidebar-w:     220px;
   --topbar-h:            60px;
 
   /* Sidebar */
@@ -339,6 +340,31 @@ body.dash-app--collapsed .dash-collapse-chevron {
   overflow: hidden;
 }
 
+/* Shell body: sits below topbar, contains inner sidebar + content */
+.dash-shell-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;   /* children fill full height */
+  overflow: hidden;
+}
+
+/* ── Inner sidebar ────────────────────────────── */
+.dash-inner-sidebar {
+  width: var(--inner-sidebar-w);
+  flex-shrink: 0;
+  align-self: stretch;    /* fill full height of shell-body */
+  background: #fff;
+  border-right: 1px solid rgba(0,0,0,0.07);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .dash-inner-sidebar { display: none !important; }
+}
+
 /* ── Topbar ── */
 .dash-topbar {
   height: var(--topbar-h);
@@ -642,11 +668,19 @@ a.dash-bc-item:hover { color: #ffffff; }
 
 .dash-content {
   flex: 1;
+  align-self: stretch;
   background: var(--content-bg);
   padding: 2.5rem 3rem;
   min-width: 0;
   min-height: 0;
   overflow-y: auto;
+}
+/* Edge variant — zero padding, flex column; used when content owns its own inner layout */
+.dash-content--edge {
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* ── Flash messages ── */
@@ -1062,7 +1096,8 @@ body.dash-app--collapsed .dash-nav-panel .dash-nav-label { opacity: 0; }
 ══════════════════════════════════════════════ */
 
 .tn-nav {
-  padding: 0.5rem 0;
+  flex: 1;
+  padding: 0;
 }
 
 .tn-group {
@@ -1080,9 +1115,11 @@ body.dash-app--collapsed .dash-nav-panel .dash-nav-label { opacity: 0; }
 }
 
 .tn-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   width: 100%;
-  padding: 0.55rem 1.25rem;
+  padding: 0.8rem 1.25rem;
   font-size: 13.5px;
   font-weight: 450;
   color: #374151;
@@ -1095,6 +1132,9 @@ body.dash-app--collapsed .dash-nav-panel .dash-nav-label { opacity: 0; }
   text-decoration: none;
   transition: background 0.12s, color 0.12s;
 }
+.tn-item svg { flex-shrink: 0; opacity: 0.55; transition: opacity 0.12s; }
+.tn-item:hover svg { opacity: 0.8; }
+.tn-item.is-active svg { opacity: 1; }
 .tn-item:hover {
   background: rgba(0,0,0,0.04);
   color: #111827;
@@ -1110,29 +1150,13 @@ body.dash-app--collapsed .dash-nav-panel .dash-nav-label { opacity: 0; }
    CAREER PATHS — 3-panel layout (cp-*)
 ══════════════════════════════════════════════ */
 
-/* Edge-to-edge variant — no padding on the content area */
-.dash-content--edge {
-  padding: 0 !important;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.cp-layout {
-  display: grid;
-  grid-template-columns: 252px 1fr;
+/* ── Thread panel — fills .dash-inner-sidebar ── */
+.cp-thread {
   flex: 1;
   min-height: 0;
-  overflow: hidden;
-}
-
-/* ── Thread panel ── */
-.cp-thread {
-  border-right: 1px solid rgba(0,0,0,0.08);
-  background: #fff;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .cp-thread-hd {
@@ -1166,7 +1190,7 @@ body.dash-app--collapsed .dash-nav-panel .dash-nav-label { opacity: 0; }
 .cp-tab-bar {
   display: flex;
   gap: 4px;
-  padding: 0.625rem 0.75rem;
+  padding: 0.45rem 0.75rem;
   border-bottom: 1px solid rgba(0,0,0,0.07);
   flex-shrink: 0;
   background: #fff;
@@ -1196,6 +1220,8 @@ body.dash-app--collapsed .dash-nav-panel .dash-nav-label { opacity: 0; }
 
 /* ── Detail panel ── */
 .cp-detail {
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1207,6 +1233,12 @@ body.dash-app--collapsed .dash-nav-panel .dash-nav-label { opacity: 0; }
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+}
+
+.cp-detail-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 /* Role header */

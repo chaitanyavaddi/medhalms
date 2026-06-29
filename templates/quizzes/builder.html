@@ -1,0 +1,97 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Question Builder — {{ quiz.title }}{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/quizzes.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.3/Sortable.min.js"></script>
+{% endblock %}
+{% block topbar_title %}
+<nav class="dash-breadcrumb">
+  <a href="{% url 'quizzes:list' %}" class="dash-bc-item">Mock Tests</a>
+  <span class="dash-bc-sep">›</span>
+  <span class="dash-bc-item dash-bc-current">{{ quiz.title }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="qz-builder-page">
+
+  <div class="qz-builder-hd">
+    <div class="qz-builder-hd-left">
+      <a href="{% url 'quizzes:list' %}" class="qz-back">← Mock Tests</a>
+      <h2 class="qz-builder-title">{{ quiz.title }}</h2>
+      <span class="qz-badge qz-badge--{{ quiz.quiz_type }}">{{ quiz.get_quiz_type_display }}</span>
+      <span class="qz-badge qz-badge--{{ quiz.difficulty }}">{{ quiz.get_difficulty_display }}</span>
+    </div>
+    <div class="qz-builder-hd-right">
+      <a href="{% url 'quizzes:edit' quiz.pk %}" class="qz-btn qz-btn--secondary">Settings</a>
+      {% if quiz.status == 'published' %}
+      <a href="{% url 'quizzes:take' quiz.pk %}" class="qz-btn qz-btn--primary">Preview Quiz</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="qz-builder-body">
+
+    <div class="qz-q-list" id="qz-q-list" data-reorder-url="{% url 'quizzes:question_reorder' quiz.pk %}">
+      {% for question in questions %}
+      {% include "quizzes/partials/question_card.html" with quiz=quiz question=question mode='view' q_type=question.question_type %}
+      {% empty %}
+      <div class="qz-q-empty" id="qz-q-empty">No questions yet. Add one below.</div>
+      {% endfor %}
+    </div>
+
+    <div class="qz-add-section">
+      <p class="qz-add-label">Add question:</p>
+      <div class="qz-add-types">
+        <button class="qz-add-type-btn"
+                hx-get="{% url 'quizzes:question_add' quiz.pk %}?type=single"
+                hx-target="#qz-q-list" hx-swap="beforeend"
+                onclick="document.getElementById('qz-q-empty') && document.getElementById('qz-q-empty').remove()">Single MCQ</button>
+        <button class="qz-add-type-btn"
+                hx-get="{% url 'quizzes:question_add' quiz.pk %}?type=multiple"
+                hx-target="#qz-q-list" hx-swap="beforeend"
+                onclick="document.getElementById('qz-q-empty') && document.getElementById('qz-q-empty').remove()">Multi MCQ</button>
+        <button class="qz-add-type-btn"
+                hx-get="{% url 'quizzes:question_add' quiz.pk %}?type=tf"
+                hx-target="#qz-q-list" hx-swap="beforeend"
+                onclick="document.getElementById('qz-q-empty') && document.getElementById('qz-q-empty').remove()">True / False</button>
+        <button class="qz-add-type-btn"
+                hx-get="{% url 'quizzes:question_add' quiz.pk %}?type=open"
+                hx-target="#qz-q-list" hx-swap="beforeend"
+                onclick="document.getElementById('qz-q-empty') && document.getElementById('qz-q-empty').remove()">Open Text</button>
+        {% if quiz.quiz_type in 'coding,mixed' %}
+        <button class="qz-add-type-btn qz-add-type-btn--coding"
+                hx-get="{% url 'quizzes:question_add' quiz.pk %}?type=coding"
+                hx-target="#qz-q-list" hx-swap="beforeend"
+                onclick="document.getElementById('qz-q-empty') && document.getElementById('qz-q-empty').remove()">+ Coding Lab</button>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  var list = document.getElementById('qz-q-list');
+  if (list && window.Sortable) {
+    Sortable.create(list, {
+      handle: '.qz-q-drag',
+      animation: 150,
+      ghostClass: 'qz-q-ghost',
+      onEnd: function () {
+        var order = Array.from(list.querySelectorAll('.qz-q-item[data-qid]')).map(function (el) {
+          return parseInt(el.dataset.qid);
+        });
+        fetch(list.dataset.reorderUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+          body: JSON.stringify({ order: order }),
+        });
+      },
+    });
+  }
+})();
+</script>
+{% endblock %}

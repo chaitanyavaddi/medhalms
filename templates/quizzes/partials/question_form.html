@@ -1,0 +1,143 @@
+<div class="qz-q-form" id="qz-q-form">
+  <form hx-post="{% if question %}{% url 'quizzes:question_edit' quiz.pk question.pk %}{% else %}{% url 'quizzes:question_add' quiz.pk %}{% endif %}"
+        hx-target="#qz-question-form-slot"
+        hx-swap="innerHTML">
+    {% csrf_token %}
+    <input type="hidden" name="question_type" value="{{ q_type }}">
+
+    {% if error %}<div class="qz-form-error">{{ error }}</div>{% endif %}
+
+    <div class="qz-field">
+      <label class="qz-label">Question Text *</label>
+      <textarea name="text" class="qz-input qz-textarea" rows="3" required>{{ question.text|default:'' }}</textarea>
+    </div>
+
+    <div class="qz-row">
+      <div class="qz-field qz-field--sm">
+        <label class="qz-label">Points</label>
+        <input type="number" name="points" class="qz-input" value="{{ question.points|default:1 }}" min="1">
+      </div>
+      <div class="qz-field">
+        <label class="qz-label">Type</label>
+        <span class="qz-input qz-input--readonly">
+          {% if q_type == 'single' %}Single Correct
+          {% elif q_type == 'multiple' %}Multiple Correct
+          {% elif q_type == 'tf' %}True / False
+          {% elif q_type == 'open' %}Open Text
+          {% elif q_type == 'coding' %}Coding Lab
+          {% endif %}
+        </span>
+      </div>
+    </div>
+
+    <!-- MCQ choices -->
+    {% if q_type in 'single,multiple,tf' %}
+    <div class="qz-field">
+      <label class="qz-label">Choices <span class="qz-hint">(check the correct one{{ q_type|yesno:'s,,' }})</span></label>
+      <div class="qz-choices" id="qz-choices">
+        {% if q_type == 'tf' %}
+          <div class="qz-choice-row">
+            <input type="checkbox" name="choice_correct" value="0"
+                   {% if question %}{% for c in question.choices.all %}{% if forloop.counter0 == 0 and c.is_correct %}checked{% endif %}{% endfor %}{% endif %}>
+            <input type="text" name="choice_text" class="qz-input" value="True" readonly>
+          </div>
+          <div class="qz-choice-row">
+            <input type="checkbox" name="choice_correct" value="1"
+                   {% if question %}{% for c in question.choices.all %}{% if forloop.counter0 == 1 and c.is_correct %}checked{% endif %}{% endfor %}{% endif %}>
+            <input type="text" name="choice_text" class="qz-input" value="False" readonly>
+          </div>
+        {% else %}
+          {% if question and question.choices.exists %}
+            {% for c in question.choices.all %}
+            <div class="qz-choice-row">
+              <input type="{% if q_type == 'multiple' %}checkbox{% else %}checkbox{% endif %}" name="choice_correct" value="{{ forloop.counter0 }}" {% if c.is_correct %}checked{% endif %}>
+              <input type="text" name="choice_text" class="qz-input" value="{{ c.text }}" placeholder="Choice text">
+              <button type="button" class="qz-choice-del" onclick="this.closest('.qz-choice-row').remove()">✕</button>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="qz-choice-row">
+              <input type="checkbox" name="choice_correct" value="0">
+              <input type="text" name="choice_text" class="qz-input" placeholder="Choice A">
+              <button type="button" class="qz-choice-del" onclick="this.closest('.qz-choice-row').remove()">✕</button>
+            </div>
+            <div class="qz-choice-row">
+              <input type="checkbox" name="choice_correct" value="1">
+              <input type="text" name="choice_text" class="qz-input" placeholder="Choice B">
+              <button type="button" class="qz-choice-del" onclick="this.closest('.qz-choice-row').remove()">✕</button>
+            </div>
+          {% endif %}
+          <button type="button" class="qz-add-choice-btn" onclick="addChoice()">+ Add choice</button>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Coding lab picker -->
+    {% if q_type == 'coding' %}
+    <div class="qz-field">
+      <label class="qz-label">Coding Lab <span class="qz-hint">(select a lab to embed)</span></label>
+      <input type="hidden" name="lab_id" id="qz-lab-id" value="{{ question.lab.pk|default:'' }}">
+      <div class="qz-lab-selected" id="qz-lab-selected">
+        {% if question and question.lab %}
+        <span class="qz-lab-name">{{ question.lab.name }} ({{ question.lab.language }})</span>
+        <button type="button" class="qz-lab-clear" onclick="clearLab()">Change</button>
+        {% else %}
+        <button type="button" class="qz-pick-lab-btn"
+                hx-get="{% url 'quizzes:labs_picker' %}"
+                hx-target="#qz-labs-picker-slot"
+                hx-swap="innerHTML">Pick a Coding Lab →</button>
+        {% endif %}
+      </div>
+      <div id="qz-labs-picker-slot"></div>
+    </div>
+    {% endif %}
+
+    <!-- Open text note -->
+    {% if q_type == 'open' %}
+    <p class="qz-hint qz-hint--block">Students type a free-form answer. Graded manually by a trainer.</p>
+    {% endif %}
+
+    <div class="qz-form-actions">
+      <button type="button" class="qz-btn qz-btn--secondary"
+              onclick="document.getElementById('qz-question-form-slot').innerHTML=''">Cancel</button>
+      <button type="submit" class="qz-btn qz-btn--primary">
+        {% if question %}Save Question{% else %}Add Question{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+(function () {
+  var choiceCount = document.querySelectorAll('.qz-choice-row').length;
+
+  window.addChoice = function () {
+    var row = document.createElement('div');
+    row.className = 'qz-choice-row';
+    row.innerHTML = '<input type="checkbox" name="choice_correct" value="' + choiceCount + '">'
+      + '<input type="text" name="choice_text" class="qz-input" placeholder="Choice text">'
+      + '<button type="button" class="qz-choice-del" onclick="this.closest(\'.qz-choice-row\').remove()">✕</button>';
+    document.getElementById('qz-choices').insertBefore(row, document.querySelector('.qz-add-choice-btn'));
+    document.querySelectorAll('.qz-choice-row input[type=checkbox]').forEach(function (cb, i) { cb.value = i; });
+    choiceCount++;
+  };
+
+  window.clearLab = function () {
+    document.getElementById('qz-lab-id').value = '';
+    document.getElementById('qz-lab-selected').innerHTML =
+      '<button type="button" class="qz-pick-lab-btn"'
+      + ' hx-get="{% url "quizzes:labs_picker" %}"'
+      + ' hx-target="#qz-labs-picker-slot" hx-swap="innerHTML">Pick a Coding Lab →</button>';
+    htmx.process(document.getElementById('qz-lab-selected'));
+  };
+
+  window.selectLab = function (id, name, lang) {
+    document.getElementById('qz-lab-id').value = id;
+    document.getElementById('qz-lab-selected').innerHTML =
+      '<span class="qz-lab-name">' + name + ' (' + lang + ')</span>'
+      + '<button type="button" class="qz-lab-clear" onclick="window.clearLab()">Change</button>';
+    document.getElementById('qz-labs-picker-slot').innerHTML = '';
+  };
+})();
+</script>

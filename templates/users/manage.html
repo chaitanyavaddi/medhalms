@@ -10,31 +10,35 @@
 {% endblock %}
 
 {% block content_class %}dash-content--edge{% endblock %}
-{% block topbar_title %}<nav class="dash-breadcrumb"><span class="dash-bc-item">Admin</span><span class="dash-bc-sep">›</span><span class="dash-bc-item dash-bc-current">Users</span></nav>{% endblock %}
+{% block topbar_title %}<nav class="dash-breadcrumb"><span class="dash-bc-item">Admin</span><span class="dash-bc-sep">›</span><span class="dash-bc-item">Users</span><span class="dash-bc-sep">›</span><span class="dash-bc-item dash-bc-current">{{ role_plural }}</span></nav>{% endblock %}
+
+{% block inner_sidebar %}
+<nav class="tn-nav">
+  <div class="tn-group">
+    <span class="tn-group-label">Directory</span>
+    <a class="tn-item {% if role_slug == 'students' %}is-active{% endif %}" href="{% url 'users:students' %}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+      Students
+    </a>
+    <a class="tn-item {% if role_slug == 'trainers' %}is-active{% endif %}" href="{% url 'users:trainers' %}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="23 11 17 17 14 14"/></svg>
+      Trainers
+    </a>
+    <a class="tn-item {% if role_slug == 'staff' %}is-active{% endif %}" href="{% url 'users:staff' %}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Staff
+    </a>
+    <a class="tn-item {% if role_slug == 'admins' %}is-active{% endif %}" href="{% url 'users:admins' %}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Admins
+    </a>
+  </div>
+</nav>
+{% endblock %}
 
 {% block content %}
-<div class="um-layout">
-
-  <aside class="um-thread">
-    <nav class="tn-nav">
-      <div class="tn-group">
-        <span class="tn-group-label">Role</span>
-        <a class="tn-item {% if role_slug == 'students' %}is-active{% endif %}"
-           href="{% url 'users:students' %}">Students</a>
-        <a class="tn-item {% if role_slug == 'trainers' %}is-active{% endif %}"
-           href="{% url 'users:trainers' %}">Trainers</a>
-        <a class="tn-item {% if role_slug == 'staff' %}is-active{% endif %}"
-           href="{% url 'users:staff' %}">Staff</a>
-        <a class="tn-item {% if role_slug == 'admins' %}is-active{% endif %}"
-           href="{% url 'users:admins' %}">Admins</a>
-      </div>
-    </nav>
-  </aside>
-
-  <div class="um-main" id="um-content">
-    {% include "users/partials/user_table.html" %}
-  </div>
-
+<div class="um-main" id="um-content">
+  {% include "users/partials/user_table.html" %}
 </div>
 
 <div id="um-modal-slot"></div>

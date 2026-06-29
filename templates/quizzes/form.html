@@ -1,0 +1,124 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}{% if quiz %}Edit Quiz{% else %}New Quiz{% endif %}{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/quizzes.css' %}">{% endblock %}
+{% block topbar_title %}
+<nav class="dash-breadcrumb">
+  <a href="{% url 'quizzes:list' %}" class="dash-bc-item">Mock Tests</a>
+  <span class="dash-bc-sep">›</span>
+  <span class="dash-bc-item dash-bc-current">{% if quiz %}Edit Quiz{% else %}New Quiz{% endif %}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="qz-form-page">
+  <div class="qz-form-card">
+    <div class="qz-form-hd">
+      <a href="{% url 'quizzes:list' %}" class="qz-back">← Back</a>
+      <h2>{% if quiz %}Edit Quiz{% else %}New Quiz{% endif %}</h2>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="qz-field">
+        <label class="qz-label">Title *</label>
+        <input type="text" name="title" class="qz-input" value="{{ quiz.title|default:fdata.title }}" required>
+      </div>
+
+      <div class="qz-field">
+        <label class="qz-label">Description</label>
+        <textarea name="description" class="qz-input qz-textarea" rows="3">{{ quiz.description|default:fdata.description }}</textarea>
+      </div>
+
+      <div class="qz-row">
+        <div class="qz-field">
+          <label class="qz-label">Quiz Type</label>
+          <select name="quiz_type" class="qz-input">
+            <option value="mcq"    {% if quiz.quiz_type == 'mcq'    or fdata.quiz_type == 'mcq'    %}selected{% endif %}>MCQ Only</option>
+            <option value="coding" {% if quiz.quiz_type == 'coding' or fdata.quiz_type == 'coding' %}selected{% endif %}>Coding Only</option>
+            <option value="mixed"  {% if quiz.quiz_type == 'mixed'  or fdata.quiz_type == 'mixed'  %}selected{% endif %}>MCQ + Coding</option>
+          </select>
+        </div>
+        <div class="qz-field">
+          <label class="qz-label">Difficulty</label>
+          <select name="difficulty" class="qz-input">
+            <option value="beginner"     {% if quiz.difficulty == 'beginner'     or fdata.difficulty == 'beginner'     %}selected{% endif %}>Beginner</option>
+            <option value="intermediate" {% if quiz.difficulty == 'intermediate' or fdata.difficulty == 'intermediate' %}selected{% endif %}>Intermediate</option>
+            <option value="advanced"     {% if quiz.difficulty == 'advanced'     or fdata.difficulty == 'advanced'     %}selected{% endif %}>Advanced</option>
+          </select>
+        </div>
+        <div class="qz-field">
+          <label class="qz-label">Status</label>
+          <select name="status" class="qz-input">
+            <option value="draft"     {% if quiz.status == 'draft'     or not quiz %}selected{% endif %}>Draft</option>
+            <option value="published" {% if quiz.status == 'published' %}selected{% endif %}>Published</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="qz-row">
+        <div class="qz-field">
+          <label class="qz-label">Time Limit (minutes)</label>
+          <input type="number" name="time_limit" class="qz-input" min="1"
+                 value="{{ quiz.time_limit|default:fdata.time_limit }}" placeholder="No limit">
+        </div>
+        <div class="qz-field">
+          <label class="qz-label">Passing Score (%)</label>
+          <input type="number" name="passing_score" class="qz-input" min="1" max="100"
+                 value="{{ quiz.passing_score|default:'70' }}">
+        </div>
+        <div class="qz-field">
+          <label class="qz-label">Max Retries</label>
+          <input type="number" name="max_retries" class="qz-input" min="1"
+                 value="{{ quiz.max_retries|default:fdata.max_retries }}" placeholder="Unlimited">
+        </div>
+      </div>
+
+      <div class="qz-row qz-row--2">
+        <div class="qz-field">
+          <label class="qz-label">Start Date <span class="qz-hint">(optional — quiz opens at this time)</span></label>
+          <input type="datetime-local" name="start_date" class="qz-input"
+                 value="{{ quiz.start_date|date:'Y-m-d\TH:i'|default:fdata.start_date }}">
+        </div>
+        <div class="qz-field">
+          <label class="qz-label">Expiry Date <span class="qz-hint">(optional — quiz closes at this time)</span></label>
+          <input type="datetime-local" name="expiry_date" class="qz-input"
+                 value="{{ quiz.expiry_date|date:'Y-m-d\TH:i'|default:fdata.expiry_date }}">
+        </div>
+      </div>
+
+      <div class="qz-field">
+        <label class="qz-label">Linked Courses</label>
+        <div class="qz-checkbox-list">
+          {% for course in courses %}
+          <label class="qz-checkbox-item">
+            <input type="checkbox" name="courses" value="{{ course.pk }}"
+                   {% if course.pk in selected_course_ids %}checked{% endif %}>
+            {{ course.name }}
+          </label>
+          {% empty %}
+          <span class="qz-hint">No courses yet.</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="qz-field">
+        <label class="qz-label">Options</label>
+        <label class="qz-checkbox-item">
+          <input type="checkbox" name="shuffle_questions" value="1"
+                 {% if quiz.shuffle_questions %}checked{% endif %}>
+          Shuffle questions for each attempt
+        </label>
+      </div>
+
+      <div class="qz-form-actions">
+        <a href="{% url 'quizzes:list' %}" class="qz-btn qz-btn--secondary">Cancel</a>
+        <button type="submit" class="qz-btn qz-btn--primary">
+          {% if quiz %}Save Changes{% else %}Create & Add Questions{% endif %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

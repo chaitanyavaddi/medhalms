@@ -1,0 +1,87 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Result — {{ quiz.title }}{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/quizzes.css' %}">{% endblock %}
+{% block topbar_title %}
+<nav class="dash-breadcrumb">
+  <a href="{% url 'quizzes:list' %}" class="dash-bc-item">Mock Tests</a>
+  <span class="dash-bc-sep">›</span>
+  <span class="dash-bc-item">{{ quiz.title }}</span>
+  <span class="dash-bc-sep">›</span>
+  <span class="dash-bc-item dash-bc-current">Result</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="qz-result-page">
+
+  <!-- Score card -->
+  <div class="qz-score-card {% if attempt.passed %}qz-score-card--pass{% elif attempt.passed == False %}qz-score-card--fail{% endif %}">
+    <div class="qz-score-num">{{ attempt.score|floatformat:0 }}%</div>
+    <div class="qz-score-label">
+      {% if attempt.passed %}
+        🎉 Passed! Required {{ quiz.passing_score }}%
+      {% elif attempt.passed == False %}
+        Not passed. Required {{ quiz.passing_score }}%
+      {% else %}
+        Submitted — pending grading
+      {% endif %}
+    </div>
+    <div class="qz-score-meta">
+      Attempt #{{ attempt.attempt_number }} ·
+      {{ attempt.submitted_at|date:"M d, Y H:i" }}
+    </div>
+  </div>
+
+  <!-- Answer review -->
+  <div class="qz-review">
+    <h3 class="qz-review-title">Review</h3>
+    {% for answer in answers %}
+    {% with q=answer.question %}
+    <div class="qz-review-item {% if answer.points_earned == q.points %}qz-review-item--correct{% elif answer.points_earned == 0 %}qz-review-item--wrong{% else %}qz-review-item--pending{% endif %}">
+      <div class="qz-review-hd">
+        <span class="qz-q-num">Q{{ forloop.counter }}</span>
+        <span class="qz-badge qz-badge--type">{{ q.get_question_type_display }}</span>
+        <span class="qz-q-pts">
+          {% if answer.points_earned is not None %}
+            {{ answer.points_earned|floatformat:0 }}/{{ q.points }} pts
+          {% else %}
+            Pending · {{ q.points }} pts
+          {% endif %}
+        </span>
+      </div>
+      <p class="qz-review-q">{{ q.text }}</p>
+
+      {% if q.question_type in 'single,multiple,tf' %}
+      <ul class="qz-review-choices">
+        {% for choice in q.choices.all %}
+        <li class="qz-review-choice
+            {% if choice in answer.selected_choices.all and choice.is_correct %}qz-rc--correct-selected
+            {% elif choice in answer.selected_choices.all and not choice.is_correct %}qz-rc--wrong-selected
+            {% elif choice.is_correct %}qz-rc--correct-missed
+            {% endif %}">
+          {{ choice.text }}
+          {% if choice.is_correct %}<span class="qz-rc-tag">correct</span>{% endif %}
+          {% if choice in answer.selected_choices.all and not choice.is_correct %}<span class="qz-rc-tag qz-rc-tag--wrong">your answer</span>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% elif q.question_type == 'open' %}
+      <p class="qz-review-text-ans"><strong>Your answer:</strong> {{ answer.text_answer|default:"—" }}</p>
+      {% elif q.question_type == 'coding' %}
+      <p class="qz-review-text-ans"><strong>Code submitted:</strong> {% if answer.code_answer %}Yes{% else %}No{% endif %}</p>
+      {% endif %}
+    </div>
+    {% endwith %}
+    {% endfor %}
+  </div>
+
+  <div class="qz-result-footer">
+    <a href="{% url 'quizzes:list' %}" class="qz-btn qz-btn--secondary">Back to Mock Tests</a>
+    {% if quiz.max_retries is None or attempt.attempt_number < quiz.max_retries %}
+    <a href="{% url 'quizzes:take' quiz.pk %}" class="qz-btn qz-btn--primary">Retry Quiz</a>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Mock Tests{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/quizzes.css' %}">{% endblock %}
+{% block topbar_title %}
+<nav class="dash-breadcrumb">
+  <span class="dash-bc-item">Mock Hub</span>
+  <span class="dash-bc-sep">›</span>
+  <span class="dash-bc-item dash-bc-current">Mock Tests</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="qz-page">
+
+  <div class="qz-hd">
+    <h1 class="qz-hd-title">Mock Tests</h1>
+    {% if can_manage %}
+    <button type="button" class="qz-new-btn"
+            hx-get="{% url 'quizzes:wizard' %}"
+            hx-target="#qz-wizard-slot"
+            hx-swap="innerHTML">+ New Quiz</button>
+    {% endif %}
+  </div>
+
+  {% if quizzes %}
+  <div class="qz-list">
+    {% for quiz in quizzes %}
+    <div class="qz-card">
+      <div class="qz-card-body">
+        <div class="qz-card-top">
+          <span class="qz-badge qz-badge--{{ quiz.quiz_type }}">{{ quiz.get_quiz_type_display }}</span>
+          <span class="qz-badge qz-badge--{{ quiz.difficulty }}">{{ quiz.get_difficulty_display }}</span>
+          {% if quiz.status == 'draft' %}<span class="qz-badge qz-badge--draft">Draft</span>{% endif %}
+          {% if quiz.start_date and quiz.status == 'published' %}<span class="qz-badge qz-badge--scheduled">Scheduled</span>{% endif %}
+        </div>
+        <h3 class="qz-card-title">{{ quiz.title }}</h3>
+        {% if quiz.description %}<p class="qz-card-desc">{{ quiz.description|truncatewords:20 }}</p>{% endif %}
+        <div class="qz-card-meta">
+          <span>{{ quiz.question_count }} question{{ quiz.question_count|pluralize }}</span>
+          <span>·</span>
+          <span>Pass {{ quiz.passing_score }}%</span>
+          {% if quiz.time_limit %}<span>·</span><span>{{ quiz.time_limit }} min</span>{% endif %}
+          {% if quiz.start_date %}<span>·</span><span>Opens {{ quiz.start_date|date:"M d, Y" }}</span>{% endif %}
+          {% if quiz.expiry_date %}<span>·</span><span>Closes {{ quiz.expiry_date|date:"M d, Y" }}</span>{% endif %}
+          {% if quiz.courses.exists %}
+          <span>·</span>
+          <span class="qz-card-courses">
+            {% for c in quiz.courses.all %}{{ c.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          </span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="qz-card-actions">
+        {% if can_manage %}
+        <a href="{% url 'quizzes:builder' quiz.pk %}" class="qz-action-btn qz-action-btn--secondary">Questions</a>
+        <a href="{% url 'quizzes:edit' quiz.pk %}" class="qz-action-btn qz-action-btn--secondary">Edit</a>
+        {% endif %}
+        {% if quiz.status == 'published' %}
+        <a href="{% url 'quizzes:take' quiz.pk %}" class="qz-action-btn qz-action-btn--primary">Take Quiz</a>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="qz-empty">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 11l3 3L22 4"/>
+      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+    </svg>
+    <p>No quizzes yet.</p>
+    {% if can_manage %}<a href="{% url 'quizzes:create' %}" class="qz-new-btn">Create your first quiz</a>{% endif %}
+  </div>
+  {% endif %}
+
+</div>
+<div id="qz-wizard-slot"></div>
+{% endblock %}
