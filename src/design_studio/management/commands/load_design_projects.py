@@ -2,6 +2,29 @@ from django.core.management.base import BaseCommand
 
 from design_studio.models import DesignProject
 
+THUMBNAILS = {
+    'Brewmosa Cafe - Specialty Coffee Shop Landing Page':
+        'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&h=340&q=80',
+    'FitLife Studio - Personal Trainer Lead Generation Page':
+        'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&h=340&q=80',
+    'Pawsome Grooming - Pet Salon Appointment Page':
+        'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=600&h=340&q=80',
+    'TaskFlow - SaaS Project Management Tool Launch Page':
+        'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&h=340&q=80',
+    'NestWise Realty - Luxury Villa Pre-Launch Lead Page':
+        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&h=340&q=80',
+    'SkillBridge - Digital Marketing Mastery Course Page':
+        'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=600&h=340&q=80',
+    'CloudBite - Healthy Food Delivery Brand Page':
+        'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&h=340&q=80',
+    'Zephyr S1 - Electric Scooter Launch Microsite':
+        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&h=340&q=80',
+    'Finspark - Neobank App Landing Page':
+        'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=600&h=340&q=80',
+    'Lumina Wellness - Corporate Wellness Platform B2B Page':
+        'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=600&h=340&q=80',
+}
+
 PROJECTS = [
     # BEGINNER (1-3)
     {
@@ -446,17 +469,23 @@ class Command(BaseCommand):
         skipped_count = 0
 
         for data in PROJECTS:
+            thumbnail = THUMBNAILS.get(data['title'], '')
             existing = DesignProject.objects.filter(title=data['title']).first()
 
             if existing:
                 if options['update']:
                     existing.description = data['description']
                     existing.tags = data['tags']
+                    existing.thumbnail_url = thumbnail
                     existing.is_active = True
-                    existing.save(update_fields=['description', 'tags', 'is_active', 'updated_at'])
+                    existing.save(update_fields=['description', 'tags', 'thumbnail_url', 'is_active', 'updated_at'])
                     self.stdout.write(f'  Updated : {data["title"]}')
                     updated_count += 1
                 else:
+                    # Always sync thumbnail even without --update
+                    if not existing.thumbnail_url and thumbnail:
+                        existing.thumbnail_url = thumbnail
+                        existing.save(update_fields=['thumbnail_url'])
                     self.stdout.write(f'  Skipped : {data["title"]} (already exists, use --update to overwrite)')
                     skipped_count += 1
             else:
@@ -464,6 +493,7 @@ class Command(BaseCommand):
                     title=data['title'],
                     description=data['description'],
                     tags=data['tags'],
+                    thumbnail_url=thumbnail,
                     is_active=True,
                 )
                 self.stdout.write(f'  Created : {data["title"]}')

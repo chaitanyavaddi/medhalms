@@ -12,3 +12,4 @@ staticfiles/
 *.md
 setup.txt
 traefik.yml
+knowledge/

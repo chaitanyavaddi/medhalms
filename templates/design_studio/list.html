@@ -44,6 +44,11 @@
   <div class="ds-grid">
     {% for project, sub, tags in project_list %}
     <div class="ds-card">
+      {% if project.thumbnail_url %}
+      <div class="ds-card-thumb">
+        <img src="{{ project.thumbnail_url }}" alt="{{ project.title }}" loading="lazy">
+      </div>
+      {% endif %}
       <div class="ds-card-body">
         {% if tags %}
         <div class="ds-card-tags">

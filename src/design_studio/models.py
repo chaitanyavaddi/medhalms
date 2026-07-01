@@ -6,6 +6,7 @@ class DesignProject(models.Model):
     title        = models.CharField(max_length=200)
     description  = models.TextField(help_text='Full brief shown to the student in the workspace.')
     tags         = models.CharField(max_length=200, blank=True, help_text='Comma-separated e.g. landing-page, ecommerce')
+    thumbnail_url = models.URLField(blank=True)
     is_active    = models.BooleanField(default=True)
     created_by   = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='design_projects_created')
     created_at   = models.DateTimeField(auto_now_add=True)
