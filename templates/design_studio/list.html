@@ -1,0 +1,96 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Design Studio{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/design_studio.css' %}">{% endblock %}
+{% block topbar_title %}
+<nav class="dash-breadcrumb">
+  <span class="dash-bc-item">Design Studio</span>
+  <span class="dash-bc-sep">›</span>
+  <span class="dash-bc-item dash-bc-current">Projects</span>
+</nav>
+{% endblock %}
+
+{% block inner_sidebar %}
+<nav class="tn-nav">
+  <div class="tn-group">
+    <span class="tn-group-label">Design Studio</span>
+    <a href="{% url 'design_studio:list' %}" class="tn-item is-active">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Projects
+    </a>
+  </div>
+  {% if can_manage %}
+  <div class="tn-group">
+    <span class="tn-group-label">Admin</span>
+    <a href="{% url 'design_studio:create' %}" class="tn-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      New Project
+    </a>
+  </div>
+  {% endif %}
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="ds-page">
+  <div class="ds-hd">
+    <h1 class="ds-hd-title">Design Projects</h1>
+    {% if can_manage %}
+    <a href="{% url 'design_studio:create' %}" class="ds-new-btn">+ New Project</a>
+    {% endif %}
+  </div>
+
+  {% if project_list %}
+  <div class="ds-grid">
+    {% for project, sub, tags in project_list %}
+    <div class="ds-card">
+      <div class="ds-card-body">
+        {% if tags %}
+        <div class="ds-card-tags">
+          {% for tag in tags %}<span class="ds-tag">{{ tag }}</span>{% endfor %}
+        </div>
+        {% endif %}
+        <h3 class="ds-card-title">{{ project.title }}</h3>
+        <p class="ds-card-desc">{{ project.description|truncatewords:25 }}</p>
+        {% if can_manage %}
+        <div class="ds-card-stats">
+          <span>{{ project.submission_count }} student{{ project.submission_count|pluralize }}</span>
+          {% if project.active_count %}<span>· {{ project.active_count }} in progress</span>{% endif %}
+        </div>
+        {% else %}
+        {% if sub %}
+        <div class="ds-card-status ds-card-status--{{ sub.status }}">
+          {% if sub.status == 'submitted' %}✓ Submitted{% else %}● In Progress{% endif %}
+        </div>
+        {% endif %}
+        {% endif %}
+      </div>
+      <div class="ds-card-actions">
+        {% if can_manage %}
+        <a href="{% url 'design_studio:submissions' project.pk %}" class="ds-action-btn ds-action-btn--secondary">Submissions</a>
+        <a href="{% url 'design_studio:edit' project.pk %}" class="ds-action-btn ds-action-btn--secondary">Edit</a>
+        {% else %}
+        {% if sub and sub.status == 'submitted' %}
+        <span class="ds-action-btn ds-action-btn--submitted">Submitted</span>
+        {% else %}
+        <a href="{% url 'design_studio:workspace' project.pk %}" class="ds-action-btn ds-action-btn--primary">
+          {% if sub %}Continue →{% else %}Start Project →{% endif %}
+        </a>
+        {% endif %}
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="ds-empty">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+    </svg>
+    <p>{% if can_manage %}No projects yet. Create the first one.{% else %}No design projects available yet.{% endif %}</p>
+    {% if can_manage %}<a href="{% url 'design_studio:create' %}" class="ds-new-btn">Create Project</a>{% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

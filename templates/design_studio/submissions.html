@@ -1,0 +1,79 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Submissions — {{ project.title }}{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/design_studio.css' %}">{% endblock %}
+{% block topbar_title %}
+<nav class="dash-breadcrumb">
+  <a href="{% url 'design_studio:list' %}" class="dash-bc-item">Design Studio</a>
+  <span class="dash-bc-sep">›</span>
+  <span class="dash-bc-item">{{ project.title }}</span>
+  <span class="dash-bc-sep">›</span>
+  <span class="dash-bc-item dash-bc-current">Submissions</span>
+</nav>
+{% endblock %}
+
+{% block inner_sidebar %}
+<nav class="tn-nav">
+  <div class="tn-group">
+    <span class="tn-group-label">Design Studio</span>
+    <a href="{% url 'design_studio:list' %}" class="tn-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      All Projects
+    </a>
+  </div>
+  <div class="tn-group">
+    <span class="tn-group-label">This Project</span>
+    <a href="{% url 'design_studio:submissions' project.pk %}" class="tn-item is-active">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Submissions
+    </a>
+    <a href="{% url 'design_studio:edit' project.pk %}" class="tn-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Edit Project
+    </a>
+  </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="ds-page">
+  <div class="ds-hd">
+    <h1 class="ds-hd-title">{{ project.title }}</h1>
+    <a href="{% url 'design_studio:edit' project.pk %}" class="ds-action-btn ds-action-btn--secondary">Edit Project</a>
+  </div>
+
+  {% if submissions %}
+  <div class="ds-sub-list">
+    {% for sub in submissions %}
+    <div class="ds-sub-row">
+      <div class="ds-sub-student">
+        <div class="ds-sub-avatar">{{ sub.student.first_name|first|upper }}{{ sub.student.last_name|first|upper }}</div>
+        <div>
+          <div class="ds-sub-name">{{ sub.student.get_full_name }}</div>
+          <div class="ds-sub-email">{{ sub.student.email }}</div>
+        </div>
+      </div>
+      <div class="ds-sub-meta">
+        <span class="ds-badge ds-badge--{{ sub.status }}">{{ sub.get_status_display }}</span>
+        {% if sub.submitted_at %}
+        <span class="ds-sub-date">Submitted {{ sub.submitted_at|date:"M d, Y H:i" }}</span>
+        {% elif sub.last_saved_at %}
+        <span class="ds-sub-date">Last saved {{ sub.last_saved_at|date:"M d, Y H:i" }}</span>
+        {% endif %}
+      </div>
+      <div class="ds-sub-actions">
+        <a href="{% url 'design_studio:workspace' project.pk %}" class="ds-action-btn ds-action-btn--secondary">View Work</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="ds-empty">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+    <p>No submissions yet.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

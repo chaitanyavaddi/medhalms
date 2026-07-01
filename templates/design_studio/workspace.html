@@ -1,0 +1,225 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}{{ project.title }} — Design Studio{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/grapesjs@0.21.13/dist/css/grapes.min.css">
+<link rel="stylesheet" href="{% static 'css/design_studio.css' %}">
+{% endblock %}
+
+{% block content_class %}dash-content--edge{% endblock %}
+{% block inner_sidebar %}{% endblock %}
+
+{% block topbar_title %}
+<nav class="dash-breadcrumb">
+  <a href="{% url 'design_studio:list' %}" class="dash-bc-item">Design Studio</a>
+  <span class="dash-bc-sep">›</span>
+  <span class="dash-bc-item dash-bc-current">{{ project.title }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="ds-ws-topbar-right" id="ds-ws-topbar-right">
+  <span class="ds-save-indicator" id="ds-save-indicator">
+    {% if submission.last_saved_at %}Saved{% else %}Not saved yet{% endif %}
+  </span>
+  {% if submission.status == 'submitted' %}
+  <span class="ds-submitted-badge">✓ Submitted on {{ submission.submitted_at|date:"M d, Y" }}</span>
+  {% else %}
+  <button type="button" class="ds-submit-btn" id="ds-submit-btn" onclick="dsSubmit()">Submit Project</button>
+  {% endif %}
+</div>
+
+<div class="ds-workspace">
+
+  <!-- Left: Question / brief panel -->
+  <div class="ds-brief-panel" id="ds-brief-panel">
+    <div class="ds-brief-inner">
+      <div class="ds-brief-hd">
+        <h3 class="ds-brief-title">Project Brief</h3>
+        <button type="button" class="ds-brief-collapse" id="ds-brief-toggle" title="Collapse panel" onclick="dsBriefToggle()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+      </div>
+      <div class="ds-brief-content" id="ds-brief-content">
+        <h4 class="ds-brief-project-title">{{ project.title }}</h4>
+        {% if project_tags %}
+        <div class="ds-brief-tags">
+          {% for tag in project_tags %}<span class="ds-tag">{{ tag }}</span>{% endfor %}
+        </div>
+        {% endif %}
+        <div class="ds-brief-text">{{ project.description|linebreaks }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Collapsed toggle handle (shown when collapsed) -->
+  <button type="button" class="ds-brief-expand-btn" id="ds-brief-expand" onclick="dsBriefToggle()" title="Expand brief" style="display:none">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"/>
+    </svg>
+    <span>Brief</span>
+  </button>
+
+  <!-- Right: GrapesJS editor -->
+  <div class="ds-editor-wrap" id="ds-editor-wrap">
+    <div id="gjs"></div>
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/grapesjs@0.21.13/dist/grapes.min.js"></script>
+<script src="https://unpkg.com/grapesjs-blocks-basic@1.0.2/dist/index.js"></script>
+<script src="https://unpkg.com/grapesjs-preset-webpage@1.0.3/dist/index.js"></script>
+
+<script>
+(function(){
+  var CSRF         = '{{ csrf_token }}';
+  var AUTOSAVE_URL = '{% url "design_studio:autosave" project.pk %}';
+  var SUBMIT_URL   = '{% url "design_studio:submit" project.pk %}';
+  var ASSET_URL    = '{% url "design_studio:asset_upload" %}';
+  var IS_SUBMITTED = {% if submission.status == 'submitted' %}true{% else %}false{% endif %};
+  var savedData    = {{ grapes_json|safe }};
+
+  // Safe plugin loading — handle both UMD global names and string fallbacks
+  var plugins = [];
+  var pluginsOpts = {};
+  if (typeof window.grapejsBlocksBasic !== 'undefined') {
+    plugins.push(window.grapejsBlocksBasic);
+    pluginsOpts[window.grapejsBlocksBasic] = { flexGrid: true };
+  } else {
+    plugins.push('gjs-blocks-basic');
+    pluginsOpts['gjs-blocks-basic'] = { flexGrid: true };
+  }
+  if (typeof window.grapejsPresetWebpage !== 'undefined') {
+    plugins.push(window.grapejsPresetWebpage);
+    pluginsOpts[window.grapejsPresetWebpage] = {};
+  } else {
+    plugins.push('gjs-preset-webpage');
+    pluginsOpts['gjs-preset-webpage'] = {};
+  }
+
+  var editor = grapesjs.init({
+    container: '#gjs',
+    height: '100%',
+    width: 'auto',
+    fromElement: false,
+    plugins: plugins,
+    pluginsOpts: pluginsOpts,
+    storageManager: false,
+    assetManager: {
+      upload: ASSET_URL,
+      uploadName: 'files',
+      headers: { 'X-CSRFToken': CSRF },
+      credentials: 'same-origin',
+      multiUpload: true,
+      autoAdd: true,
+    },
+    canvas: {
+      styles: [
+        'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
+      ],
+    },
+  });
+
+  // Load existing data
+  if (savedData && Object.keys(savedData).length > 0) {
+    editor.loadProjectData(savedData);
+  }
+
+  // Auto-save
+  var saveTimer;
+  var saveIndicator = document.getElementById('ds-save-indicator');
+
+  function setSaveStatus(status) {
+    if (!saveIndicator) return;
+    if (status === 'saving') {
+      saveIndicator.textContent = 'Saving…';
+      saveIndicator.className = 'ds-save-indicator ds-save-indicator--saving';
+    } else if (status === 'saved') {
+      saveIndicator.textContent = 'Saved';
+      saveIndicator.className = 'ds-save-indicator ds-save-indicator--saved';
+    } else {
+      saveIndicator.textContent = 'Save failed';
+      saveIndicator.className = 'ds-save-indicator ds-save-indicator--error';
+    }
+  }
+
+  function autosave() {
+    if (IS_SUBMITTED) return;
+    setSaveStatus('saving');
+    fetch(AUTOSAVE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+      body: JSON.stringify({
+        data: editor.getProjectData(),
+        html: editor.getHtml(),
+      }),
+    }).then(function(r) {
+      setSaveStatus(r.ok ? 'saved' : 'error');
+    }).catch(function() {
+      setSaveStatus('error');
+    });
+  }
+
+  if (!IS_SUBMITTED) {
+    editor.on('update', function() {
+      setSaveStatus('saving');
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(autosave, 2000);
+    });
+  }
+
+  // Submit
+  window.dsSubmit = function() {
+    if (!confirm('Submit your project? You will not be able to edit it after submission.')) return;
+    var btn = document.getElementById('ds-submit-btn');
+    if (btn) btn.disabled = true;
+    fetch(SUBMIT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+      body: JSON.stringify({
+        data: editor.getProjectData(),
+        html: editor.getHtml(),
+      }),
+    }).then(function(r) {
+      if (r.ok) {
+        var redirect = r.headers.get('HX-Redirect');
+        if (redirect) window.location.href = redirect;
+      } else {
+        if (btn) btn.disabled = false;
+        alert('Submission failed. Please try again.');
+      }
+    });
+  };
+
+  // Brief panel collapse/expand
+  var briefCollapsed = false;
+  window.dsBriefToggle = function() {
+    briefCollapsed = !briefCollapsed;
+    var panel = document.getElementById('ds-brief-panel');
+    var expand = document.getElementById('ds-brief-expand');
+    if (briefCollapsed) {
+      panel.style.display = 'none';
+      expand.style.display = 'flex';
+    } else {
+      panel.style.display = '';
+      expand.style.display = 'none';
+    }
+  };
+
+  // Move topbar-right controls into actual topbar
+  (function() {
+    var wsRight = document.getElementById('ds-ws-topbar-right');
+    var topbarEnd = document.querySelector('.dash-topbar-end');
+    if (wsRight && topbarEnd) {
+      topbarEnd.insertBefore(wsRight, topbarEnd.firstChild);
+      wsRight.style.display = 'flex';
+    }
+  })();
+
+})();
+</script>
+{% endblock %}

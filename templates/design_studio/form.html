@@ -1,0 +1,65 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}{% if project %}Edit Project{% else %}New Project{% endif %} — Design Studio{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/design_studio.css' %}">{% endblock %}
+{% block topbar_title %}
+<nav class="dash-breadcrumb">
+  <a href="{% url 'design_studio:list' %}" class="dash-bc-item">Design Studio</a>
+  <span class="dash-bc-sep">›</span>
+  <span class="dash-bc-item dash-bc-current">{% if project %}Edit Project{% else %}New Project{% endif %}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="ds-form-page">
+  <div class="ds-form-card">
+    <div class="ds-form-hd">
+      <a href="{% url 'design_studio:list' %}" class="ds-back">← Design Studio</a>
+      <h2>{% if project %}Edit Project{% else %}New Design Project{% endif %}</h2>
+    </div>
+
+    {% if messages %}
+    <ul class="form-messages">
+      {% for m in messages %}<li class="form-message form-message--{{ m.tags }}">{{ m }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="ds-field">
+        <label class="ds-label">Project Title <span class="ds-required">*</span></label>
+        <input type="text" name="title" class="ds-input" value="{{ project.title|default:fdata.title }}" placeholder="e.g. Design a landing page for Tata Motors" required autofocus>
+      </div>
+      <div class="ds-field">
+        <label class="ds-label">Project Brief &amp; Specs <span class="ds-required">*</span></label>
+        <p class="ds-hint">Write the full assignment question here. Include design requirements, target audience, color preferences, sections to include, etc.</p>
+        <textarea name="description" class="ds-input ds-textarea" rows="12" placeholder="e.g.&#10;Design a modern landing page for Tata Motors' new EV launch campaign.&#10;&#10;Requirements:&#10;- Hero section with full-width banner&#10;- Feature highlights (battery life, range, charging)&#10;- Customer testimonials section&#10;- CTA: Book a test drive&#10;&#10;Style: Clean, premium, dark navy + orange accent">{{ project.description|default:'' }}</textarea>
+      </div>
+      <div class="ds-field">
+        <label class="ds-label">Tags <span class="ds-opt">(optional, comma-separated)</span></label>
+        <input type="text" name="tags" class="ds-input" value="{{ project.tags|default:'' }}" placeholder="landing-page, automotive, EV">
+      </div>
+      {% if project %}
+      <div class="ds-field">
+        <label class="ds-checkbox-item">
+          <input type="checkbox" name="is_active" value="1" {% if project.is_active %}checked{% endif %}>
+          Active (visible to students)
+        </label>
+      </div>
+      {% endif %}
+      <div class="ds-form-actions">
+        <a href="{% url 'design_studio:list' %}" class="ds-btn ds-btn--secondary">Cancel</a>
+        {% if project %}
+        <button type="button" class="ds-btn ds-btn--danger"
+                hx-post="{% url 'design_studio:delete' project.pk %}"
+                hx-confirm="Delete this project and all submissions?"
+                hx-target="body" hx-swap="none">Delete</button>
+        {% endif %}
+        <button type="submit" class="ds-btn ds-btn--primary">
+          {% if project %}Save Changes{% else %}Create Project{% endif %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

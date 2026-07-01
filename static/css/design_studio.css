@@ -1,0 +1,635 @@
+/* ══════════════════════════════════════════════
+   DESIGN STUDIO — shared styles
+   Brand: --brand-blue: #1550be  --brand-accent: #e67f0f
+══════════════════════════════════════════════ */
+
+/* ── Page scaffold ────────────────────────── */
+.ds-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 28px;
+}
+
+.ds-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.ds-hd-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.ds-new-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  background: var(--brand-accent);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.ds-new-btn:hover { background: #c96d0a; }
+
+/* ── Tags ─────────────────────────────────── */
+.ds-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  white-space: nowrap;
+}
+
+/* ── Project card grid ────────────────────── */
+.ds-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media (max-width: 900px) {
+  .ds-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 580px) {
+  .ds-grid { grid-template-columns: 1fr; }
+}
+
+.ds-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.ds-card:hover {
+  border-color: #c7d2fe;
+  box-shadow: 0 4px 16px rgba(21, 80, 190, 0.07);
+}
+
+.ds-card-body {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ds-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 0;
+}
+
+.ds-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.ds-card-desc {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.55;
+  flex: 1;
+}
+
+.ds-card-stats {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: auto;
+}
+
+.ds-card-status {
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: auto;
+}
+.ds-card-status--submitted { color: #16a34a; }
+.ds-card-status--in_progress { color: #d97706; }
+
+.ds-card-actions {
+  padding: 12px 20px;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  background: #fafafa;
+}
+
+/* ── Action buttons ───────────────────────── */
+.ds-action-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.ds-action-btn--primary {
+  background: var(--brand-accent);
+  color: #fff;
+}
+.ds-action-btn--primary:hover { background: #c96d0a; }
+.ds-action-btn--secondary {
+  background: #f1f5f9;
+  color: #374151;
+  border: 1px solid #e2e8f0;
+}
+.ds-action-btn--secondary:hover { background: #e2e8f0; }
+.ds-action-btn--submitted {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+  cursor: default;
+}
+
+/* ── Empty state ──────────────────────────── */
+.ds-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 60px 20px;
+  color: #9ca3af;
+  text-align: center;
+}
+.ds-empty p {
+  font-size: 14px;
+  margin: 0;
+}
+.ds-empty svg { opacity: 0.4; }
+
+/* ── Breadcrumb ───────────────────────────── */
+.dash-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+.dash-bc-item {
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.dash-bc-item:hover { color: #111827; }
+.dash-bc-current { color: #111827; font-weight: 600; }
+.dash-bc-sep { color: #d1d5db; }
+
+/* ══════════════════════════════════════════════
+   FORM PAGE
+══════════════════════════════════════════════ */
+.ds-form-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 28px;
+}
+
+.ds-form-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 32px;
+}
+
+.ds-form-hd {
+  margin-bottom: 24px;
+}
+.ds-form-hd h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 8px 0 0;
+}
+
+.ds-back {
+  font-size: 13px;
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.ds-back:hover { color: #111827; }
+
+.ds-form-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.ds-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.ds-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+.ds-required { color: #dc2626; }
+.ds-opt { color: #9ca3af; font-weight: 400; }
+
+.ds-hint {
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 0 0 8px;
+}
+
+.ds-input {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  font-size: 13.5px;
+  color: #111827;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+.ds-input:focus {
+  outline: none;
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 3px rgba(21, 80, 190, 0.08);
+}
+.ds-textarea {
+  resize: vertical;
+  min-height: 200px;
+  line-height: 1.6;
+}
+
+.ds-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  color: #374151;
+  cursor: pointer;
+}
+.ds-checkbox-item input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--brand-blue);
+  cursor: pointer;
+}
+
+.ds-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+  padding-top: 20px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.ds-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.ds-btn--primary { background: var(--brand-accent); color: #fff; }
+.ds-btn--primary:hover { background: #c96d0a; }
+.ds-btn--secondary { background: #f1f5f9; color: #374151; border: 1px solid #e2e8f0; }
+.ds-btn--secondary:hover { background: #e2e8f0; }
+.ds-btn--danger { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+.ds-btn--danger:hover { background: #fee2e2; }
+
+/* ══════════════════════════════════════════════
+   WORKSPACE
+══════════════════════════════════════════════ */
+.dash-content--edge {
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.ds-workspace {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Brief panel */
+.ds-brief-panel {
+  width: 300px;
+  min-width: 220px;
+  max-width: 380px;
+  height: 100%;
+  overflow-y: auto;
+  border-right: 1px solid #e5e7eb;
+  background: #fff;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-brief-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ds-brief-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid #f3f4f6;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+}
+
+.ds-brief-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.ds-brief-collapse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: #f3f4f6;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #6b7280;
+  transition: background 0.15s, color 0.15s;
+  padding: 0;
+}
+.ds-brief-collapse:hover { background: #e5e7eb; color: #111827; }
+
+.ds-brief-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.ds-brief-project-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.ds-brief-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ds-brief-text {
+  font-size: 13px;
+  color: #374151;
+  line-height: 1.7;
+}
+.ds-brief-text p { margin: 0 0 10px; }
+.ds-brief-text p:last-child { margin-bottom: 0; }
+
+/* Expand button (vertical strip when collapsed) */
+.ds-brief-expand-btn {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 32px;
+  height: 100%;
+  border: none;
+  border-right: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  letter-spacing: 0.05em;
+  padding: 16px 0;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.ds-brief-expand-btn:hover { background: #f3f4f6; color: #111827; }
+.ds-brief-expand-btn svg {
+  writing-mode: horizontal-tb;
+  flex-shrink: 0;
+}
+
+/* GrapesJS editor area */
+.ds-editor-wrap {
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+.ds-editor-wrap #gjs {
+  width: 100%;
+  height: 100%;
+}
+
+/* GrapesJS overrides for full-height */
+.gjs-editor {
+  height: 100% !important;
+}
+.gjs-editor-cont {
+  height: 100% !important;
+}
+
+/* ── Workspace topbar elements ────────────── */
+.ds-ws-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: 8px;
+}
+
+.ds-save-indicator {
+  font-size: 12px;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+.ds-save-indicator--saving { color: #d97706; }
+.ds-save-indicator--saved  { color: #16a34a; }
+.ds-save-indicator--error  { color: #dc2626; }
+
+.ds-submitted-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #16a34a;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  padding: 5px 12px;
+  white-space: nowrap;
+}
+
+.ds-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  background: var(--brand-accent);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.ds-submit-btn:hover { background: #c96d0a; }
+.ds-submit-btn:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* ══════════════════════════════════════════════
+   SUBMISSIONS LIST
+══════════════════════════════════════════════ */
+.ds-sub-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.ds-sub-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.1s;
+}
+.ds-sub-row:last-child { border-bottom: none; }
+.ds-sub-row:hover { background: #fafafa; }
+
+.ds-sub-student {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ds-sub-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--brand-blue);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.ds-sub-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ds-sub-email {
+  font-size: 12px;
+  color: #9ca3af;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ds-sub-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.ds-sub-date {
+  font-size: 11.5px;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.ds-sub-actions {
+  flex-shrink: 0;
+}
+
+/* ── Badges ───────────────────────────────── */
+.ds-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.ds-badge--in_progress { background: #fffbeb; color: #d97706; }
+.ds-badge--submitted   { background: #f0fdf4; color: #16a34a; }
