@@ -6,6 +6,7 @@ from django.views import View
 
 from utils.view_helper import redirect_to
 from .models import User
+from .service import UserService
 
 
 class SuperuserRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -98,9 +99,12 @@ class UserCreateView(SuperuserRequiredMixin, View):
 class UserUpdateView(SuperuserRequiredMixin, View):
     def get(self, request, pk):
         user_obj = get_object_or_404(User, pk=pk)
+        all_courses, selected_ids = UserService.courses_for_user(user_obj)
         return render(request, 'users/partials/user_form_modal.html', {
-            'role':      user_obj.role,
-            'user_obj':  user_obj,
+            'role':                user_obj.role,
+            'user_obj':            user_obj,
+            'all_courses':         all_courses,
+            'selected_course_ids': selected_ids,
             'form_data': {
                 'first_name': user_obj.first_name,
                 'last_name':  user_obj.last_name,
@@ -117,6 +121,11 @@ class UserUpdateView(SuperuserRequiredMixin, View):
         if new_password:
             user_obj.set_password(new_password)
         user_obj.save()
+
+        # Update course assignments based on role
+        selected_course_ids = request.POST.getlist('courses')
+        UserService.update_course_assignments(user_obj, selected_course_ids)
+
         name = user_obj.get_full_name() or user_obj.email
         messages.success(request, f'User "{name}" updated.')
         resp = HttpResponse()

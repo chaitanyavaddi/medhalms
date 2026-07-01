@@ -15,6 +15,10 @@ class Course(models.Model):
         User, related_name='assigned_courses', blank=True,
         limit_choices_to={'role': 'trainer'},
     )
+    students    = models.ManyToManyField(
+        User, related_name='enrolled_courses', blank=True,
+        limit_choices_to={'role': 'student'},
+    )
     created_by  = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='created_courses',
     )

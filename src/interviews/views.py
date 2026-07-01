@@ -8,7 +8,9 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views import View
 
+from courses.access import get_user_course_ids
 from courses.models import Course
+from users.models import User
 from utils.view_helper import htmx, redirect_to
 
 from .models import Interview, InterviewAnswer, InterviewSession, Question
@@ -17,34 +19,56 @@ from .schemas import InterviewSchema
 FORM_TEMPLATE = 'interviews/form.html'
 
 
+def _can_manage_interview(user):
+    return user.is_superuser or user.role == 'trainer'
+
+
 class InterviewListView(LoginRequiredMixin, View):
     def get(self, request):
+        user = request.user
         interviews = Interview.objects.prefetch_related('questions', 'courses').all()
-        return render(request, 'interviews/list.html', {'interviews': interviews})
+
+        user_course_ids = get_user_course_ids(user)
+        if user_course_ids is not None:
+            accessible_iv_ids = frozenset(
+                Interview.objects.filter(courses__in=user_course_ids).values_list('pk', flat=True)
+            )
+        else:
+            accessible_iv_ids = None
+
+        return render(request, 'interviews/list.html', {
+            'interviews':         interviews,
+            'can_manage':         _can_manage_interview(user),
+            'accessible_iv_ids':  accessible_iv_ids,
+            'is_restricted':      accessible_iv_ids is not None,
+        })
 
 
 class InterviewCreateView(LoginRequiredMixin, View):
-    def _ctx(self, data=None):
+    def _ctx(self, user, data=None):
+        trainer_course_ids = get_user_course_ids(user)
         return {
-            'interview':    None,
-            'courses':      Course.objects.all(),
-            'difficulties': Interview.Difficulty.choices,
-            'data':         data or {},
+            'interview':           None,
+            'courses':             Course.objects.all(),
+            'difficulties':        Interview.Difficulty.choices,
+            'data':                data or {},
+            'trainer_course_ids':  trainer_course_ids,
+            'is_course_restricted': trainer_course_ids is not None,
         }
 
     def get(self, request):
-        if not request.user.is_superuser:
+        if not _can_manage_interview(request.user):
             return HttpResponseForbidden()
-        return render(request, FORM_TEMPLATE, self._ctx())
+        return render(request, FORM_TEMPLATE, self._ctx(request.user))
 
     def post(self, request):
-        if not request.user.is_superuser:
+        if not _can_manage_interview(request.user):
             return HttpResponseForbidden()
         hx     = htmx(request)
         schema = InterviewSchema.from_post(request)
         tmpl   = f'{FORM_TEMPLATE}#interview-form' if hx else FORM_TEMPLATE
         if not schema.is_valid():
-            return render(request, tmpl, self._ctx(data=request.POST))
+            return render(request, tmpl, self._ctx(request.user, data=request.POST))
         iv = Interview.objects.create(
             title          = schema.title,
             persona_prompt = schema.persona_prompt,
@@ -52,48 +76,61 @@ class InterviewCreateView(LoginRequiredMixin, View):
             max_duration   = schema.max_duration,
             created_by     = request.user,
         )
-        iv.courses.set(schema.courses)
+        trainer_course_ids = get_user_course_ids(request.user)
+        allowed_courses = schema.courses
+        if trainer_course_ids is not None:
+            allowed_courses = [c for c in schema.courses if int(c) in trainer_course_ids]
+        iv.courses.set(allowed_courses)
         _save_questions(iv, schema.questions)
         messages.success(request, f'Interview "{iv.title}" created.')
         return redirect_to(request, reverse('interviews:detail', args=[iv.pk]))
 
 
 class InterviewUpdateView(LoginRequiredMixin, View):
-    def _ctx(self, interview, data=None):
+    def _ctx(self, interview, user, data=None):
         d = data or {
             'title':          interview.title,
             'persona_prompt': interview.persona_prompt,
             'difficulty':     interview.difficulty,
             'max_duration':   interview.max_duration,
         }
+        trainer_course_ids = get_user_course_ids(user)
         return {
-            'interview':    interview,
-            'courses':      Course.objects.all(),
-            'difficulties': Interview.Difficulty.choices,
-            'data':         d,
+            'interview':           interview,
+            'courses':             Course.objects.all(),
+            'difficulties':        Interview.Difficulty.choices,
+            'data':                d,
+            'trainer_course_ids':  trainer_course_ids,
+            'is_course_restricted': trainer_course_ids is not None,
         }
 
     def get(self, request, pk):
-        if not request.user.is_superuser:
+        if not _can_manage_interview(request.user):
             return HttpResponseForbidden()
         iv = get_object_or_404(Interview, pk=pk)
-        return render(request, FORM_TEMPLATE, self._ctx(iv))
+        return render(request, FORM_TEMPLATE, self._ctx(iv, request.user))
 
     def post(self, request, pk):
-        if not request.user.is_superuser:
+        if not _can_manage_interview(request.user):
             return HttpResponseForbidden()
         iv     = get_object_or_404(Interview, pk=pk)
         hx     = htmx(request)
         schema = InterviewSchema.from_post(request)
         tmpl   = f'{FORM_TEMPLATE}#interview-form' if hx else FORM_TEMPLATE
         if not schema.is_valid():
-            return render(request, tmpl, self._ctx(iv, data=request.POST))
+            return render(request, tmpl, self._ctx(iv, request.user, data=request.POST))
         iv.title          = schema.title
         iv.persona_prompt = schema.persona_prompt
         iv.difficulty     = schema.difficulty
         iv.max_duration   = schema.max_duration
         iv.save()
-        iv.courses.set(schema.courses)
+        trainer_course_ids = get_user_course_ids(request.user)
+        if trainer_course_ids is not None:
+            existing_other = list(iv.courses.exclude(pk__in=trainer_course_ids).values_list('pk', flat=True))
+            allowed = [c for c in schema.courses if int(c) in trainer_course_ids]
+            iv.courses.set(existing_other + allowed)
+        else:
+            iv.courses.set(schema.courses)
         iv.questions.all().delete()
         _save_questions(iv, schema.questions)
         messages.success(request, f'Interview "{iv.title}" updated.')
@@ -188,16 +225,39 @@ class SessionResultView(LoginRequiredMixin, View):
 
 class InterviewResultsView(LoginRequiredMixin, View):
     def get(self, request):
-        if request.user.is_superuser or request.user.is_staff:
+        user = request.user
+        if user.is_superuser or user.is_staff:
             sessions = (InterviewSession.objects
                         .select_related('interview', 'user')
                         .order_by('-ended_at', '-started_at'))
+            results_label = 'All Interview Sessions'
+            show_student_col = True
+            is_trainer_view  = False
+        elif user.role == 'trainer':
+            # Show interview results for students enrolled in trainer's courses
+            student_ids = (User.objects
+                           .filter(enrolled_courses__in=user.assigned_courses.all())
+                           .values_list('pk', flat=True).distinct())
+            sessions = (InterviewSession.objects
+                        .filter(user__in=student_ids)
+                        .select_related('interview', 'user')
+                        .order_by('-ended_at', '-started_at'))
+            results_label = "Your Students' Interview Results"
+            show_student_col = True
+            is_trainer_view  = True
         else:
             sessions = (InterviewSession.objects
-                        .filter(user=request.user)
+                        .filter(user=user)
                         .select_related('interview')
                         .order_by('-ended_at', '-started_at'))
+            results_label = 'Your Interview Sessions'
+            show_student_col = False
+            is_trainer_view  = False
+
         return render(request, 'interviews/results.html', {
-            'sessions': sessions,
-            'is_admin': request.user.is_superuser or request.user.is_staff,
+            'sessions':         sessions,
+            'is_admin':         user.is_superuser or user.is_staff or user.role == 'trainer',
+            'show_student_col': show_student_col,
+            'results_label':    results_label,
+            'is_trainer_view':  is_trainer_view,
         })

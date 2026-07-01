@@ -1,7 +1,7 @@
 {% extends "dashboard/base.html" %}
 {% load static %}
-{% block title %}My Results{% endblock %}
-{% block topbar_title %}<nav class="dash-breadcrumb"><a href="{% url 'interviews:list' %}" class="dash-bc-item">AI Interviews</a><span class="dash-bc-sep">›</span><span class="dash-bc-item dash-bc-current">My Results</span></nav>{% endblock %}
+{% block title %}Results{% endblock %}
+{% block topbar_title %}<nav class="dash-breadcrumb"><a href="{% url 'interviews:list' %}" class="dash-bc-item">AI Interviews</a><span class="dash-bc-sep">›</span><span class="dash-bc-item dash-bc-current">Results</span></nav>{% endblock %}
 {% block extra_head %}<link rel="stylesheet" href="{% static 'css/interviews.css' %}">{% endblock %}
 {% block content_class %}dash-content--edge{% endblock %}
 
@@ -32,10 +32,17 @@
   <!-- Right main -->
   <div class="ivr-main">
     <div class="ivr-main-hd">
-      <h2 class="ivr-main-title">
-        {% if is_admin %}All Interview Sessions{% else %}Your Interview Sessions{% endif %}
-      </h2>
+      <h2 class="ivr-main-title">{{ results_label }}</h2>
     </div>
+
+    {% if is_trainer_view %}
+    <div class="ivr-trainer-note">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      Showing interview results for students enrolled in your assigned courses only.
+    </div>
+    {% endif %}
 
     <div class="ivr-table-wrap">
       {% if sessions %}
@@ -43,7 +50,7 @@
         <thead>
           <tr>
             <th>Interview</th>
-            {% if is_admin %}<th>Student</th>{% endif %}
+            {% if show_student_col %}<th>Student</th>{% endif %}
             <th>Status</th>
             <th>Score</th>
             <th>Date</th>
@@ -57,8 +64,8 @@
               <strong>{{ s.interview.title }}</strong>
               <br><span style="font-size:11px;color:#9ca3af">{{ s.interview.get_difficulty_display }}</span>
             </td>
-            {% if is_admin %}
-            <td>{{ s.user }}</td>
+            {% if show_student_col %}
+            <td>{{ s.user.get_full_name|default:s.user.email }}</td>
             {% endif %}
             <td>
               {% if s.status == 'completed' %}
@@ -96,4 +103,5 @@
   </div>
 
 </div>
+
 {% endblock %}

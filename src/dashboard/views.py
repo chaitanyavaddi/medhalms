@@ -3,10 +3,13 @@ from django.http import Http404
 from django.shortcuts import render
 from django.views import View
 
+from users.models import User
+
 from .career_paths_data import (
     ALL_ROADMAPS, DEFAULT_ROLE_ID, DEFAULT_SKILL_ID,
     ROLE_GROUPS, ROLE_IDS, SKILL_GROUPS,
 )
+from .service import TrainerDashboardService
 
 
 def _thread_groups(groups):
@@ -16,11 +19,25 @@ def _thread_groups(groups):
     ]
 
 
+class PendingApprovalView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request):
+        return render(request, 'dashboard/pending_approval.html')
+
+
 class HomeView(LoginRequiredMixin, View):
     login_url = '/login/'
 
     def get(self, request):
+        user = request.user
+        if user.role == User.Role.TRAINER and not user.is_superuser:
+            return self._trainer_dashboard(request, user)
         return render(request, 'dashboard/home.html')
+
+    def _trainer_dashboard(self, request, user):
+        ctx = TrainerDashboardService.get_context(user)
+        return render(request, 'dashboard/trainer_home.html', ctx)
 
 
 class CareerPathsView(LoginRequiredMixin, View):

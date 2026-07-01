@@ -1,0 +1,51 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Account Pending Approval{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">{% endblock %}
+
+{% block content %}
+<div class="pending-wrap">
+  <div class="pending-card">
+
+    <div class="pending-icon-ring">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.5"
+           stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+    </div>
+
+    <h1 class="pending-title">Your account is pending approval</h1>
+    <p class="pending-sub">
+      An admin will review your registration and activate your account shortly.
+      You'll have full access to the platform once approved.
+    </p>
+
+    <div class="pending-notice">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.75"
+           stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span>
+        If your approval is delayed beyond <strong>2 days</strong> after clearing the full fee,
+        please reach out to the office directly.
+      </span>
+    </div>
+
+    <div class="pending-meta">
+      Signed in as <strong>{{ request.user.email }}</strong>
+    </div>
+
+    <form method="post" action="{% url 'authentication:logout' %}" style="display:contents">
+      {% csrf_token %}
+      <button type="submit" class="pending-logout">Sign out</button>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

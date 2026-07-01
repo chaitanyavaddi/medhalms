@@ -695,3 +695,8 @@
 .qz-q-choices-preview li { font-size: 12.5px; color: #6b7280; }
 .qz-choice--correct { color: #16a34a !important; font-weight: 600; }
 .qz-q-empty { font-size: 13.5px; color: #9ca3af; padding: 24px; text-align: center; }
+
+/* ── Quiz lock card ───────────────────────────────────────────── */
+.qz-card--locked { opacity: .65; }
+.qz-lock-msg { display: flex; align-items: center; gap: .4rem; font-size: .78rem; color: #9ca3af; }
+.qz-checkbox-item--locked { opacity: .5; cursor: not-allowed; display: flex; align-items: center; }

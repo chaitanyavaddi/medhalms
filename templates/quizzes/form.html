@@ -90,18 +90,33 @@
 
       <div class="qz-field">
         <label class="qz-label">Linked Courses</label>
+        {% if is_course_restricted %}
+        <p class="qz-hint" style="margin-bottom:.5rem">You can only map quizzes to your assigned courses.</p>
+        {% endif %}
         <div class="qz-checkbox-list">
           {% for course in courses %}
+          {% if is_course_restricted and course.pk not in trainer_course_ids %}
+          <label class="qz-checkbox-item qz-checkbox-item--locked" title="Not your assigned course">
+            <input type="checkbox" disabled>
+            {{ course.name }}
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;color:#d1d5db">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </label>
+          {% else %}
           <label class="qz-checkbox-item">
             <input type="checkbox" name="courses" value="{{ course.pk }}"
                    {% if course.pk in selected_course_ids %}checked{% endif %}>
             {{ course.name }}
           </label>
+          {% endif %}
           {% empty %}
           <span class="qz-hint">No courses yet.</span>
           {% endfor %}
         </div>
       </div>
+
 
       <div class="qz-field">
         <label class="qz-label">Options</label>

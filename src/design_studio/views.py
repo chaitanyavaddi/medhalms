@@ -20,7 +20,15 @@ from .models import DesignProject, DesignSubmission, DesignFeedback
 
 
 def _can_manage(user):
-    return user.is_superuser or user.role == 'trainer'
+    """
+    Full design-studio management rights: superuser, staff, admin-role,
+    or trainers assigned to a Digital Marketing course.
+    """
+    if user.is_superuser or user.role in ('admin', 'staff'):
+        return True
+    if user.role == 'trainer':
+        return user.assigned_courses.filter(name__icontains='digital marketing').exists()
+    return False
 
 
 def _parse_tags(tags_str):

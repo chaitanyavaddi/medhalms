@@ -461,3 +461,16 @@
 }
 
 .um-btn-danger:hover { background: #dc2626; }
+
+/* ── User modal — course mapping ─────────────────────────────── */
+.um-course-list {
+  max-height: 180px; overflow-y: auto;
+  border: 1px solid #e5e7eb; border-radius: 6px;
+  padding: .5rem .75rem; display: flex; flex-direction: column; gap: .35rem;
+}
+.um-course-item {
+  display: flex; align-items: center; gap: .5rem;
+  font-size: .84rem; color: #374151; cursor: pointer;
+}
+.um-course-item input[type=checkbox] { flex-shrink: 0; }
+.um-course-name { line-height: 1.3; }

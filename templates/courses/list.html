@@ -17,7 +17,19 @@
   {% if courses %}
   <div class="cl-grid">
     {% for course in courses %}
+    {% if is_restricted and course.pk not in user_course_ids %}
+    <div class="cl-card cl-card--locked" title="You are not enrolled in this course">
+      <div class="cl-card-lock-overlay">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span>Not enrolled</span>
+      </div>
+    {% else %}
     <a href="{% url 'courses:detail' course.pk %}" class="cl-card">
+    {% endif %}
       {% if course.thumbnail %}
       <div class="cl-card-thumb" style="background-image:url({{ course.thumbnail }})"></div>
       {% else %}
@@ -37,7 +49,11 @@
           <span class="cl-card-chapters">{{ course.total_chapters }} chapter{{ course.total_chapters|pluralize }}</span>
         </div>
       </div>
+    {% if is_restricted and course.pk not in user_course_ids %}
+    </div>
+    {% else %}
     </a>
+    {% endif %}
     {% endfor %}
   </div>
 

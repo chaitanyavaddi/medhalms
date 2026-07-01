@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.views import View
 
+from courses.access import get_user_course_ids
 from courses.models import Course
 from ide.models import Lab
 from users.models import User
@@ -74,13 +75,25 @@ def _autograde_attempt(attempt):
 
 class QuizListView(LoginRequiredMixin, View):
     def get(self, request):
-        if _can_manage(request.user):
+        user = request.user
+        if _can_manage(user):
             quizzes = Quiz.objects.prefetch_related('courses').all()
         else:
             quizzes = Quiz.objects.filter(status=Quiz.Status.PUBLISHED).prefetch_related('courses')
+
+        user_course_ids = get_user_course_ids(user)
+        if user_course_ids is not None:
+            accessible_quiz_ids = frozenset(
+                Quiz.objects.filter(courses__in=user_course_ids).values_list('pk', flat=True)
+            )
+        else:
+            accessible_quiz_ids = None
+
         return render(request, 'quizzes/list.html', {
-            'quizzes': quizzes,
-            'can_manage': _can_manage(request.user),
+            'quizzes':             quizzes,
+            'can_manage':          _can_manage(user),
+            'accessible_quiz_ids': accessible_quiz_ids,
+            'is_restricted':       accessible_quiz_ids is not None,
         })
 
 
@@ -98,18 +111,21 @@ _FDATA_DEFAULTS = {
 class QuizCreateView(LoginRequiredMixin, View):
     TEMPLATE = 'quizzes/form.html'
 
-    def _ctx(self, fdata=None):
+    def _ctx(self, user, fdata=None, selected_ids=None):
+        trainer_course_ids = get_user_course_ids(user)
         return {
-            'quiz': None,
-            'courses': Course.objects.filter(is_deleted=False).order_by('name'),
-            'selected_course_ids': set(),
-            'fdata': {**_FDATA_DEFAULTS, **(fdata or {})},
+            'quiz':                None,
+            'courses':             Course.objects.filter(is_deleted=False).order_by('name'),
+            'selected_course_ids': selected_ids or set(),
+            'fdata':               {**_FDATA_DEFAULTS, **(fdata or {})},
+            'trainer_course_ids':  trainer_course_ids,
+            'is_course_restricted': trainer_course_ids is not None,
         }
 
     def get(self, request):
         if not _can_manage(request.user):
             return HttpResponseForbidden()
-        return render(request, self.TEMPLATE, self._ctx())
+        return render(request, self.TEMPLATE, self._ctx(request.user))
 
     def post(self, request):
         if not _can_manage(request.user):
@@ -130,7 +146,12 @@ class QuizCreateView(LoginRequiredMixin, View):
         }
         if not fdata['title']:
             messages.error(request, 'Quiz title is required.')
-            return render(request, self.TEMPLATE, self._ctx(fdata))
+            return render(request, self.TEMPLATE, self._ctx(request.user, fdata))
+        # Trainers can only link to their own assigned courses
+        trainer_course_ids = get_user_course_ids(request.user)
+        allowed_courses = fdata['courses']
+        if trainer_course_ids is not None:
+            allowed_courses = [c for c in fdata['courses'] if int(c) in trainer_course_ids]
         quiz = Quiz.objects.create(
             title=fdata['title'],
             description=fdata['description'],
@@ -145,8 +166,8 @@ class QuizCreateView(LoginRequiredMixin, View):
             shuffle_questions=fdata['shuffle_questions'],
             created_by=request.user,
         )
-        if fdata['courses']:
-            quiz.courses.set(fdata['courses'])
+        if allowed_courses:
+            quiz.courses.set(allowed_courses)
         messages.success(request, f'Quiz "{quiz.title}" created.')
         return redirect_to(request, reverse('quizzes:builder', kwargs={'pk': quiz.pk}))
 
@@ -154,20 +175,23 @@ class QuizCreateView(LoginRequiredMixin, View):
 class QuizUpdateView(LoginRequiredMixin, View):
     TEMPLATE = 'quizzes/form.html'
 
-    def _ctx(self, quiz, fdata=None):
+    def _ctx(self, quiz, user, fdata=None):
         selected_ids = set(quiz.courses.values_list('pk', flat=True)) if quiz else set()
+        trainer_course_ids = get_user_course_ids(user)
         return {
-            'quiz': quiz,
-            'courses': Course.objects.filter(is_deleted=False).order_by('name'),
+            'quiz':                quiz,
+            'courses':             Course.objects.filter(is_deleted=False).order_by('name'),
             'selected_course_ids': selected_ids,
-            'fdata': {**_FDATA_DEFAULTS, **(fdata or {})},
+            'fdata':               {**_FDATA_DEFAULTS, **(fdata or {})},
+            'trainer_course_ids':  trainer_course_ids,
+            'is_course_restricted': trainer_course_ids is not None,
         }
 
     def get(self, request, pk):
         if not _can_manage(request.user):
             return HttpResponseForbidden()
         quiz = get_object_or_404(Quiz, pk=pk)
-        return render(request, self.TEMPLATE, self._ctx(quiz))
+        return render(request, self.TEMPLATE, self._ctx(quiz, request.user))
 
     def post(self, request, pk):
         if not _can_manage(request.user):
@@ -176,7 +200,7 @@ class QuizUpdateView(LoginRequiredMixin, View):
         title = request.POST.get('title', '').strip()
         if not title:
             messages.error(request, 'Quiz title is required.')
-            return render(request, self.TEMPLATE, self._ctx(quiz))
+            return render(request, self.TEMPLATE, self._ctx(quiz, request.user))
         quiz.title             = title
         quiz.description       = request.POST.get('description', '').strip()
         quiz.quiz_type         = request.POST.get('quiz_type', quiz.quiz_type)
@@ -194,7 +218,16 @@ class QuizUpdateView(LoginRequiredMixin, View):
         quiz.passing_score     = int(ps) if ps.isdigit() else 70
         quiz.shuffle_questions = bool(request.POST.get('shuffle_questions'))
         quiz.save()
-        quiz.courses.set(request.POST.getlist('courses'))
+        # Trainers can only set courses they're assigned to
+        trainer_course_ids = get_user_course_ids(request.user)
+        submitted = request.POST.getlist('courses')
+        if trainer_course_ids is not None:
+            # Keep existing non-trainer courses, add/remove only trainer's own
+            existing_other = list(quiz.courses.exclude(pk__in=trainer_course_ids).values_list('pk', flat=True))
+            allowed = [c for c in submitted if int(c) in trainer_course_ids]
+            quiz.courses.set(existing_other + allowed)
+        else:
+            quiz.courses.set(submitted)
         messages.success(request, f'Quiz "{quiz.title}" updated.')
         return redirect_to(request, reverse('quizzes:builder', kwargs={'pk': quiz.pk}))
 

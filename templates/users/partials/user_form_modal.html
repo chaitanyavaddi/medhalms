@@ -74,6 +74,26 @@
                {% if not user_obj %}required{% endif %}>
       </div>
 
+      {% if user_obj and all_courses and user_obj.role in 'trainer,student' %}
+      <div class="um-form-field">
+        <label>
+          {% if user_obj.role == 'trainer' %}Assigned Courses{% else %}Enrolled Courses{% endif %}
+          <span class="um-hint">(select one or more)</span>
+        </label>
+        <div class="um-course-list">
+          {% for course in all_courses %}
+          <label class="um-course-item">
+            <input type="checkbox" name="courses" value="{{ course.pk }}"
+                   {% if course.pk in selected_course_ids %}checked{% endif %}>
+            <span class="um-course-name">{{ course.name }}</span>
+          </label>
+          {% empty %}
+          <span class="um-hint">No courses yet.</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
       <div class="um-form-actions">
         <button type="button" class="um-btn-secondary"
                 onclick="document.getElementById('um-modal-slot').innerHTML=''">Cancel</button>
@@ -82,5 +102,6 @@
         </button>
       </div>
     </form>
+
   </div>
 </div>

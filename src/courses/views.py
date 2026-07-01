@@ -11,6 +11,7 @@ from django.views import View
 from utils.view_helper import htmx, redirect_to
 
 from users.models import User
+from .access import can_access_course, get_user_course_ids
 from .models import Chapter, Course, Module
 
 
@@ -49,7 +50,12 @@ def _renumber_chapters(module):
 class CourseListView(LoginRequiredMixin, View):
     def get(self, request):
         courses = Course.objects.prefetch_related('trainers').filter(is_deleted=False)
-        return render(request, 'courses/list.html', {'courses': courses})
+        user_course_ids = get_user_course_ids(request.user)
+        return render(request, 'courses/list.html', {
+            'courses':         courses,
+            'user_course_ids': user_course_ids if user_course_ids is not None else None,
+            'is_restricted':   user_course_ids is not None,
+        })
 
 
 class CourseCreateView(LoginRequiredMixin, View):
@@ -163,6 +169,9 @@ class CourseDeleteView(LoginRequiredMixin, View):
 class CourseDetailView(LoginRequiredMixin, View):
     def get(self, request, pk):
         course = get_object_or_404(Course, pk=pk, is_deleted=False)
+        if not can_access_course(request.user, course):
+            messages.error(request, "You don't have access to this course.")
+            return redirect_to(request, 'courses:list')
         first  = course.first_chapter
         if first:
             return redirect_to(request, reverse('courses:chapter', kwargs={'pk': course.pk, 'chapter_pk': first.pk}))
@@ -176,6 +185,9 @@ class CourseDetailView(LoginRequiredMixin, View):
 class ChapterDetailView(LoginRequiredMixin, View):
     def get(self, request, pk, chapter_pk):
         course  = get_object_or_404(Course, pk=pk, is_deleted=False)
+        if not can_access_course(request.user, course):
+            messages.error(request, "You don't have access to this course.")
+            return redirect_to(request, 'courses:list')
         chapter = get_object_or_404(Chapter, pk=chapter_pk, module__course=course)
         return render(request, 'courses/detail.html', {
             'course':         course,

@@ -46,6 +46,8 @@ class LoginView(View):
             messages.error(request, 'Invalid email or password')
             return render(request, template, ctx)
         login(request, user, backend=backend)
+        if user.role == User.Role.STUDENT and user.status == User.Status.PENDING:
+            return redirect_to(request, 'dashboard:pending_approval')
         messages.success(request, f'Welcome back, {user.first_name or user.email}!')
         return redirect_to(request, 'dashboard:index')
 
@@ -70,11 +72,12 @@ class SignupView(View):
             password=schema.password,
             first_name=schema.first_name,
             last_name=schema.last_name,
+            status=User.Status.PENDING,
         )
         send_welcome_email.enqueue(user.email)
         login(request, user, backend=backend)
-        messages.success(request, f'Welcome to {settings.SITE_NAME}, {user.first_name or user.email}!')
-        return redirect_to(request, 'dashboard:index')
+        messages.success(request, f'Welcome to {settings.SITE_NAME}, {user.first_name or user.email}! Your account is pending admin approval.')
+        return redirect_to(request, 'dashboard:pending_approval')
 
 
 class LogoutView(View):
@@ -219,9 +222,12 @@ class GoogleCallbackView(View):
                 'first_name': info.get('given_name', ''),
                 'last_name':  info.get('family_name', ''),
                 'avatar':     info.get('picture', ''),
+                'status':     User.Status.PENDING,
             },
         )
         if created:
             send_welcome_email.enqueue(user.email)
         login(request, user, backend=backend)
+        if user.role == User.Role.STUDENT and user.status == User.Status.PENDING:
+            return redirect('dashboard:pending_approval')
         return redirect('dashboard:index')

@@ -12,7 +12,7 @@
       <h1 class="iv-page-title">Practice Interviews</h1>
       <p class="iv-page-sub">AI-powered mock interviews. Push to talk, get instant feedback.</p>
     </div>
-    {% if request.user.is_superuser %}
+    {% if can_manage %}
     <a href="{% url 'interviews:create' %}" class="iv-admin-create-btn">+ Create Interview</a>
     {% endif %}
   </div>
@@ -20,6 +20,29 @@
   {% if interviews %}
   <div class="iv-grid">
     {% for iv in interviews %}
+    {% if is_restricted and iv.pk not in accessible_iv_ids %}
+    <div class="iv-card iv-card--locked">
+      <div class="iv-card-top">
+        <span class="iv-badge iv-badge--{{ iv.difficulty }}">{{ iv.get_difficulty_display }}</span>
+        <span class="iv-card-duration">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {{ iv.max_duration }} min
+        </span>
+      </div>
+      <h3 class="iv-card-title">{{ iv.title }}</h3>
+      {% if iv.courses.all %}
+      <div class="iv-card-courses">
+        {% for c in iv.courses.all %}<span class="iv-course-tag">{{ c.name }}</span>{% endfor %}
+      </div>
+      {% endif %}
+      <div class="iv-card-lock">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Not available for your courses
+      </div>
+    </div>
+    {% else %}
     <div class="iv-card">
       <div class="iv-card-top">
         <span class="iv-badge iv-badge--{{ iv.difficulty }}">{{ iv.get_difficulty_display }}</span>
@@ -38,8 +61,16 @@
         {% for c in iv.courses.all %}<span class="iv-course-tag">{{ c.name }}</span>{% endfor %}
       </div>
       {% endif %}
+      {% if can_manage %}
+      <div class="iv-card-actions">
+        <a href="{% url 'interviews:edit' iv.pk %}" class="iv-card-btn iv-card-btn--secondary">Edit</a>
+        <a href="{% url 'interviews:detail' iv.pk %}" class="iv-card-btn">Start</a>
+      </div>
+      {% else %}
       <a href="{% url 'interviews:detail' iv.pk %}" class="iv-card-btn">Start Interview</a>
+      {% endif %}
     </div>
+    {% endif %}
     {% endfor %}
   </div>
   {% else %}
@@ -50,4 +81,5 @@
   {% endif %}
 
 </div>
+
 {% endblock %}

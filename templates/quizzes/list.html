@@ -26,6 +26,28 @@
   {% if quizzes %}
   <div class="qz-list">
     {% for quiz in quizzes %}
+    {% if is_restricted and quiz.pk not in accessible_quiz_ids %}
+    <div class="qz-card qz-card--locked">
+      <div class="qz-card-body">
+        <div class="qz-card-top">
+          <span class="qz-badge qz-badge--{{ quiz.quiz_type }}">{{ quiz.get_quiz_type_display }}</span>
+          <span class="qz-badge qz-badge--{{ quiz.difficulty }}">{{ quiz.get_difficulty_display }}</span>
+        </div>
+        <h3 class="qz-card-title">{{ quiz.title }}</h3>
+        {% if quiz.description %}<p class="qz-card-desc">{{ quiz.description|truncatewords:20 }}</p>{% endif %}
+      </div>
+      <div class="qz-card-actions">
+        <span class="qz-lock-msg">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Not available for your courses
+        </span>
+      </div>
+    </div>
+    {% else %}
     <div class="qz-card">
       <div class="qz-card-body">
         <div class="qz-card-top">
@@ -61,6 +83,7 @@
         {% endif %}
       </div>
     </div>
+    {% endif %}
     {% endfor %}
   </div>
 
