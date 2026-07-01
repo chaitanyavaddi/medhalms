@@ -19,60 +19,103 @@
 {% endblock %}
 
 {% block content %}
-<div class="ds-ws-topbar-right" id="ds-ws-topbar-right">
-  <span class="ds-save-indicator" id="ds-save-indicator">
-    {% if submission.last_saved_at %}Saved{% else %}Not saved yet{% endif %}
-  </span>
-  {% if submission.status == 'submitted' %}
-  <span class="ds-submitted-badge">✓ Submitted on {{ submission.submitted_at|date:"M d, Y" }}</span>
-  {% else %}
-  <button type="button" class="ds-submit-btn" id="ds-submit-btn" onclick="dsSubmit()">Submit Project</button>
-  {% endif %}
-</div>
+<div class="ds-ws">
 
-<div class="ds-workspace">
-
-  <!-- Left: Question / brief panel -->
-  <div class="ds-brief-panel" id="ds-brief-panel">
-    <div class="ds-brief-inner">
-      <div class="ds-brief-hd">
-        <h3 class="ds-brief-title">Project Brief</h3>
-        <button type="button" class="ds-brief-collapse" id="ds-brief-toggle" title="Collapse panel" onclick="dsBriefToggle()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"/>
-          </svg>
-        </button>
-      </div>
-      <div class="ds-brief-content" id="ds-brief-content">
-        <h4 class="ds-brief-project-title">{{ project.title }}</h4>
-        {% if project_tags %}
-        <div class="ds-brief-tags">
-          {% for tag in project_tags %}<span class="ds-tag">{{ tag }}</span>{% endfor %}
-        </div>
-        {% endif %}
-        <div class="ds-brief-text">{{ project.description|linebreaks }}</div>
-      </div>
+  <!-- Tab bar -->
+  <div class="ds-ws-tabbar">
+    <div class="ds-ws-tabs">
+      <button type="button" class="ds-ws-tab is-active" id="ds-tab-brief-btn" onclick="dsTab('brief')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Brief
+      </button>
+      <button type="button" class="ds-ws-tab" id="ds-tab-builder-btn" onclick="dsTab('builder')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Builder
+      </button>
+    </div>
+    <div class="ds-ws-tabbar-right">
+      <span class="ds-save-indicator" id="ds-save-indicator">
+        {% if submission.last_saved_at %}Saved{% else %}Not saved yet{% endif %}
+      </span>
+      {% if submission.status == 'submitted' %}
+      <span class="ds-submitted-badge">✓ Submitted {{ submission.submitted_at|date:"M d, Y" }}</span>
+      {% elif submission.status == 'approved' %}
+      <span class="ds-submitted-badge ds-submitted-badge--approved">✓ Approved</span>
+      {% elif submission.status == 'needs_revision' %}
+      <span class="ds-ws-revision-badge">⚠ Needs Revision</span>
+      <button type="button" class="ds-submit-btn" id="ds-submit-btn" onclick="dsSubmit()">Resubmit</button>
+      {% else %}
+      <button type="button" class="ds-submit-btn" id="ds-submit-btn" onclick="dsSubmit()">Submit Project</button>
+      {% endif %}
     </div>
   </div>
 
-  <!-- Collapsed toggle handle (shown when collapsed) -->
-  <button type="button" class="ds-brief-expand-btn" id="ds-brief-expand" onclick="dsBriefToggle()" title="Expand brief" style="display:none">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="9 18 15 12 9 6"/>
-    </svg>
-    <span>Brief</span>
-  </button>
+  <!-- Panel body — both panels stack via absolute positioning so GrapesJS always has real dimensions -->
+  <div class="ds-ws-body">
 
-  <!-- Right: GrapesJS editor -->
-  <div class="ds-editor-wrap" id="ds-editor-wrap">
-    <div id="gjs"></div>
+    <!-- Builder panel — always in DOM at full size, hidden under brief until tab switch -->
+    <div class="ds-ws-panel ds-ws-panel--builder is-hidden" id="ds-panel-builder">
+      <div id="gjs"></div>
+    </div>
+
+    <!-- Brief panel — visible by default -->
+    <div class="ds-ws-panel ds-ws-panel--brief" id="ds-panel-brief">
+      <div class="ds-brief-body">
+        <div class="ds-brief-tags-row">
+          {% for tag in project_tags %}<span class="ds-tag">{{ tag }}</span>{% endfor %}
+        </div>
+        <h2 class="ds-brief-heading">{{ project.title }}</h2>
+        <div class="ds-brief-text">{{ project.description|safe }}</div>
+        {% if feedback_entries %}
+        <div class="ds-ws-feedback-section">
+          <h3 class="ds-ws-feedback-heading">Feedback from your trainer</h3>
+          <div class="ds-feedback-thread">
+            {% for fb in feedback_entries %}
+            <div class="ds-fb-entry ds-fb-entry--{{ fb.action }}">
+              <div class="ds-fb-header">
+                <div class="ds-sub-avatar" style="width:28px;height:28px;font-size:10px">
+                  {{ fb.author.first_name|first|upper }}{{ fb.author.last_name|first|upper }}
+                </div>
+                <div>
+                  <span class="ds-fb-author">{{ fb.author.get_full_name }}</span>
+                  <span class="ds-fb-action ds-fb-action--{{ fb.action }}">
+                    {% if fb.action == 'approved' %}Approved{% else %}Sent Back{% endif %}
+                  </span>
+                </div>
+                <span class="ds-fb-date">{{ fb.created_at|date:"M d, Y" }}</span>
+              </div>
+              {% if fb.comment %}
+              <p class="ds-fb-comment">{{ fb.comment }}</p>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div><!-- /.ds-ws-body -->
+
+</div><!-- /.ds-ws -->
+
+<!-- Submit Modal -->
+<div class="modal-overlay" id="ds-modal-submit" hidden onclick="if(event.target===this)this.hidden=true">
+  <div class="modal-box">
+    <h3 class="modal-title">Submit Project</h3>
+    <p class="modal-desc">Once submitted, you will not be able to edit your work. Make sure everything looks good before submitting.</p>
+    <p class="modal-desc" id="ds-modal-submit-error" hidden style="color:#dc2626;margin-top:-.5rem">Submission failed. Please try again.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" onclick="document.getElementById('ds-modal-submit').hidden=true">Cancel</button>
+      <button type="button" class="btn btn-primary" onclick="dsConfirmSubmit()">Submit Project</button>
+    </div>
   </div>
-
 </div>
 
 <script src="https://unpkg.com/grapesjs@0.21.13/dist/grapes.min.js"></script>
 <script src="https://unpkg.com/grapesjs-blocks-basic@1.0.2/dist/index.js"></script>
 <script src="https://unpkg.com/grapesjs-preset-webpage@1.0.3/dist/index.js"></script>
+<script src="https://unpkg.com/grapesjs-plugin-forms@2.0.6/dist/index.js"></script>
 
 <script>
 (function(){
@@ -80,12 +123,10 @@
   var AUTOSAVE_URL = '{% url "design_studio:autosave" project.pk %}';
   var SUBMIT_URL   = '{% url "design_studio:submit" project.pk %}';
   var ASSET_URL    = '{% url "design_studio:asset_upload" %}';
-  var IS_SUBMITTED = {% if submission.status == 'submitted' %}true{% else %}false{% endif %};
+  var IS_SUBMITTED = {% if submission.status == 'submitted' or submission.status == 'approved' %}true{% else %}false{% endif %};
   var savedData    = {{ grapes_json|safe }};
 
-  // Safe plugin loading — handle both UMD global names and string fallbacks
-  var plugins = [];
-  var pluginsOpts = {};
+  var plugins = [], pluginsOpts = {};
   if (typeof window.grapejsBlocksBasic !== 'undefined') {
     plugins.push(window.grapejsBlocksBasic);
     pluginsOpts[window.grapejsBlocksBasic] = { flexGrid: true };
@@ -99,6 +140,13 @@
   } else {
     plugins.push('gjs-preset-webpage');
     pluginsOpts['gjs-preset-webpage'] = {};
+  }
+  if (typeof window.grapejsPluginForms !== 'undefined') {
+    plugins.push(window.grapejsPluginForms);
+    pluginsOpts[window.grapejsPluginForms] = {};
+  } else {
+    plugins.push('grapesjs-plugin-forms');
+    pluginsOpts['grapesjs-plugin-forms'] = {};
   }
 
   var editor = grapesjs.init({
@@ -124,27 +172,353 @@
     },
   });
 
-  // Load existing data
   if (savedData && Object.keys(savedData).length > 0) {
     editor.loadProjectData(savedData);
   }
 
-  // Auto-save
+  editor.on('load', function() {
+    editor.runCommand('open-blocks');
+  });
+
+  // ── Custom section blocks ──────────────────────────────────
+  (function(e) {
+    var S = 'Sections', N = 'Navigation', F = 'Footer', FM = 'Forms';
+    function blk(id, label, cat, html) {
+      e.Blocks.add(id, { label: label, category: cat, content: html });
+    }
+
+    blk('hero-dark', 'Hero - Dark', S,
+      '<section style="background:#0f172a;color:#fff;padding:96px 24px;text-align:center;font-family:sans-serif">' +
+        '<p style="font-size:12px;font-weight:700;letter-spacing:.12em;color:#60a5fa;text-transform:uppercase;margin:0 0 18px">Your Category · Your Brand</p>' +
+        '<h1 style="font-size:50px;font-weight:800;line-height:1.15;margin:0 auto 24px;max-width:720px">The Headline That Makes People Stop Scrolling</h1>' +
+        '<p style="font-size:18px;color:#94a3b8;line-height:1.7;max-width:560px;margin:0 auto 40px">A compelling subheadline that explains your unique value. Keep it short, outcome-focused, and human.</p>' +
+        '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">' +
+          '<a href="#" style="padding:14px 32px;background:#3b82f6;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:15px">Get Started Free</a>' +
+          '<a href="#" style="padding:14px 32px;background:transparent;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:15px;border:2px solid rgba(255,255,255,.25)">See a Demo</a>' +
+        '</div>' +
+      '</section>'
+    );
+
+    blk('hero-light', 'Hero - Light', S,
+      '<section style="background:#fff;padding:96px 24px;text-align:center;font-family:sans-serif;border-bottom:1px solid #f1f5f9">' +
+        '<p style="font-size:12px;font-weight:700;letter-spacing:.12em;color:#6366f1;text-transform:uppercase;margin:0 0 18px">Introducing Something New</p>' +
+        '<h1 style="font-size:50px;font-weight:800;line-height:1.15;color:#0f172a;margin:0 auto 24px;max-width:720px">Your Headline That Drives Action</h1>' +
+        '<p style="font-size:18px;color:#64748b;line-height:1.7;max-width:560px;margin:0 auto 40px">A short subheadline that speaks directly to the reader\'s pain point and your solution.</p>' +
+        '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">' +
+          '<a href="#" style="padding:14px 32px;background:#0f172a;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:15px">Start for Free</a>' +
+          '<a href="#" style="padding:14px 32px;background:transparent;color:#0f172a;text-decoration:none;border-radius:8px;font-weight:700;font-size:15px;border:2px solid #e2e8f0">Learn More</a>' +
+        '</div>' +
+        '<p style="margin-top:24px;font-size:13px;color:#94a3b8">No credit card required · Free forever plan</p>' +
+      '</section>'
+    );
+
+    blk('hero-split', 'Hero - Split', S,
+      '<section style="background:#fff;padding:80px 60px;display:flex;align-items:center;gap:72px;font-family:sans-serif;max-width:1200px;margin:0 auto;box-sizing:border-box">' +
+        '<div style="flex:1;min-width:0">' +
+          '<span style="display:inline-block;padding:4px 12px;background:#eff6ff;color:#2563eb;font-size:12px;font-weight:700;border-radius:20px;margin-bottom:20px;letter-spacing:.05em;text-transform:uppercase">New Launch</span>' +
+          '<h1 style="font-size:44px;font-weight:800;line-height:1.2;color:#0f172a;margin:0 0 20px">Build Something Your Users Will Love</h1>' +
+          '<p style="font-size:16px;color:#475569;line-height:1.75;margin:0 0 32px">Your value proposition in two sentences. Focus on the outcome your user gets, not just what the product does.</p>' +
+          '<div style="display:flex;gap:12px;flex-wrap:wrap">' +
+            '<a href="#" style="padding:13px 28px;background:#f97316;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:15px">Start Free Trial</a>' +
+            '<a href="#" style="padding:13px 28px;background:#f8fafc;color:#374151;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;border:1px solid #e2e8f0">Book a Demo</a>' +
+          '</div>' +
+          '<p style="margin-top:18px;font-size:12px;color:#9ca3af">Trusted by 10,000+ companies worldwide</p>' +
+        '</div>' +
+        '<div style="flex:1;min-width:0;background:#f1f5f9;border-radius:16px;min-height:340px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px;font-family:sans-serif">Image / Screenshot</div>' +
+      '</section>'
+    );
+
+    blk('features-3col', 'Features - 3 Column', S,
+      '<section style="padding:80px 24px;background:#f8fafc;font-family:sans-serif">' +
+        '<div style="text-align:center;max-width:600px;margin:0 auto 52px">' +
+          '<h2 style="font-size:36px;font-weight:800;color:#0f172a;margin:0 0 16px">Everything You Need</h2>' +
+          '<p style="font-size:16px;color:#64748b;line-height:1.7;margin:0">A short sentence describing what makes your product different.</p>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;margin:0 auto">' +
+          '<div style="background:#fff;border-radius:14px;padding:32px;border:1px solid #e2e8f0">' +
+            '<div style="width:48px;height:48px;background:#eff6ff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px">&#9889;</div>' +
+            '<h3 style="font-size:17px;font-weight:700;color:#0f172a;margin:0 0 10px">Fast Performance</h3>' +
+            '<p style="font-size:14px;color:#64748b;line-height:1.65;margin:0">Describe this feature\'s benefit clearly. Focus on what the user gains.</p>' +
+          '</div>' +
+          '<div style="background:#fff;border-radius:14px;padding:32px;border:1px solid #e2e8f0">' +
+            '<div style="width:48px;height:48px;background:#f0fdf4;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px">&#128274;</div>' +
+            '<h3 style="font-size:17px;font-weight:700;color:#0f172a;margin:0 0 10px">Secure by Default</h3>' +
+            '<p style="font-size:14px;color:#64748b;line-height:1.65;margin:0">Describe this feature\'s benefit clearly. Focus on what the user gains.</p>' +
+          '</div>' +
+          '<div style="background:#fff;border-radius:14px;padding:32px;border:1px solid #e2e8f0">' +
+            '<div style="width:48px;height:48px;background:#fdf4ff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px">&#128202;</div>' +
+            '<h3 style="font-size:17px;font-weight:700;color:#0f172a;margin:0 0 10px">Deep Analytics</h3>' +
+            '<p style="font-size:14px;color:#64748b;line-height:1.65;margin:0">Describe this feature\'s benefit clearly. Focus on what the user gains.</p>' +
+          '</div>' +
+        '</div>' +
+      '</section>'
+    );
+
+    blk('features-split', 'Feature - Image + Text', S,
+      '<section style="padding:80px 60px;background:#fff;display:flex;align-items:center;gap:72px;max-width:1200px;margin:0 auto;box-sizing:border-box;font-family:sans-serif">' +
+        '<div style="flex:1;min-width:0;background:#f1f5f9;border-radius:16px;min-height:320px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px">Image / Screenshot</div>' +
+        '<div style="flex:1;min-width:0">' +
+          '<p style="font-size:12px;font-weight:700;letter-spacing:.1em;color:#6366f1;text-transform:uppercase;margin:0 0 16px">Feature Highlight</p>' +
+          '<h2 style="font-size:36px;font-weight:800;color:#0f172a;margin:0 0 20px;line-height:1.2">A Feature That Solves a Real Problem</h2>' +
+          '<p style="font-size:16px;color:#475569;line-height:1.75;margin:0 0 28px">Describe the feature and its benefit in 2-3 sentences. Make it concrete: what does the user get to do?</p>' +
+          '<ul style="margin:0;padding:0;list-style:none">' +
+            '<li style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;font-size:14px;color:#374151"><span style="color:#22c55e;font-weight:700">&#10003;</span> Benefit one — what the user gains</li>' +
+            '<li style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;font-size:14px;color:#374151"><span style="color:#22c55e;font-weight:700">&#10003;</span> Benefit two — what the user gains</li>' +
+            '<li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#374151"><span style="color:#22c55e;font-weight:700">&#10003;</span> Benefit three — what the user gains</li>' +
+          '</ul>' +
+        '</div>' +
+      '</section>'
+    );
+
+    blk('stats-row', 'Stats Row', S,
+      '<section style="padding:60px 24px;background:#0f172a;font-family:sans-serif">' +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:32px;max-width:1000px;margin:0 auto;text-align:center">' +
+          '<div><p style="font-size:44px;font-weight:800;color:#60a5fa;margin:0 0 8px">10K+</p><p style="font-size:14px;color:#94a3b8;margin:0">Happy Customers</p></div>' +
+          '<div><p style="font-size:44px;font-weight:800;color:#34d399;margin:0 0 8px">99.9%</p><p style="font-size:14px;color:#94a3b8;margin:0">Uptime SLA</p></div>' +
+          '<div><p style="font-size:44px;font-weight:800;color:#f472b6;margin:0 0 8px">4.9★</p><p style="font-size:14px;color:#94a3b8;margin:0">App Store Rating</p></div>' +
+          '<div><p style="font-size:44px;font-weight:800;color:#fbbf24;margin:0 0 8px">24/7</p><p style="font-size:14px;color:#94a3b8;margin:0">Customer Support</p></div>' +
+        '</div>' +
+      '</section>'
+    );
+
+    blk('testimonials', 'Testimonials', S,
+      '<section style="padding:80px 24px;background:#f8fafc;font-family:sans-serif">' +
+        '<div style="text-align:center;max-width:600px;margin:0 auto 52px">' +
+          '<h2 style="font-size:36px;font-weight:800;color:#0f172a;margin:0 0 14px">What Our Customers Say</h2>' +
+          '<p style="font-size:16px;color:#64748b;margin:0">Real results from real people.</p>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;margin:0 auto">' +
+          '<div style="background:#fff;border-radius:14px;padding:32px;border:1px solid #e2e8f0">' +
+            '<div style="color:#fbbf24;font-size:18px;margin-bottom:16px">&#9733;&#9733;&#9733;&#9733;&#9733;</div>' +
+            '<p style="font-size:15px;color:#374151;line-height:1.75;margin:0 0 24px;font-style:italic">"This product completely transformed how our team works. We saved 15 hours a week from the very first month."</p>' +
+            '<div style="display:flex;align-items:center;gap:12px">' +
+              '<div style="width:42px;height:42px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-weight:700;color:#2563eb;font-size:14px">AK</div>' +
+              '<div><p style="margin:0;font-size:14px;font-weight:700;color:#0f172a">Ananya Kumar</p><p style="margin:0;font-size:12px;color:#94a3b8">Marketing Manager, TechCorp</p></div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="background:#fff;border-radius:14px;padding:32px;border:1px solid #e2e8f0">' +
+            '<div style="color:#fbbf24;font-size:18px;margin-bottom:16px">&#9733;&#9733;&#9733;&#9733;&#9733;</div>' +
+            '<p style="font-size:15px;color:#374151;line-height:1.75;margin:0 0 24px;font-style:italic">"I was sceptical at first, but within 2 weeks we saw a 40% increase in conversions. Absolutely recommend."</p>' +
+            '<div style="display:flex;align-items:center;gap:12px">' +
+              '<div style="width:42px;height:42px;border-radius:50%;background:#d1fae5;display:flex;align-items:center;justify-content:center;font-weight:700;color:#059669;font-size:14px">RS</div>' +
+              '<div><p style="margin:0;font-size:14px;font-weight:700;color:#0f172a">Rahul Singh</p><p style="margin:0;font-size:12px;color:#94a3b8">Founder, GrowthLab</p></div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="background:#fff;border-radius:14px;padding:32px;border:1px solid #e2e8f0">' +
+            '<div style="color:#fbbf24;font-size:18px;margin-bottom:16px">&#9733;&#9733;&#9733;&#9733;&#9733;</div>' +
+            '<p style="font-size:15px;color:#374151;line-height:1.75;margin:0 0 24px;font-style:italic">"The best investment we made this year. Our team loves using it and our clients notice the difference."</p>' +
+            '<div style="display:flex;align-items:center;gap:12px">' +
+              '<div style="width:42px;height:42px;border-radius:50%;background:#fae8ff;display:flex;align-items:center;justify-content:center;font-weight:700;color:#9333ea;font-size:14px">PM</div>' +
+              '<div><p style="margin:0;font-size:14px;font-weight:700;color:#0f172a">Priya Mehta</p><p style="margin:0;font-size:12px;color:#94a3b8">CEO, DesignFirst Agency</p></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</section>'
+    );
+
+    blk('pricing', 'Pricing Table', S,
+      '<section style="padding:80px 24px;background:#fff;font-family:sans-serif">' +
+        '<div style="text-align:center;max-width:600px;margin:0 auto 52px">' +
+          '<h2 style="font-size:36px;font-weight:800;color:#0f172a;margin:0 0 16px">Simple, Transparent Pricing</h2>' +
+          '<p style="font-size:16px;color:#64748b;margin:0">No hidden fees. No surprises. Cancel anytime.</p>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1000px;margin:0 auto;align-items:start">' +
+          '<div style="border:1px solid #e2e8f0;border-radius:16px;padding:32px">' +
+            '<p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin:0 0 12px">Starter</p>' +
+            '<p style="font-size:40px;font-weight:800;color:#0f172a;margin:0 0 4px">Free</p>' +
+            '<p style="font-size:13px;color:#94a3b8;margin:0 0 24px">Free forever</p>' +
+            '<a href="#" style="display:block;text-align:center;padding:11px;background:#f1f5f9;color:#374151;text-decoration:none;border-radius:8px;font-weight:600;font-size:14px;margin-bottom:24px">Get Started Free</a>' +
+            '<ul style="margin:0;padding:0;list-style:none">' +
+              '<li style="font-size:14px;color:#374151;padding:7px 0;border-bottom:1px solid #f1f5f9">&#10003; 3 projects</li>' +
+              '<li style="font-size:14px;color:#374151;padding:7px 0;border-bottom:1px solid #f1f5f9">&#10003; 1 user seat</li>' +
+              '<li style="font-size:14px;color:#94a3b8;padding:7px 0">&#10007; Advanced features</li>' +
+            '</ul>' +
+          '</div>' +
+          '<div style="border:2px solid #6366f1;border-radius:16px;padding:32px;position:relative;box-shadow:0 8px 32px rgba(99,102,241,.12)">' +
+            '<span style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#6366f1;color:#fff;font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;white-space:nowrap">Most Popular</span>' +
+            '<p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6366f1;margin:0 0 12px">Pro</p>' +
+            '<p style="font-size:40px;font-weight:800;color:#0f172a;margin:0 0 4px">&#8377;999<span style="font-size:15px;font-weight:500;color:#64748b">/mo</span></p>' +
+            '<p style="font-size:13px;color:#94a3b8;margin:0 0 24px">Billed monthly</p>' +
+            '<a href="#" style="display:block;text-align:center;padding:11px;background:#6366f1;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;font-size:14px;margin-bottom:24px">Start Pro Trial</a>' +
+            '<ul style="margin:0;padding:0;list-style:none">' +
+              '<li style="font-size:14px;color:#374151;padding:7px 0;border-bottom:1px solid #f1f5f9">&#10003; Unlimited projects</li>' +
+              '<li style="font-size:14px;color:#374151;padding:7px 0;border-bottom:1px solid #f1f5f9">&#10003; 5 user seats</li>' +
+              '<li style="font-size:14px;color:#374151;padding:7px 0">&#10003; All advanced features</li>' +
+            '</ul>' +
+          '</div>' +
+          '<div style="border:1px solid #e2e8f0;border-radius:16px;padding:32px">' +
+            '<p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin:0 0 12px">Team</p>' +
+            '<p style="font-size:40px;font-weight:800;color:#0f172a;margin:0 0 4px">&#8377;2,499<span style="font-size:15px;font-weight:500;color:#64748b">/mo</span></p>' +
+            '<p style="font-size:13px;color:#94a3b8;margin:0 0 24px">Up to 20 seats</p>' +
+            '<a href="#" style="display:block;text-align:center;padding:11px;background:#f1f5f9;color:#374151;text-decoration:none;border-radius:8px;font-weight:600;font-size:14px;margin-bottom:24px">Contact Sales</a>' +
+            '<ul style="margin:0;padding:0;list-style:none">' +
+              '<li style="font-size:14px;color:#374151;padding:7px 0;border-bottom:1px solid #f1f5f9">&#10003; Everything in Pro</li>' +
+              '<li style="font-size:14px;color:#374151;padding:7px 0;border-bottom:1px solid #f1f5f9">&#10003; 20 user seats</li>' +
+              '<li style="font-size:14px;color:#374151;padding:7px 0">&#10003; Dedicated support</li>' +
+            '</ul>' +
+          '</div>' +
+        '</div>' +
+      '</section>'
+    );
+
+    blk('cta-dark', 'CTA Banner - Dark', S,
+      '<section style="padding:80px 24px;background:#0f172a;text-align:center;font-family:sans-serif">' +
+        '<h2 style="font-size:40px;font-weight:800;color:#fff;margin:0 auto 20px;max-width:660px">Ready to Get Started? Your First Month is Free</h2>' +
+        '<p style="font-size:17px;color:#94a3b8;margin:0 auto 36px;max-width:500px">Join thousands of teams who have already made the switch. Setup takes under 5 minutes.</p>' +
+        '<a href="#" style="padding:16px 40px;background:#f97316;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:16px">Start Free Today</a>' +
+        '<p style="margin-top:20px;font-size:13px;color:#475569">No credit card · Cancel anytime · Free onboarding</p>' +
+      '</section>'
+    );
+
+    blk('cta-email', 'CTA - Email Capture', S,
+      '<section style="padding:80px 24px;background:#eff6ff;text-align:center;font-family:sans-serif">' +
+        '<h2 style="font-size:36px;font-weight:800;color:#0f172a;margin:0 0 16px">Stay in the Loop</h2>' +
+        '<p style="font-size:16px;color:#475569;margin:0 auto 36px;max-width:480px">Get early access, product updates, and insider tips delivered to your inbox. No spam, ever.</p>' +
+        '<div style="display:flex;gap:10px;justify-content:center;max-width:480px;margin:0 auto;flex-wrap:wrap">' +
+          '<input type="email" placeholder="Enter your email address" style="flex:1;min-width:220px;padding:13px 16px;border:1px solid #c7d2fe;border-radius:8px;font-size:14px;outline:none">' +
+          '<button style="padding:13px 28px;background:#4f46e5;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer">Get Early Access</button>' +
+        '</div>' +
+        '<p style="margin-top:16px;font-size:12px;color:#94a3b8">Join 3,200+ subscribers. Unsubscribe anytime.</p>' +
+      '</section>'
+    );
+
+    blk('faq-section', 'FAQ Section', S,
+      '<section style="padding:80px 24px;background:#fff;font-family:sans-serif">' +
+        '<div style="text-align:center;max-width:600px;margin:0 auto 52px">' +
+          '<h2 style="font-size:36px;font-weight:800;color:#0f172a;margin:0 0 16px">Frequently Asked Questions</h2>' +
+          '<p style="font-size:16px;color:#64748b;margin:0">Can\'t find your answer? <a href="#" style="color:#4f46e5;text-decoration:none;font-weight:600">Contact us</a></p>' +
+        '</div>' +
+        '<div style="max-width:720px;margin:0 auto">' +
+          '<div style="border-bottom:1px solid #e2e8f0;padding:22px 0"><p style="font-size:16px;font-weight:700;color:#0f172a;margin:0 0 10px">What is your refund policy?</p><p style="font-size:15px;color:#64748b;margin:0;line-height:1.7">We offer a 30-day money-back guarantee. If you\'re not satisfied, reach out and we\'ll process your refund within 2 business days.</p></div>' +
+          '<div style="border-bottom:1px solid #e2e8f0;padding:22px 0"><p style="font-size:16px;font-weight:700;color:#0f172a;margin:0 0 10px">How long does setup take?</p><p style="font-size:15px;color:#64748b;margin:0;line-height:1.7">Most teams are up and running in under 10 minutes. Our onboarding wizard guides you through every step.</p></div>' +
+          '<div style="border-bottom:1px solid #e2e8f0;padding:22px 0"><p style="font-size:16px;font-weight:700;color:#0f172a;margin:0 0 10px">Can I use this on multiple devices?</p><p style="font-size:15px;color:#64748b;margin:0;line-height:1.7">Yes. Your account works on desktop, tablet, and mobile. All your data syncs automatically in real time.</p></div>' +
+          '<div style="padding:22px 0"><p style="font-size:16px;font-weight:700;color:#0f172a;margin:0 0 10px">Do you offer a free plan?</p><p style="font-size:15px;color:#64748b;margin:0;line-height:1.7">Yes! Our Starter plan is free forever with no credit card required. Upgrade anytime when you need more.</p></div>' +
+        '</div>' +
+      '</section>'
+    );
+
+    blk('navbar-light', 'Navbar - Light', N,
+      '<nav style="background:#fff;border-bottom:1px solid #e2e8f0;padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:64px;font-family:sans-serif">' +
+        '<a href="#" style="font-size:20px;font-weight:800;color:#0f172a;text-decoration:none">YourLogo</a>' +
+        '<div style="display:flex;align-items:center;gap:32px">' +
+          '<a href="#" style="font-size:14px;color:#475569;text-decoration:none;font-weight:500">Features</a>' +
+          '<a href="#" style="font-size:14px;color:#475569;text-decoration:none;font-weight:500">Pricing</a>' +
+          '<a href="#" style="font-size:14px;color:#475569;text-decoration:none;font-weight:500">About</a>' +
+          '<a href="#" style="padding:9px 20px;background:#4f46e5;color:#fff;text-decoration:none;border-radius:8px;font-size:13px;font-weight:700">Get Started</a>' +
+        '</div>' +
+      '</nav>'
+    );
+
+    blk('navbar-dark', 'Navbar - Dark', N,
+      '<nav style="background:#0f172a;padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:64px;font-family:sans-serif">' +
+        '<a href="#" style="font-size:20px;font-weight:800;color:#fff;text-decoration:none">YourLogo</a>' +
+        '<div style="display:flex;align-items:center;gap:32px">' +
+          '<a href="#" style="font-size:14px;color:#94a3b8;text-decoration:none;font-weight:500">Features</a>' +
+          '<a href="#" style="font-size:14px;color:#94a3b8;text-decoration:none;font-weight:500">Pricing</a>' +
+          '<a href="#" style="font-size:14px;color:#94a3b8;text-decoration:none;font-weight:500">About</a>' +
+          '<a href="#" style="padding:9px 20px;background:#3b82f6;color:#fff;text-decoration:none;border-radius:8px;font-size:13px;font-weight:700">Get Started</a>' +
+        '</div>' +
+      '</nav>'
+    );
+
+    blk('footer-3col', 'Footer - 3 Column', F,
+      '<footer style="background:#0f172a;color:#94a3b8;padding:60px 40px 32px;font-family:sans-serif">' +
+        '<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;max-width:1100px;margin:0 auto;padding-bottom:44px;border-bottom:1px solid #1e293b">' +
+          '<div>' +
+            '<p style="font-size:20px;font-weight:800;color:#fff;margin:0 0 14px">YourLogo</p>' +
+            '<p style="font-size:14px;line-height:1.75;margin:0;max-width:300px">A short tagline or description about your brand. Keep it under two sentences.</p>' +
+          '</div>' +
+          '<div>' +
+            '<p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#fff;margin:0 0 16px">Company</p>' +
+            '<div style="display:flex;flex-direction:column;gap:10px">' +
+              '<a href="#" style="font-size:14px;color:#94a3b8;text-decoration:none">About</a>' +
+              '<a href="#" style="font-size:14px;color:#94a3b8;text-decoration:none">Careers</a>' +
+              '<a href="#" style="font-size:14px;color:#94a3b8;text-decoration:none">Blog</a>' +
+              '<a href="#" style="font-size:14px;color:#94a3b8;text-decoration:none">Contact</a>' +
+            '</div>' +
+          '</div>' +
+          '<div>' +
+            '<p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#fff;margin:0 0 16px">Legal</p>' +
+            '<div style="display:flex;flex-direction:column;gap:10px">' +
+              '<a href="#" style="font-size:14px;color:#94a3b8;text-decoration:none">Privacy Policy</a>' +
+              '<a href="#" style="font-size:14px;color:#94a3b8;text-decoration:none">Terms of Service</a>' +
+              '<a href="#" style="font-size:14px;color:#94a3b8;text-decoration:none">Cookie Policy</a>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="max-width:1100px;margin:28px auto 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">' +
+          '<p style="font-size:13px;margin:0">&#169; 2024 YourBrand. All rights reserved.</p>' +
+          '<div style="display:flex;gap:16px">' +
+            '<a href="#" style="font-size:13px;color:#94a3b8;text-decoration:none">Twitter</a>' +
+            '<a href="#" style="font-size:13px;color:#94a3b8;text-decoration:none">LinkedIn</a>' +
+            '<a href="#" style="font-size:13px;color:#94a3b8;text-decoration:none">Instagram</a>' +
+          '</div>' +
+        '</div>' +
+      '</footer>'
+    );
+
+    blk('footer-simple', 'Footer - Simple', F,
+      '<footer style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:28px 40px;font-family:sans-serif;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">' +
+        '<p style="font-size:14px;color:#64748b;margin:0">&#169; 2024 YourBrand. All rights reserved.</p>' +
+        '<div style="display:flex;gap:24px">' +
+          '<a href="#" style="font-size:14px;color:#64748b;text-decoration:none">Privacy</a>' +
+          '<a href="#" style="font-size:14px;color:#64748b;text-decoration:none">Terms</a>' +
+          '<a href="#" style="font-size:14px;color:#64748b;text-decoration:none">Contact</a>' +
+        '</div>' +
+      '</footer>'
+    );
+
+    blk('form-contact', 'Contact Form', FM,
+      '<section style="padding:80px 24px;background:#f8fafc;font-family:sans-serif">' +
+        '<div style="max-width:580px;margin:0 auto;background:#fff;border-radius:16px;padding:48px;border:1px solid #e2e8f0">' +
+          '<h2 style="font-size:28px;font-weight:800;color:#0f172a;margin:0 0 8px">Get in Touch</h2>' +
+          '<p style="font-size:15px;color:#64748b;margin:0 0 32px">Fill in the form below and we\'ll get back to you within 24 hours.</p>' +
+          '<div style="display:flex;flex-direction:column;gap:18px">' +
+            '<div><label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Full Name</label><input type="text" placeholder="Your name" style="width:100%;padding:11px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;box-sizing:border-box;outline:none"></div>' +
+            '<div><label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Email Address</label><input type="email" placeholder="you@example.com" style="width:100%;padding:11px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;box-sizing:border-box;outline:none"></div>' +
+            '<div><label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Message</label><textarea placeholder="How can we help you?" rows="5" style="width:100%;padding:11px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;box-sizing:border-box;outline:none;resize:vertical;font-family:inherit"></textarea></div>' +
+            '<button style="padding:13px;background:#4f46e5;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer">Send Message</button>' +
+          '</div>' +
+        '</div>' +
+      '</section>'
+    );
+
+    blk('form-lead', 'Lead Capture Form', FM,
+      '<section style="padding:80px 24px;background:#0f172a;font-family:sans-serif;text-align:center">' +
+        '<h2 style="font-size:36px;font-weight:800;color:#fff;margin:0 0 16px">Book a Free Demo</h2>' +
+        '<p style="font-size:16px;color:#94a3b8;margin:0 auto 40px;max-width:460px">See how it works in 20 minutes. No pitch. No pressure. Just a demo.</p>' +
+        '<div style="max-width:480px;margin:0 auto;background:#1e293b;border-radius:16px;padding:36px">' +
+          '<div style="display:flex;flex-direction:column;gap:14px">' +
+            '<input type="text" placeholder="Your Name" style="width:100%;padding:12px 14px;background:#0f172a;border:1px solid #334155;border-radius:8px;font-size:14px;color:#fff;box-sizing:border-box;outline:none">' +
+            '<input type="email" placeholder="Work Email" style="width:100%;padding:12px 14px;background:#0f172a;border:1px solid #334155;border-radius:8px;font-size:14px;color:#fff;box-sizing:border-box;outline:none">' +
+            '<input type="tel" placeholder="Phone Number" style="width:100%;padding:12px 14px;background:#0f172a;border:1px solid #334155;border-radius:8px;font-size:14px;color:#fff;box-sizing:border-box;outline:none">' +
+            '<select style="width:100%;padding:12px 14px;background:#0f172a;border:1px solid #334155;border-radius:8px;font-size:14px;color:#64748b;box-sizing:border-box;outline:none"><option>Company Size</option><option>1-10 employees</option><option>11-50 employees</option><option>51-200 employees</option><option>200+ employees</option></select>' +
+            '<button style="padding:14px;background:#3b82f6;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer">Book My Demo</button>' +
+          '</div>' +
+          '<p style="margin-top:14px;font-size:12px;color:#475569">Your information is safe with us. We do not spam.</p>' +
+        '</div>' +
+      '</section>'
+    );
+
+  })(editor);
+
+  // ── Auto-save ──────────────────────────────────────────────
   var saveTimer;
   var saveIndicator = document.getElementById('ds-save-indicator');
 
   function setSaveStatus(status) {
     if (!saveIndicator) return;
-    if (status === 'saving') {
-      saveIndicator.textContent = 'Saving…';
-      saveIndicator.className = 'ds-save-indicator ds-save-indicator--saving';
-    } else if (status === 'saved') {
-      saveIndicator.textContent = 'Saved';
-      saveIndicator.className = 'ds-save-indicator ds-save-indicator--saved';
-    } else {
-      saveIndicator.textContent = 'Save failed';
-      saveIndicator.className = 'ds-save-indicator ds-save-indicator--error';
-    }
+    var map = {
+      saving: ['Saving…',     'ds-save-indicator--saving'],
+      saved:  ['Saved',       'ds-save-indicator--saved'],
+      error:  ['Save failed', 'ds-save-indicator--error'],
+    };
+    saveIndicator.textContent = map[status][0];
+    saveIndicator.className   = 'ds-save-indicator ' + map[status][1];
+  }
+
+  function getFullHtml() {
+    return '<style>' + editor.getCss() + '</style>' + editor.getHtml();
   }
 
   function autosave() {
@@ -153,15 +527,10 @@
     fetch(AUTOSAVE_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
-      body: JSON.stringify({
-        data: editor.getProjectData(),
-        html: editor.getHtml(),
-      }),
+      body: JSON.stringify({ data: editor.getProjectData(), html: getFullHtml() }),
     }).then(function(r) {
       setSaveStatus(r.ok ? 'saved' : 'error');
-    }).catch(function() {
-      setSaveStatus('error');
-    });
+    }).catch(function() { setSaveStatus('error'); });
   }
 
   if (!IS_SUBMITTED) {
@@ -172,53 +541,56 @@
     });
   }
 
-  // Submit
+  // ── Submit ─────────────────────────────────────────────────
   window.dsSubmit = function() {
-    if (!confirm('Submit your project? You will not be able to edit it after submission.')) return;
+    document.getElementById('ds-modal-submit').hidden = false;
+  };
+
+  window.dsConfirmSubmit = function() {
+    document.getElementById('ds-modal-submit').hidden = true;
     var btn = document.getElementById('ds-submit-btn');
     if (btn) btn.disabled = true;
     fetch(SUBMIT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
-      body: JSON.stringify({
-        data: editor.getProjectData(),
-        html: editor.getHtml(),
-      }),
+      body: JSON.stringify({ data: editor.getProjectData(), html: getFullHtml() }),
     }).then(function(r) {
       if (r.ok) {
         var redirect = r.headers.get('HX-Redirect');
         if (redirect) window.location.href = redirect;
       } else {
         if (btn) btn.disabled = false;
-        alert('Submission failed. Please try again.');
+        document.getElementById('ds-modal-submit-error').hidden = false;
       }
+    }).catch(function() {
+      if (btn) btn.disabled = false;
+      document.getElementById('ds-modal-submit-error').hidden = false;
     });
   };
 
-  // Brief panel collapse/expand
-  var briefCollapsed = false;
-  window.dsBriefToggle = function() {
-    briefCollapsed = !briefCollapsed;
-    var panel = document.getElementById('ds-brief-panel');
-    var expand = document.getElementById('ds-brief-expand');
-    if (briefCollapsed) {
-      panel.style.display = 'none';
-      expand.style.display = 'flex';
+  // ── Tabs ───────────────────────────────────────────────────
+  var currentTab = 'brief';
+
+  window.dsTab = function(tab) {
+    if (tab === currentTab) return;
+    currentTab = tab;
+    var builderPanel = document.getElementById('ds-panel-builder');
+    var briefPanel   = document.getElementById('ds-panel-brief');
+    var builderBtn   = document.getElementById('ds-tab-builder-btn');
+    var briefBtn     = document.getElementById('ds-tab-brief-btn');
+
+    if (tab === 'builder') {
+      briefPanel.classList.add('is-hidden');
+      builderPanel.classList.remove('is-hidden');
+      builderBtn.classList.add('is-active');
+      briefBtn.classList.remove('is-active');
     } else {
-      panel.style.display = '';
-      expand.style.display = 'none';
+      builderPanel.classList.add('is-hidden');
+      briefPanel.classList.remove('is-hidden');
+      briefBtn.classList.add('is-active');
+      builderBtn.classList.remove('is-active');
     }
   };
-
-  // Move topbar-right controls into actual topbar
-  (function() {
-    var wsRight = document.getElementById('ds-ws-topbar-right');
-    var topbarEnd = document.querySelector('.dash-topbar-end');
-    if (wsRight && topbarEnd) {
-      topbarEnd.insertBefore(wsRight, topbarEnd.firstChild);
-      wsRight.style.display = 'flex';
-    }
-  })();
 
 })();
 </script>

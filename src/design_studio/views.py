@@ -8,13 +8,15 @@ from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
 from utils.view_helper import redirect_to
 
-from .models import DesignProject, DesignSubmission
+from .models import DesignProject, DesignSubmission, DesignFeedback
 
 
 def _can_manage(user):
@@ -22,10 +24,12 @@ def _can_manage(user):
 
 
 def _parse_tags(tags_str):
-    """Return a list of stripped, non-empty tag strings."""
     if not tags_str:
         return []
     return [t.strip() for t in tags_str.split(',') if t.strip()]
+
+
+_LOCKED_STATUSES = (DesignSubmission.Status.SUBMITTED, DesignSubmission.Status.APPROVED)
 
 
 class DesignProjectListView(LoginRequiredMixin, View):
@@ -46,7 +50,10 @@ class DesignProjectCreateView(LoginRequiredMixin, View):
     def get(self, request):
         if not _can_manage(request.user):
             return HttpResponseForbidden()
-        return render(request, 'design_studio/form.html', {'project': None})
+        return render(request, 'design_studio/form.html', {
+            'project': None,
+            'fdata': {'title': '', 'description': '', 'tags': ''},
+        })
 
     def post(self, request):
         if not _can_manage(request.user):
@@ -72,7 +79,10 @@ class DesignProjectUpdateView(LoginRequiredMixin, View):
         if not _can_manage(request.user):
             return HttpResponseForbidden()
         project = get_object_or_404(DesignProject, pk=pk)
-        return render(request, 'design_studio/form.html', {'project': project})
+        return render(request, 'design_studio/form.html', {
+            'project': project,
+            'fdata': {'title': project.title, 'description': project.description, 'tags': project.tags},
+        })
 
     def post(self, request, pk):
         if not _can_manage(request.user):
@@ -83,7 +93,10 @@ class DesignProjectUpdateView(LoginRequiredMixin, View):
         tags = request.POST.get('tags', '').strip()
         if not title or not description:
             messages.error(request, 'Title and description are required.')
-            return render(request, 'design_studio/form.html', {'project': project})
+            return render(request, 'design_studio/form.html', {
+                'project': project,
+                'fdata': {'title': title, 'description': description, 'tags': tags},
+            })
         project.title = title
         project.description = description
         project.tags = tags
@@ -107,11 +120,15 @@ class DesignWorkspaceView(LoginRequiredMixin, View):
         submission, _ = DesignSubmission.objects.get_or_create(
             project=project, student=request.user
         )
+        if submission.status == DesignSubmission.Status.APPROVED:
+            return redirect_to(request, reverse('design_studio:submission_detail', kwargs={'pk': pk, 'sub_pk': submission.pk}))
+        feedback_entries = submission.feedback_entries.select_related('author').all()
         return render(request, 'design_studio/workspace.html', {
             'project': project,
             'submission': submission,
             'grapes_json': json.dumps(submission.grapes_data) if submission.grapes_data else '{}',
             'project_tags': _parse_tags(project.tags),
+            'feedback_entries': feedback_entries,
         })
 
 
@@ -119,7 +136,7 @@ class DesignAutosaveView(LoginRequiredMixin, View):
     def post(self, request, pk):
         project = get_object_or_404(DesignProject, pk=pk, is_active=True)
         submission = get_object_or_404(DesignSubmission, project=project, student=request.user)
-        if submission.status == DesignSubmission.Status.SUBMITTED:
+        if submission.status in _LOCKED_STATUSES:
             return HttpResponse(status=403)
         try:
             body = json.loads(request.body)
@@ -136,7 +153,7 @@ class DesignSubmitView(LoginRequiredMixin, View):
     def post(self, request, pk):
         project = get_object_or_404(DesignProject, pk=pk, is_active=True)
         submission = get_object_or_404(DesignSubmission, project=project, student=request.user)
-        if submission.status == DesignSubmission.Status.SUBMITTED:
+        if submission.status in _LOCKED_STATUSES:
             return HttpResponse(status=400)
         try:
             body = json.loads(request.body)
@@ -151,6 +168,102 @@ class DesignSubmitView(LoginRequiredMixin, View):
         resp = HttpResponse()
         resp['HX-Redirect'] = reverse('design_studio:list')
         return resp
+
+
+class DesignSubmissionListView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        if not _can_manage(request.user):
+            return HttpResponseForbidden()
+        project = get_object_or_404(DesignProject, pk=pk)
+        submissions = project.submissions.select_related('student').order_by('-submitted_at', '-last_saved_at')
+        return render(request, 'design_studio/submissions.html', {
+            'project': project,
+            'submissions': submissions,
+        })
+
+
+class DesignSubmissionDetailView(LoginRequiredMixin, View):
+    def get(self, request, pk, sub_pk):
+        project = get_object_or_404(DesignProject, pk=pk)
+        submission = get_object_or_404(DesignSubmission, pk=sub_pk, project=project)
+        if not _can_manage(request.user) and submission.student != request.user:
+            return HttpResponseForbidden()
+        preview_url = reverse('design_studio:submission_preview', kwargs={'pk': pk, 'sub_pk': sub_pk})
+        feedback_entries = submission.feedback_entries.select_related('author').all()
+        return render(request, 'design_studio/submission_detail.html', {
+            'project': project,
+            'submission': submission,
+            'preview_url': preview_url,
+            'can_manage': _can_manage(request.user),
+            'feedback_entries': feedback_entries,
+            'project_tags': _parse_tags(project.tags),
+        })
+
+
+@method_decorator(xframe_options_exempt, name='dispatch')
+class DesignSubmissionPreviewView(LoginRequiredMixin, View):
+    def get(self, request, pk, sub_pk):
+        project = get_object_or_404(DesignProject, pk=pk)
+        submission = get_object_or_404(DesignSubmission, pk=sub_pk, project=project)
+        if not _can_manage(request.user) and submission.student != request.user:
+            return HttpResponseForbidden()
+        html = submission.html_snapshot or ''
+        page = (
+            '<!DOCTYPE html><html><head>'
+            '<meta charset="utf-8">'
+            '<meta name="viewport" content="width=device-width,initial-scale=1">'
+            '<title>' + project.title + '</title>'
+            '<style>*{box-sizing:border-box}body{margin:0;padding:0;font-family:sans-serif}</style>'
+            '</head><body>' + html + '</body></html>'
+        )
+        return HttpResponse(page, content_type='text/html')
+
+
+class DesignSubmissionApproveView(LoginRequiredMixin, View):
+    def post(self, request, pk, sub_pk):
+        if not _can_manage(request.user):
+            return HttpResponseForbidden()
+        submission = get_object_or_404(DesignSubmission, pk=sub_pk, project_id=pk)
+        comment = request.POST.get('comment', '').strip()
+        submission.status = DesignSubmission.Status.APPROVED
+        submission.save(update_fields=['status'])
+        DesignFeedback.objects.create(
+            submission=submission,
+            author=request.user,
+            action=DesignFeedback.Action.APPROVED,
+            comment=comment,
+        )
+        return redirect_to(request, reverse('design_studio:submissions', kwargs={'pk': pk}))
+
+
+class DesignSubmissionSendBackView(LoginRequiredMixin, View):
+    def post(self, request, pk, sub_pk):
+        if not _can_manage(request.user):
+            return HttpResponseForbidden()
+        submission = get_object_or_404(DesignSubmission, pk=sub_pk, project_id=pk)
+        comment = request.POST.get('comment', '').strip()
+        if not comment:
+            messages.error(request, 'A comment is required when sending back for revision.')
+            return redirect_to(request, reverse('design_studio:submission_detail', kwargs={'pk': pk, 'sub_pk': sub_pk}))
+        submission.status = DesignSubmission.Status.NEEDS_REVISION
+        submission.submitted_at = None
+        submission.save(update_fields=['status', 'submitted_at'])
+        DesignFeedback.objects.create(
+            submission=submission,
+            author=request.user,
+            action=DesignFeedback.Action.SENT_BACK,
+            comment=comment,
+        )
+        return redirect_to(request, reverse('design_studio:submissions', kwargs={'pk': pk}))
+
+
+class DesignSubmissionDeleteView(LoginRequiredMixin, View):
+    def post(self, request, pk, sub_pk):
+        if not _can_manage(request.user):
+            return HttpResponseForbidden()
+        submission = get_object_or_404(DesignSubmission, pk=sub_pk, project_id=pk)
+        submission.delete()
+        return redirect_to(request, reverse('design_studio:submissions', kwargs={'pk': pk}))
 
 
 class DesignAssetUploadView(LoginRequiredMixin, View):
@@ -174,15 +287,3 @@ class DesignAssetUploadView(LoginRequiredMixin, View):
             asset_type = 'video' if f.content_type.startswith('video') else 'image'
             result.append({'src': url, 'type': asset_type, 'name': f.name})
         return JsonResponse({'data': result})
-
-
-class DesignSubmissionListView(LoginRequiredMixin, View):
-    def get(self, request, pk):
-        if not _can_manage(request.user):
-            return HttpResponseForbidden()
-        project = get_object_or_404(DesignProject, pk=pk)
-        submissions = project.submissions.select_related('student').order_by('-submitted_at', '-last_saved_at')
-        return render(request, 'design_studio/submissions.html', {
-            'project': project,
-            'submissions': submissions,
-        })

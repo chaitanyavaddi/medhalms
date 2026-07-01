@@ -1,0 +1,221 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}{{ submission.student.get_full_name }} — {{ project.title }}{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/design_studio.css' %}">{% endblock %}
+
+{% block content_class %}dash-content--edge{% endblock %}
+{% block inner_sidebar %}{% endblock %}
+
+{% block topbar_title %}
+<nav class="dash-breadcrumb">
+  <a href="{% url 'design_studio:list' %}" class="dash-bc-item">Design Studio</a>
+  <span class="dash-bc-sep">›</span>
+  {% if can_manage %}
+  <a href="{% url 'design_studio:submissions' project.pk %}" class="dash-bc-item">{{ project.title }}</a>
+  {% else %}
+  <span class="dash-bc-item">{{ project.title }}</span>
+  {% endif %}
+  <span class="dash-bc-sep">›</span>
+  <span class="dash-bc-item dash-bc-current">{{ submission.student.get_full_name }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="ds-sub-detail">
+
+  <!-- Top bar -->
+  <div class="ds-sub-detail-bar">
+    <div class="ds-sub-detail-info">
+      <div class="ds-sub-avatar" style="width:36px;height:36px;font-size:13px">
+        {{ submission.student.first_name|first|upper }}{{ submission.student.last_name|first|upper }}
+      </div>
+      <div>
+        <div class="ds-sub-name">{{ submission.student.get_full_name }}</div>
+        <div class="ds-sub-email">{{ submission.student.email }}</div>
+      </div>
+      <span class="ds-badge ds-badge--{{ submission.status }}">{{ submission.get_status_display }}</span>
+      {% if submission.submitted_at %}
+      <span class="ds-sub-date">Submitted {{ submission.submitted_at|date:"M d, Y H:i" }}</span>
+      {% elif submission.last_saved_at %}
+      <span class="ds-sub-date">Last saved {{ submission.last_saved_at|date:"M d, Y H:i" }}</span>
+      {% endif %}
+    </div>
+    <div class="ds-sub-detail-actions">
+      <a href="{{ preview_url }}" target="_blank" class="ds-action-btn ds-action-btn--secondary">Open Full Page</a>
+      {% if can_manage %}
+      {% if submission.status == 'submitted' %}
+      <button type="button" class="ds-action-btn ds-action-btn--secondary"
+              onclick="document.getElementById('ds-modal-send-back').hidden=false">
+        Send Back
+      </button>
+      <button type="button" class="ds-action-btn ds-action-btn--primary"
+              onclick="document.getElementById('ds-modal-approve').hidden=false">
+        Approve
+      </button>
+      {% elif submission.status == 'approved' %}
+      <button type="button" class="ds-action-btn ds-action-btn--secondary"
+              onclick="document.getElementById('ds-modal-send-back').hidden=false">
+        Send Back for Revision
+      </button>
+      {% elif submission.status == 'needs_revision' %}
+      <button type="button" class="ds-action-btn ds-action-btn--secondary"
+              onclick="document.getElementById('ds-modal-approve').hidden=false">
+        Approve Anyway
+      </button>
+      {% endif %}
+      <button type="button" class="ds-action-btn ds-action-btn--danger"
+              onclick="document.getElementById('ds-modal-delete').hidden=false">
+        Delete
+      </button>
+      <a href="{% url 'design_studio:submissions' project.pk %}" class="ds-action-btn ds-action-btn--secondary">Back to Submissions</a>
+      {% else %}
+      <a href="{% url 'design_studio:list' %}" class="ds-action-btn ds-action-btn--secondary">Back to Projects</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="ds-sub-tabbar">
+    <button type="button" class="ds-sub-tab is-active" id="ds-sub-tab-preview-btn" onclick="dsSubTab('preview')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Preview
+    </button>
+    <button type="button" class="ds-sub-tab" id="ds-sub-tab-brief-btn" onclick="dsSubTab('brief')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Brief
+    </button>
+    <button type="button" class="ds-sub-tab" id="ds-sub-tab-feedback-btn" onclick="dsSubTab('feedback')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Feedback
+      {% if feedback_entries %}
+      <span class="ds-sub-tab-count">{{ feedback_entries|length }}</span>
+      {% endif %}
+    </button>
+  </div>
+
+  <!-- Tab panels -->
+  <div class="ds-sub-tab-body">
+
+    <!-- Preview panel -->
+    <div class="ds-sub-tab-panel" id="ds-sub-panel-preview">
+      <iframe src="{{ preview_url }}" class="ds-sub-preview-frame" title="{{ submission.student.get_full_name }}'s work"></iframe>
+    </div>
+
+    <!-- Brief panel -->
+    <div class="ds-sub-tab-panel is-hidden" id="ds-sub-panel-brief">
+      <div class="ds-brief-body">
+        <div class="ds-brief-tags-row">
+          {% for tag in project_tags %}<span class="ds-tag">{{ tag }}</span>{% endfor %}
+        </div>
+        <h2 class="ds-brief-heading">{{ project.title }}</h2>
+        <div class="ds-brief-text">{{ project.description|safe }}</div>
+      </div>
+    </div>
+
+    <!-- Feedback panel -->
+    <div class="ds-sub-tab-panel is-hidden" id="ds-sub-panel-feedback">
+      <div class="ds-feedback-body">
+        {% if feedback_entries %}
+        <div class="ds-feedback-thread">
+          {% for fb in feedback_entries %}
+          <div class="ds-fb-entry ds-fb-entry--{{ fb.action }}">
+            <div class="ds-fb-header">
+              <div class="ds-sub-avatar" style="width:30px;height:30px;font-size:11px">
+                {{ fb.author.first_name|first|upper }}{{ fb.author.last_name|first|upper }}
+              </div>
+              <div>
+                <span class="ds-fb-author">{{ fb.author.get_full_name }}</span>
+                <span class="ds-fb-action ds-fb-action--{{ fb.action }}">
+                  {% if fb.action == 'approved' %}Approved{% else %}Sent Back{% endif %}
+                </span>
+              </div>
+              <span class="ds-fb-date">{{ fb.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            {% if fb.comment %}
+            <p class="ds-fb-comment">{{ fb.comment }}</p>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="ds-empty" style="padding:3rem">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <p>No feedback yet.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+{% if can_manage %}
+<!-- Approve Modal -->
+<div class="modal-overlay" id="ds-modal-approve" hidden onclick="if(event.target===this)this.hidden=true">
+  <div class="modal-box">
+    <h3 class="modal-title">Approve Submission</h3>
+    <p class="modal-desc">Approving will mark this work as complete. The student will not be able to edit further.</p>
+    <form method="post" action="{% url 'design_studio:submission_approve' project.pk submission.pk %}">
+      {% csrf_token %}
+      <div style="margin-bottom:1.25rem">
+        <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Comment (optional)</label>
+        <textarea name="comment" rows="3" class="ds-textarea" placeholder="Add a note for the student..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="document.getElementById('ds-modal-approve').hidden=true">Cancel</button>
+        <button type="submit" class="btn btn-primary">Approve</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Send Back Modal -->
+<div class="modal-overlay" id="ds-modal-send-back" hidden onclick="if(event.target===this)this.hidden=true">
+  <div class="modal-box">
+    <h3 class="modal-title">Send Back for Revision</h3>
+    <p class="modal-desc">The student will be notified to revise their work and resubmit. Your comment will be visible to them.</p>
+    <form method="post" action="{% url 'design_studio:submission_send_back' project.pk submission.pk %}">
+      {% csrf_token %}
+      <div style="margin-bottom:1.25rem">
+        <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Comment <span style="color:#dc2626">*</span></label>
+        <textarea name="comment" rows="4" class="ds-textarea" placeholder="Explain what needs to be improved..." required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="document.getElementById('ds-modal-send-back').hidden=true">Cancel</button>
+        <button type="submit" class="btn btn-primary">Send Back</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal-overlay" id="ds-modal-delete" hidden onclick="if(event.target===this)this.hidden=true">
+  <div class="modal-box">
+    <h3 class="modal-title">Delete Submission</h3>
+    <p class="modal-desc">This will permanently delete {{ submission.student.get_full_name }}'s submission and all their work. They will need to start from scratch. This cannot be undone.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" onclick="document.getElementById('ds-modal-delete').hidden=true">Cancel</button>
+      <button type="button" class="btn btn-danger" onclick="document.getElementById('ds-form-delete').submit()">Delete</button>
+    </div>
+  </div>
+</div>
+<form id="ds-form-delete" method="post" action="{% url 'design_studio:submission_delete' project.pk submission.pk %}" style="display:none">{% csrf_token %}</form>
+{% endif %}
+
+{% block extra_js %}
+<script>
+(function(){
+  var currentTab = 'preview';
+  window.dsSubTab = function(tab) {
+    if (tab === currentTab) return;
+    document.getElementById('ds-sub-panel-' + currentTab).classList.add('is-hidden');
+    document.getElementById('ds-sub-tab-' + currentTab + '-btn').classList.remove('is-active');
+    currentTab = tab;
+    document.getElementById('ds-sub-panel-' + tab).classList.remove('is-hidden');
+    document.getElementById('ds-sub-tab-' + tab + '-btn').classList.add('is-active');
+  };
+})();
+</script>
+{% endblock %}
+{% endblock %}

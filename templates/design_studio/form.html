@@ -1,7 +1,10 @@
 {% extends "dashboard/base.html" %}
 {% load static %}
 {% block title %}{% if project %}Edit Project{% else %}New Project{% endif %} — Design Studio{% endblock %}
-{% block extra_head %}<link rel="stylesheet" href="{% static 'css/design_studio.css' %}">{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/quill@2.0.2/dist/quill.snow.css">
+<link rel="stylesheet" href="{% static 'css/design_studio.css' %}">
+{% endblock %}
 {% block topbar_title %}
 <nav class="dash-breadcrumb">
   <a href="{% url 'design_studio:list' %}" class="dash-bc-item">Design Studio</a>
@@ -32,8 +35,9 @@
       </div>
       <div class="ds-field">
         <label class="ds-label">Project Brief &amp; Specs <span class="ds-required">*</span></label>
-        <p class="ds-hint">Write the full assignment question here. Include design requirements, target audience, color preferences, sections to include, etc.</p>
-        <textarea name="description" class="ds-input ds-textarea" rows="12" placeholder="e.g.&#10;Design a modern landing page for Tata Motors' new EV launch campaign.&#10;&#10;Requirements:&#10;- Hero section with full-width banner&#10;- Feature highlights (battery life, range, charging)&#10;- Customer testimonials section&#10;- CTA: Book a test drive&#10;&#10;Style: Clean, premium, dark navy + orange accent">{{ project.description|default:'' }}</textarea>
+        <p class="ds-hint">Use headings and lists to structure the brief clearly. Students will read this in the workspace before building.</p>
+        <textarea name="description" id="ds-description-hidden" style="display:none">{{ project.description|default:'' }}</textarea>
+        <div id="ds-quill-editor" class="ds-quill-wrap"></div>
       </div>
       <div class="ds-field">
         <label class="ds-label">Tags <span class="ds-opt">(optional, comma-separated)</span></label>
@@ -62,4 +66,33 @@
     </form>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/quill@2.0.2/dist/quill.js"></script>
+<script>
+(function(){
+  var hidden = document.getElementById('ds-description-hidden');
+  var quill = new Quill('#ds-quill-editor', {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['link', 'clean'],
+      ],
+    },
+    placeholder: 'Write the full brief here. Use headings for sections: Client Background, Target Audience, Required Sections, Design Notes...',
+  });
+
+  if (hidden.value && hidden.value.trim()) {
+    quill.clipboard.dangerouslyPasteHTML(hidden.value);
+  }
+
+  hidden.closest('form').addEventListener('submit', function() {
+    hidden.value = quill.getSemanticHTML();
+  });
+})();
+</script>
 {% endblock %}

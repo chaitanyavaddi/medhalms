@@ -62,9 +62,18 @@
         {% endif %}
       </div>
       <div class="ds-sub-actions">
-        <a href="{% url 'design_studio:workspace' project.pk %}" class="ds-action-btn ds-action-btn--secondary">View Work</a>
+        {% if sub.html_snapshot %}
+        <a href="{% url 'design_studio:submission_detail' project.pk sub.pk %}" class="ds-action-btn ds-action-btn--primary">View Work</a>
+        {% else %}
+        <span class="ds-action-btn ds-action-btn--secondary" style="opacity:.5;cursor:default">No work yet</span>
+        {% endif %}
+        <button type="button" class="ds-action-btn ds-action-btn--danger"
+                onclick="dsOpenDeleteModal('{{ sub.pk }}', '{{ sub.student.get_full_name|escapejs }}')">
+          Delete
+        </button>
       </div>
     </div>
+    <form id="ds-form-delete-{{ sub.pk }}" method="post" action="{% url 'design_studio:submission_delete' project.pk sub.pk %}" style="display:none">{% csrf_token %}</form>
     {% endfor %}
   </div>
   {% else %}
@@ -76,4 +85,31 @@
   </div>
   {% endif %}
 </div>
+
+<!-- Delete Modal -->
+<div class="modal-overlay" id="ds-modal-delete" hidden onclick="if(event.target===this)this.hidden=true">
+  <div class="modal-box">
+    <h3 class="modal-title">Delete Submission</h3>
+    <p class="modal-desc" id="ds-modal-delete-desc"></p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" onclick="document.getElementById('ds-modal-delete').hidden=true">Cancel</button>
+      <button type="button" class="btn btn-danger" id="ds-modal-delete-confirm">Delete</button>
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script>
+(function(){
+  function dsOpenDeleteModal(subPk, name) {
+    document.getElementById('ds-modal-delete-desc').textContent = "This will permanently delete " + name + "'s submission and all their work. They will need to start from scratch. This cannot be undone.";
+    document.getElementById('ds-modal-delete-confirm').onclick = function() {
+      document.getElementById('ds-form-delete-' + subPk).submit();
+    };
+    document.getElementById('ds-modal-delete').hidden = false;
+  }
+  window.dsOpenDeleteModal = dsOpenDeleteModal;
+})();
+</script>
+{% endblock %}
 {% endblock %}

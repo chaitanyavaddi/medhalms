@@ -51,7 +51,7 @@
         </div>
         {% endif %}
         <h3 class="ds-card-title">{{ project.title }}</h3>
-        <p class="ds-card-desc">{{ project.description|truncatewords:25 }}</p>
+        <p class="ds-card-desc">{{ project.description|striptags|truncatewords:25 }}</p>
         {% if can_manage %}
         <div class="ds-card-stats">
           <span>{{ project.submission_count }} student{{ project.submission_count|pluralize }}</span>
@@ -60,7 +60,10 @@
         {% else %}
         {% if sub %}
         <div class="ds-card-status ds-card-status--{{ sub.status }}">
-          {% if sub.status == 'submitted' %}✓ Submitted{% else %}● In Progress{% endif %}
+          {% if sub.status == 'submitted' %}✓ Submitted
+          {% elif sub.status == 'approved' %}✓ Approved
+          {% elif sub.status == 'needs_revision' %}⚠ Needs Revision
+          {% else %}● In Progress{% endif %}
         </div>
         {% endif %}
         {% endif %}
@@ -71,7 +74,11 @@
         <a href="{% url 'design_studio:edit' project.pk %}" class="ds-action-btn ds-action-btn--secondary">Edit</a>
         {% else %}
         {% if sub and sub.status == 'submitted' %}
-        <span class="ds-action-btn ds-action-btn--submitted">Submitted</span>
+        <a href="{% url 'design_studio:submission_detail' project.pk sub.pk %}" class="ds-action-btn ds-action-btn--primary">View My Work</a>
+        {% elif sub and sub.status == 'approved' %}
+        <a href="{% url 'design_studio:submission_detail' project.pk sub.pk %}" class="ds-action-btn ds-action-btn--submitted">✓ Approved</a>
+        {% elif sub and sub.status == 'needs_revision' %}
+        <a href="{% url 'design_studio:workspace' project.pk %}" class="ds-action-btn ds-action-btn--primary">Revise Work →</a>
         {% else %}
         <a href="{% url 'design_studio:workspace' project.pk %}" class="ds-action-btn ds-action-btn--primary">
           {% if sub %}Continue →{% else %}Start Project →{% endif %}
